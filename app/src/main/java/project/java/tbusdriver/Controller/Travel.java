@@ -13,6 +13,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +25,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -32,11 +36,15 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.usefulFunctions;
@@ -47,9 +55,11 @@ import static android.content.Context.LOCATION_SERVICE;
 public class Travel extends Fragment
             implements OnMapReadyCallback,
             GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,View.OnClickListener{
+            GoogleApiClient.OnConnectionFailedListener,View.OnClickListener,
+            LocationSource.OnLocationChangedListener{
 
-    private static  int DEFAULT_ZOOM =10 ;
+    //region Variable
+    private static int DEFAULT_ZOOM =10 ;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted=false;
@@ -68,8 +78,9 @@ public class Travel extends Fragment
     private MapView mMapView;
     public static Travel instance;
     LocationManager locationManager;
-
+    Marker mPositionMarker;
     boolean doZoom;
+    //endregion
 
     public Travel() {
         // Required empty public constructor
@@ -132,13 +143,11 @@ public class Travel extends Fragment
         myFloating.bringToFront();
         myFloating.setClickable(true);
         myFloating.setOnClickListener(this);
+        myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
         mapFragment=(SupportMapFragment) myActivity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-
         mMapView=(MapView)myActivity.findViewById(R.id.map);
-
-        //myActivity.setTitle("Travel");
 
         return myView;
     }
@@ -184,6 +193,7 @@ public class Travel extends Fragment
     /**
      * Builds the map when the Google Play services client is successfully connected.
      */
+    //region Connection Handler
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.v(TAG, "onConnected");
@@ -207,6 +217,7 @@ public class Travel extends Fragment
         Log.v(TAG, "onConnectionFailed");
         //super.onConnectionFailed(connectionResult);
     }
+    //endregion
 
     /**
      * Manipulates the map once available.
@@ -236,10 +247,13 @@ public class Travel extends Fragment
         getDeviceLocation();
     }
 
+    //region Button Handler
     public void busy(View v) {
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);
             myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+            busyButton.setBackgroundResource(R.drawable.busy);
+            availableButton.setBackgroundResource(R.drawable.start);
             usefulFunctions.busy=true;
 
         }
@@ -250,6 +264,8 @@ public class Travel extends Fragment
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);
             myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+            busyButton.setBackgroundResource(R.drawable.start);
+            availableButton.setBackgroundResource(R.drawable.available);
             usefulFunctions.busy=false;
 
         }
@@ -258,7 +274,6 @@ public class Travel extends Fragment
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-
             case R.id.available:
                 available(v);
                 //myFloating.setDrawingCacheBackgroundColor(323);
@@ -277,7 +292,6 @@ public class Travel extends Fragment
                         DEFAULT_ZOOM = 14;
                         doZoom=true;
                     }
-
                     getDeviceLocation();
                     updateLocationUI();
                 }
@@ -286,11 +300,12 @@ public class Travel extends Fragment
                 break;
         }
     }
+    //endregion
 
     //maybe here the problem, look good and work just one time
     private void getDeviceLocation() {
         boolean mLocationPermissionGranted= false;
-        //premmision hendler
+        //permission handler
         if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED)
@@ -315,7 +330,6 @@ public class Travel extends Fragment
                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
         } else {
             LatLng jerusalem = new LatLng(31.75, 35.2);
-            //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(jerusalem));
             mMap.animateCamera(CameraUpdateFactory.zoomTo((float) 10.5));
             Log.v(TAG, "Current location is null. Using defaults.");
@@ -383,10 +397,11 @@ public class Travel extends Fragment
         }
     }
 
+    //region GPS Enable?
     private void checkGPSEnable()
     {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            //Toast.makeText(myActivity, "GPS is Enabled in your devide", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(myActivity, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
         }else{
             showGPSDisabledAlertToUser();
         }
@@ -413,6 +428,8 @@ public class Travel extends Fragment
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
     }
+    //endregion
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -424,4 +441,62 @@ public class Travel extends Fragment
         }
     }
 
+    //region custom marker
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location == null)
+            return;
+        if (mPositionMarker == null) {
+            mPositionMarker = mMap.addMarker(new MarkerOptions()
+                    .flat(true)
+                    .anchor(0.5f, 0.5f)
+                    .icon(BitmapDescriptorFactory
+                            .fromResource(R.drawable.taxi))
+                    .position(
+                            new LatLng(location.getLatitude(), location
+                                    .getLongitude())));
+        }
+
+
+        animateMarker(mPositionMarker, location); // Helper method for smooth
+        // animation
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location
+                .getLatitude(), location.getLongitude())));
+    }
+
+    public void animateMarker(final Marker marker, final Location location) {
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        final LatLng startLatLng = marker.getPosition();
+        final double startRotation = marker.getRotation();
+        final long duration = 500;
+        final Interpolator interpolator = new LinearInterpolator();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed
+                        / duration);
+
+                double lng = t * location.getLongitude() + (1 - t)
+                        * startLatLng.longitude;
+                double lat = t * location.getLatitude() + (1 - t)
+                        * startLatLng.latitude;
+
+                float rotation = (float) (t * location.getBearing() + (1 - t)
+                        * startRotation);
+
+                marker.setPosition(new LatLng(lat, lng));
+                marker.setRotation(rotation);
+
+                if (t < 1.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+    }
+    //endregion
 }
