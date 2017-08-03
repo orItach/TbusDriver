@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="project.java.tbusdriver.Controller.Travel">
+    tools:context="project.java.tbusdriver.Controller.firstTry">
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/allInstruction"
@@ -74,36 +75,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="project.java.tbusdriver.Controller.Travel"
-        android:layout_below="@+id/instruction"
-        />
-    <Button
-        style="@style/CodeFont"
-        android:id="@+id/busy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/busy"
-        android:background="@drawable/busy"
-        tools:context="project.java.tbusdriver.Controller.Travel"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        />
-    <Button
-        android:id="@+id/available"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/available"
-        android:background="@drawable/start"
-        tools:context="project.java.tbusdriver.Controller.Travel"
-        android:layout_alignParentBottom="true"
-        />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/getMyLocation"
-        android:clickable="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        tools:context="project.java.tbusdriver.Controller.Travel"
-        />
-
+        android:layout_below="@+id/allInstruction" />
 </android.support.percent.PercentRelativeLayout>

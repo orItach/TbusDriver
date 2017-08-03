@@ -41,16 +41,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controller.Activitys.LoginAuth">
-
-        </activity>
+        <activity android:name=".Controller.Activitys.LoginAuth"></activity>
         <activity
             android:name=".Controller.Activitys.Main4Activity"
-            android:theme="@style/AppTheme.Base"></activity>
+            android:theme="@style/AppTheme.Base" />
         <activity
             android:name=".Controller.Activitys.OtherActivity"
             android:label="@string/title_activity_other"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Controller.firstTry">
+
+        </activity>
     </application>
 
 </manifest>

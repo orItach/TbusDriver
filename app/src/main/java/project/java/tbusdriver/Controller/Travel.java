@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -28,7 +27,6 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,7 +46,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.usefulFunctions;
-import project.java.tbusdriver.usefulFunctions.*;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -148,6 +145,7 @@ public class Travel extends Fragment
                 .findFragmentById(R.id.map);
 
         mMapView=(MapView)myActivity.findViewById(R.id.map);
+
 
         return myView;
     }
@@ -434,8 +432,12 @@ public class Travel extends Fragment
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(getActivity()!=null)
+            if(getActivity()!=null) {
                 getActivity().setTitle("Travel");
+                View ins=(View)myActivity.findViewById(R.id.allInstruction);
+                ins.bringToFront();
+
+            }
         }
         else {
         }

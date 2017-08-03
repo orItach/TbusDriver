@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +22,6 @@ import project.java.tbusdriver.Controller.Fragments.MyRide;
 import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
-import project.java.tbusdriver.usefulFunctions;
-import project.java.tbusdriver.usefulFunctions.*;
 
 
 public class MainActivity extends AppCompatActivity
@@ -66,16 +64,6 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //                .setAction("Action", null).show();
-        //    }
-        //});
-
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -111,8 +99,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        int tabIndex=getIntent().getIntExtra("index",0);
-        viewPager.setCurrentItem(tabIndex);
+        //int tabIndex=getIntent().getIntExtra("index",0);
+
+        //viewPager.setCurrentItem(tabIndex);
     }
 
     @Override
