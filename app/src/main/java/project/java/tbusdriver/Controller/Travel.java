@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.percent.PercentRelativeLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,6 +28,9 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -164,6 +168,10 @@ public class Travel extends Fragment
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        if(getActivity()!=null)
+        {
+            myActivity=getActivity();
+        }
     }
 
     @Override
@@ -253,7 +261,8 @@ public class Travel extends Fragment
             busyButton.setBackgroundResource(R.drawable.busy);
             availableButton.setBackgroundResource(R.drawable.start);
             usefulFunctions.busy=true;
-
+            drawNavigationInstruction();
+            setBigInstruction("left");
         }
     }
 
@@ -265,7 +274,7 @@ public class Travel extends Fragment
             busyButton.setBackgroundResource(R.drawable.start);
             availableButton.setBackgroundResource(R.drawable.available);
             usefulFunctions.busy=false;
-
+            drawMap();
         }
     }
 
@@ -434,14 +443,80 @@ public class Travel extends Fragment
         if (isVisibleToUser) {
             if(getActivity()!=null) {
                 getActivity().setTitle("Travel");
-                View ins=(View)myActivity.findViewById(R.id.allInstruction);
-                ins.bringToFront();
+                //RelativeLayout ins=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+                //ins.bringToFront();
+                //ins.invalidate();
 
             }
         }
         else {
         }
     }
+
+    //region NavigationInstruction
+    private void drawNavigationInstruction()
+    {
+        if(getActivity()!=null)
+        {
+            myActivity=getActivity();
+            RelativeLayout ins=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+            ins.bringToFront();
+            ins.setVisibility(View.VISIBLE);
+        }
+        //ins.invalidate();
+    }
+    private void drawMap()
+    {
+        if(getActivity()!=null)
+        {
+            myActivity=getActivity();
+            PercentRelativeLayout allTravel=(PercentRelativeLayout)myActivity.findViewById(R.id.allTravel);
+            allTravel.bringToFront();
+            allTravel.invalidate();
+            RelativeLayout ins=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+            ins.invalidate();
+            //ins.postInvalidate();
+            //allTravel.postInvalidate();
+            ins.setVisibility(View.GONE);
+
+        }
+    }
+    private void setBigInstruction(String direction)
+    {
+        ImageView imageFirstInstruction = (ImageView) myActivity.findViewById(R.id.imageFirstInstruction);
+        TextView textFirstInstruction = (TextView)myActivity.findViewById(R.id.textFirstInstruction);
+        switch (direction)
+        {
+            case "left":
+                imageFirstInstruction.setImageResource(R.drawable.turn_left);
+                textFirstInstruction.setText("turn left");
+                break;
+            case "right":
+                textFirstInstruction.setText("turn right");
+                break;
+            case "straight":
+                break;
+            case "left U-turn":
+                break;
+
+        }
+    }
+    private void setSmallInstructionP(String direction)
+    {
+        switch (direction)
+        {
+            case "left":
+
+                break;
+            case "right":
+                break;
+            case "straight":
+                break;
+            case "left U-turn":
+                break;
+        }
+    }
+    //endregion
 
     //region custom marker
     @Override

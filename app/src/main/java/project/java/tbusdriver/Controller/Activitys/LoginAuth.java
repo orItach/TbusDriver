@@ -4,8 +4,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,9 +19,9 @@ public class LoginAuth extends AppCompatActivity implements Login.OnFragmentInte
 
     Context context=this;
     FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
     Login loginFragment;
     Auth authFragment;
-    FragmentTransaction fragmentTransaction;
     RWSetting rwSettings;
 
     String phone;

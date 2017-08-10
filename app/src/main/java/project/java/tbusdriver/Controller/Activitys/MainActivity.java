@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +23,8 @@ import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 
+import static project.java.tbusdriver.Controller.Travel.newInstance;
+
 
 public class MainActivity extends AppCompatActivity
         implements MyRide.OnFragmentInteractionListener,
@@ -30,12 +32,15 @@ public class MainActivity extends AppCompatActivity
         Travel.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener{
 
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
     DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
     NavigationView navigationView;
     Toolbar toolbar;
     RWSetting rwSettings = null;
     SupportMapFragment mapFragment;
+    Travel travelFragment;
 
 
     @Override
@@ -54,11 +59,11 @@ public class MainActivity extends AppCompatActivity
         //}
         setContentView(R.layout.activity_main);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Map"));
-        tabLayout.addTab(tabLayout.newTab().setText("My Rides"));
-        tabLayout.addTab(tabLayout.newTab().setText("Active Rides"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        //TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        //tabLayout.addTab(tabLayout.newTab().setText("Map"));
+        //tabLayout.addTab(tabLayout.newTab().setText("My Rides"));
+        //tabLayout.addTab(tabLayout.newTab().setText("Active Rides"));
+        //tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -73,31 +78,33 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        setFragment("travel");
+
 
         //mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment=SupportMapFragment.newInstance();
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final PagerAdapter adapter = new PagerAdapter
-                (getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+        //final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        //final PagerAdapter adapter = new PagerAdapter
+        //        (getSupportFragmentManager(), tabLayout.getTabCount());
+        //viewPager.setAdapter(adapter);
+        //viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        //tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        //    @Override
+        //    public void onTabSelected(TabLayout.Tab tab) {
+        //        viewPager.setCurrentItem(tab.getPosition());
+//
+        //    }
+//
+        //    @Override
+        //    public void onTabUnselected(TabLayout.Tab tab) {
+//
+        //    }
+//
+        //    @Override
+        //    public void onTabReselected(TabLayout.Tab tab) {
+//
+        //    }
+        //});
 
         //int tabIndex=getIntent().getIntExtra("index",0);
 
@@ -166,6 +173,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mapFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void setFragment(String fragmentName)
+    {
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        //fragmentTransaction.replace(R.id.fragment_container, loginFragment);
+        switch (fragmentName)
+        {
+            case "travel":
+                travelFragment = newInstance();
+                fragmentTransaction.add(R.id.content_main,travelFragment);
+                break;
+            case "myRide":
+                break;
+            case "availableRide":
+                break;
+        }
+        fragmentTransaction.commit();
+
     }
 
 

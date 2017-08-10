@@ -15,6 +15,5 @@ public class firstTry extends AppCompatActivity {
         View ins=(View)findViewById(R.id.allInstruction);
         ins.bringToFront();
 
-
     }
 }
