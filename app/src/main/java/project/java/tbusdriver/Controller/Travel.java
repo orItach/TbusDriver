@@ -38,15 +38,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.usefulFunctions;
@@ -56,524 +53,525 @@ import static android.content.Context.LOCATION_SERVICE;
 public class Travel extends Fragment
             implements OnMapReadyCallback,
             GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,View.OnClickListener,
-            LocationSource.OnLocationChangedListener{
+            GoogleApiClient.OnConnectionFailedListener,
+            View.OnClickListener
+            {
 
-    //region Variable
-    private static int DEFAULT_ZOOM =10 ;
-    private GoogleApiClient mGoogleApiClient;
-    private GoogleMap mMap;
-    private boolean mLocationPermissionGranted=false;
-    private Location mLastKnownLocation=null;
-    private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=1;
-    private LatLng mDefaultLocation;
-    private CameraPosition mCameraPosition;
-    public static final String TAG = Travel.class.getSimpleName();
-    View myView;
-    FragmentActivity myActivity;
-    private OnFragmentInteractionListener mListener;
-    Button availableButton;
-    Button busyButton;
-    FloatingActionButton myFloating;
-    SupportMapFragment mapFragment;
-    private MapView mMapView;
-    public static Travel instance;
-    LocationManager locationManager;
-    Marker mPositionMarker;
-    boolean doZoom;
-    //endregion
+        //region Variable
+        private static int DEFAULT_ZOOM =10 ;
+        private GoogleApiClient mGoogleApiClient;
+        private GoogleMap mMap;
+        private boolean mLocationPermissionGranted=false;
+        private Location mLastKnownLocation=null;
+        private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=1;
+        private LatLng mDefaultLocation;
+        private CameraPosition mCameraPosition;
+        public static final String TAG = Travel.class.getSimpleName();
+        View myView;
+        FragmentActivity myActivity;
+        private OnFragmentInteractionListener mListener;
+        Button availableButton;
+        Button busyButton;
+        FloatingActionButton myFloating;
+        SupportMapFragment mapFragment;
+        private MapView mMapView;
+        public static Travel instance;
+        LocationManager locationManager;
+        Marker mPositionMarker;
+        boolean doZoom;
+        //endregion
 
-    public Travel() {
-        // Required empty public constructor
-    }
-
-
-    public static Travel newInstance() {
-        if(instance==null) {
-            instance = new Travel();
+        public Travel() {
+            // Required empty public constructor
         }
-        else {
+
+
+        public static Travel newInstance() {
+            if(instance==null) {
+                instance = new Travel();
+            }
+            else {
+
+                return instance;
+            }
             return instance;
         }
-        return instance;
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-        doZoom=true;
-
-        locationManager = (LocationManager) myActivity.getSystemService(LOCATION_SERVICE);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        //mapFragment.getMapAsync(this);
-        // Do other setup activities here too, as described elsewhere in this tutorial.
-        // Build the Play services client for use by the Fused Location Provider and the Places API.
-        // Use the addApi() method to request the Google Places API and the Fused Location Provider.
-        if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
-            mGoogleApiClient = new GoogleApiClient.Builder(myActivity)
-                    .enableAutoManage(myActivity /* FragmentActivity */,
-                            this /* OnConnectionFailedListener */)
-                    .addConnectionCallbacks(this)
-                    //.addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .addApi(Places.GEO_DATA_API)
-                    .addApi(Places.PLACE_DETECTION_API)
-                    .build();
-            mGoogleApiClient.connect();
-        }
-
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        myView= inflater.inflate(R.layout.fragment_travel, container, false);
-
-        availableButton = (Button) myView.findViewById(R.id.available); // you have to use rootview object..
-        availableButton.setOnClickListener(this);
-
-        busyButton = (Button) myView.findViewById(R.id.busy); // you have to use rootview object..
-        busyButton.setOnClickListener(this);
-
-        myFloating=(FloatingActionButton) myView.findViewById(R.id.getMyLocation); // you have to use rootview object..
-        myFloating.bringToFront();
-        myFloating.setClickable(true);
-        myFloating.setOnClickListener(this);
-        myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        mapFragment=(SupportMapFragment) myActivity.getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-
-        mMapView=(MapView)myActivity.findViewById(R.id.map);
-
-
-        return myView;
-    }
-
-
-
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        //onMapReady();
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-        if(getActivity()!=null)
-        {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
             myActivity=getActivity();
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+            doZoom=true;
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+            locationManager = (LocationManager) myActivity.getSystemService(LOCATION_SERVICE);
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            SupportMapFragment mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-    }
-
-    /**
-     * Builds the map when the Google Play services client is successfully connected.
-     */
-    //region Connection Handler
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Log.v(TAG, "onConnected");
-        mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
-
-        //mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
-        //        .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        checkGPSEnable();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.v(TAG, "onConnectionSuspended");
-        //super.onConnectionSuspended(i);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-        Log.v(TAG, "onConnectionFailed");
-        //super.onConnectionFailed(connectionResult);
-    }
-    //endregion
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    //@Override
-    //public void onMapReady(GoogleMap googleMap) {
-    //    mMap = googleMap;
-    //    // Add a marker in Sydney and move the camera
-    //    LatLng sydney = new LatLng(-34, 151);
-    //    mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-    //    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    //}
-    /**
-     * Manipulates the map when it's available.
-     * This callback is triggered when the map is ready to be used.
-     */
-    @Override
-    public void onMapReady(GoogleMap map) {
-        mMap =map;
-        //// Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-    }
-
-    //region Button Handler
-    public void busy(View v) {
-        if (mListener != null) {
-            //mListener.onFragmentInteraction(uri);
-            myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-            busyButton.setBackgroundResource(R.drawable.busy);
-            availableButton.setBackgroundResource(R.drawable.start);
-            usefulFunctions.busy=true;
-            drawNavigationInstruction();
-            setBigInstruction("left");
-        }
-    }
-
-    public void available(View v)
-    {
-        if (mListener != null) {
-            //mListener.onFragmentInteraction(uri);
-            myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
-            busyButton.setBackgroundResource(R.drawable.start);
-            availableButton.setBackgroundResource(R.drawable.available);
-            usefulFunctions.busy=false;
-            drawMap();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.available:
-                available(v);
-                //myFloating.setDrawingCacheBackgroundColor(323);
-                break;
-            case R.id.busy:
-                busy(v);
-                break;
-            case R.id.getMyLocation:
-                if(mMap != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
-                    ///DEFAULT_ZOOM =14; // TODO: 30/06/2017 good for view nibgerood
-                    if(doZoom) {
-                        DEFAULT_ZOOM = 16;
-                        doZoom=false;
-                    }
-                    else {
-                        DEFAULT_ZOOM = 14;
-                        doZoom=true;
-                    }
-                    getDeviceLocation();
-                    updateLocationUI();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    //endregion
-
-    //maybe here the problem, look good and work just one time
-    private void getDeviceLocation() {
-        boolean mLocationPermissionGranted= false;
-        //permission handler
-        if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-        {
-            mLocationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(myActivity,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-        if (mLocationPermissionGranted) {
-            mLastKnownLocation = LocationServices.FusedLocationApi
-                    .getLastLocation(mGoogleApiClient);
-        }
-        // Set the map's camera position to the current location of the device.
-        //look like the problem is here
-        if (mCameraPosition != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
-        } else if (mLastKnownLocation != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-        } else {
-            LatLng jerusalem = new LatLng(31.75, 35.2);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(jerusalem));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo((float) 10.5));
-            Log.v(TAG, "Current location is null. Using defaults.");
-            //the problem, probably DEFAULT_ZOOM inisilaze to something wrong
-            //mMap.moveCamera(CameraUpdateFactory.newLatLn3.
-            // gZoom(mDefaultLocation, DEFAULT_ZOOM));
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        }
-        // A step later in the tutorial adds the code to get the device location.
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
-        mLocationPermissionGranted = false;
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted = true;
-                }
+            //mapFragment.getMapAsync(this);
+            // Do other setup activities here too, as described elsewhere in this tutorial.
+            // Build the Play services client for use by the Fused Location Provider and the Places API.
+            // Use the addApi() method to request the Google Places API and the Fused Location Provider.
+            if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+                mGoogleApiClient = new GoogleApiClient.Builder(myActivity)
+                        .enableAutoManage(myActivity /* FragmentActivity */,
+                                this /* OnConnectionFailedListener */)
+                        .addConnectionCallbacks(this)
+                        //.addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .addApi(Places.GEO_DATA_API)
+                        .addApi(Places.PLACE_DETECTION_API)
+                        .build();
+                mGoogleApiClient.connect();
             }
         }
-        updateLocationUI();
-    }
 
-    private void updateLocationUI() {
-        if (mMap == null)
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            // Inflate the layout for this fragment
+            myView= inflater.inflate(R.layout.fragment_travel, container, false);
+
+            availableButton = (Button) myView.findViewById(R.id.available); // you have to use rootview object..
+            availableButton.setOnClickListener(this);
+
+            busyButton = (Button) myView.findViewById(R.id.busy); // you have to use rootview object..
+            busyButton.setOnClickListener(this);
+
+            myFloating=(FloatingActionButton) myView.findViewById(R.id.getMyLocation); // you have to use rootview object..
+            myFloating.bringToFront();
+            myFloating.setClickable(true);
+            myFloating.setOnClickListener(this);
+            myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+            mapFragment=(SupportMapFragment) myActivity.getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+
+            mMapView=(MapView)myActivity.findViewById(R.id.map);
+            PercentRelativeLayout allInstruction=(PercentRelativeLayout)myActivity.findViewById(R.id.allInstruction);
+            allInstruction.bringToFront();
+
+
+            return myView;
+        }
+
+        @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            //onMapReady();
+            if (context instanceof OnFragmentInteractionListener) {
+                mListener = (OnFragmentInteractionListener) context;
+            } else {
+                throw new RuntimeException(context.toString()
+                        + " must implement OnFragmentInteractionListener");
+            }
+            if(getActivity()!=null)
+            {
+                myActivity=getActivity();
+            }
+        }
+
+        @Override
+        public void onDetach() {
+            super.onDetach();
+            mListener = null;
+        }
+
+
+                    /**
+         * This interface must be implemented by activities that contain this
+         * fragment to allow an interaction in this fragment to be communicated
+         * to the activity and potentially other fragments contained in that
+         * activity.
+         * <p>
+         * See the Android Training lesson <a href=
+         * "http://developer.android.com/training/basics/fragments/communicating.html"
+         * >Communicating with Other Fragments</a> for more information.
+         */
+
+        public interface OnFragmentInteractionListener {
+            void onFragmentInteraction(Uri uri);
+        }
+
+        /**
+         * Builds the map when the Google Play services client is successfully connected.
+         */
+        //region Connection Handler
+        @Override
+        public void onConnected(Bundle connectionHint) {
+            Log.v(TAG, "onConnected");
+            //mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
+//
+            ////mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
+            ////        .findFragmentById(R.id.map);
+            //if (mapFragment!=null){
+            //    mapFragment.getMapAsync(this);
+            //    checkGPSEnable();
+            //}
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+            Log.v(TAG, "onConnectionSuspended");
+            //super.onConnectionSuspended(i);
+        }
+
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+            Log.v(TAG, "onConnectionFailed");
+            //super.onConnectionFailed(connectionResult);
+        }
+        //endregion
+
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera. In this case,
+         * we just add a marker near Sydney, Australia.
+         * If Google Play services is not installed on the device, the user will be prompted to install
+         * it inside the SupportMapFragment. This method will only be triggered once the user has
+         * installed Google Play services and returned to the app.
+         */
+        //@Override
+        //public void onMapReady(GoogleMap googleMap) {
+        //    mMap = googleMap;
+        //    // Add a marker in Sydney and move the camera
+        //    LatLng sydney = new LatLng(-34, 151);
+        //    mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        //    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //}
+        /**
+         * Manipulates the map when it's available.
+         * This callback is triggered when the map is ready to be used.
+         */
+        @Override
+        public void onMapReady(GoogleMap map) {
+            mMap =map;
+            //// Get the current location of the device and set the position of the map.
+            getDeviceLocation();
+        }
+
+        //region Button Handler
+        public void busy(View v) {
+            if (mListener != null) {
+                //mListener.onFragmentInteraction(uri);
+                myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                busyButton.setBackgroundResource(R.drawable.busy);
+                availableButton.setBackgroundResource(R.drawable.start);
+                usefulFunctions.busy=true;
+                drawNavigationInstruction();
+                setBigInstruction("left");
+                setSmallInstructionP("right");
+            }
+        }
+
+        public void available(View v)
         {
-            return;
+            if (mListener != null) {
+                //mListener.onFragmentInteraction(uri);
+                myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+                busyButton.setBackgroundResource(R.drawable.start);
+                availableButton.setBackgroundResource(R.drawable.available);
+                usefulFunctions.busy=false;
+                drawMap();
+            }
         }
-    /*
-     * Request location permission, so that we can get the location of the
-     * device. The result of the permission request is handled by a callback,
-     * onRequestPermissionsResult.
-     */
-        if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mLocationPermissionGranted = true;
+
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.available:
+                    available(v);
+                    //myFloating.setDrawingCacheBackgroundColor(323);
+                    break;
+                case R.id.busy:
+                    busy(v);
+                    break;
+                case R.id.getMyLocation:
+                    if(mMap != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
+                        ///DEFAULT_ZOOM =14; // TODO: 30/06/2017 good for view nibgerood
+                        if(doZoom) {
+                            DEFAULT_ZOOM = 16;
+                            doZoom=false;
+                        }
+                        else {
+                            DEFAULT_ZOOM = 14;
+                            doZoom=true;
+                        }
+                        getDeviceLocation();
+                        updateLocationUI();
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-        else {
-            if (Build.VERSION.SDK_INT >= 23) {
+        //endregion
+
+        //maybe here the problem, look good and work just one time
+        private void getDeviceLocation() {
+            boolean mLocationPermissionGranted= false;
+            //permission handler
+            if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED)
+            {
+                mLocationPermissionGranted = true;
+            } else {
                 ActivityCompat.requestPermissions(myActivity,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
-            else
-                mLocationPermissionGranted = true;
-        }
-
-        if (mLocationPermissionGranted) {
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            mMap.getUiSettings().setMapToolbarEnabled(false);
-        }
-        else
-        {
-            mMap.setMyLocationEnabled(false);
-            mMap.getUiSettings().setMapToolbarEnabled(false);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            mLastKnownLocation = null;
-        }
-    }
-
-    //region GPS Enable?
-    private void checkGPSEnable()
-    {
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            //Toast.makeText(myActivity, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
-        }else{
-            showGPSDisabledAlertToUser();
-        }
-    }
-
-    private void showGPSDisabledAlertToUser(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(myActivity);
-        alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Goto Settings Page To Enable GPS",
-                        new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int id){
-                                Intent callGPSSettingIntent = new Intent(
-                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(callGPSSettingIntent);
-                            }
-                        });
-        alertDialogBuilder.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-    //endregion
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if(getActivity()!=null) {
-                getActivity().setTitle("Travel");
-                //RelativeLayout ins=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
-                //ins.bringToFront();
-                //ins.invalidate();
-
+            if (mLocationPermissionGranted) {
+                mLastKnownLocation = LocationServices.FusedLocationApi
+                        .getLastLocation(mGoogleApiClient);
             }
-        }
-        else {
-        }
-    }
+            // Set the map's camera position to the current location of the device.
+            //look like the problem is here
+            if (mCameraPosition != null) {
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
+            } else if (mLastKnownLocation != null) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
-    //region NavigationInstruction
-    private void drawNavigationInstruction()
-    {
-        if(getActivity()!=null)
-        {
-            myActivity=getActivity();
-            RelativeLayout ins=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
-            ins.bringToFront();
-            ins.setVisibility(View.VISIBLE);
-        }
-        //ins.invalidate();
-    }
-    private void drawMap()
-    {
-        if(getActivity()!=null)
-        {
-            myActivity=getActivity();
-            PercentRelativeLayout allTravel=(PercentRelativeLayout)myActivity.findViewById(R.id.allTravel);
-            allTravel.bringToFront();
-            allTravel.invalidate();
-            RelativeLayout ins=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
-            ins.invalidate();
-            //ins.postInvalidate();
-            //allTravel.postInvalidate();
-            ins.setVisibility(View.GONE);
-
-        }
-    }
-    private void setBigInstruction(String direction)
-    {
-        ImageView imageFirstInstruction = (ImageView) myActivity.findViewById(R.id.imageFirstInstruction);
-        TextView textFirstInstruction = (TextView)myActivity.findViewById(R.id.textFirstInstruction);
-        switch (direction)
-        {
-            case "left":
-                imageFirstInstruction.setImageResource(R.drawable.turn_left);
-                textFirstInstruction.setText("turn left");
-                break;
-            case "right":
-                textFirstInstruction.setText("turn right");
-                break;
-            case "straight":
-                break;
-            case "left U-turn":
-                break;
-
-        }
-    }
-    private void setSmallInstructionP(String direction)
-    {
-        switch (direction)
-        {
-            case "left":
-
-                break;
-            case "right":
-                break;
-            case "straight":
-                break;
-            case "left U-turn":
-                break;
-        }
-    }
-    //endregion
-
-    //region custom marker
-    @Override
-    public void onLocationChanged(Location location) {
-        if (location == null)
-            return;
-        if (mPositionMarker == null) {
-            mPositionMarker = mMap.addMarker(new MarkerOptions()
-                    .flat(true)
-                    .anchor(0.5f, 0.5f)
-                    .icon(BitmapDescriptorFactory
-                            .fromResource(R.drawable.taxi))
-                    .position(
-                            new LatLng(location.getLatitude(), location
-                                    .getLongitude())));
+                //mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            } else {
+                LatLng jerusalem = new LatLng(31.75, 35.2);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(jerusalem));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
+                Log.v(TAG, "Current location is null. Using defaults.");
+                //the problem, probably DEFAULT_ZOOM initialize to something wrong
+                //mMap.moveCamera(CameraUpdateFactory.newLatLn3.
+                // gZoom(mDefaultLocation, DEFAULT_ZOOM));
+                //mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            }
+            // A step later in the tutorial adds the code to get the device location.
         }
 
-
-        animateMarker(mPositionMarker, location); // Helper method for smooth
-        // animation
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location
-                .getLatitude(), location.getLongitude())));
-    }
-
-    public void animateMarker(final Marker marker, final Location location) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final LatLng startLatLng = marker.getPosition();
-        final double startRotation = marker.getRotation();
-        final long duration = 500;
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-
-                double lng = t * location.getLongitude() + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * location.getLatitude() + (1 - t)
-                        * startLatLng.latitude;
-
-                float rotation = (float) (t * location.getBearing() + (1 - t)
-                        * startRotation);
-
-                marker.setPosition(new LatLng(lat, lng));
-                marker.setRotation(rotation);
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
+        @Override
+        public void onRequestPermissionsResult(int requestCode,
+                                               @NonNull String permissions[],
+                                               @NonNull int[] grantResults) {
+            mLocationPermissionGranted = false;
+            switch (requestCode) {
+                case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                    // If request is cancelled, the result arrays are empty.
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        mLocationPermissionGranted = true;
+                    }
                 }
             }
-        });
-    }
+            updateLocationUI();
+        }
+
+        private void updateLocationUI() {
+            if (mMap == null)
+            {
+                return;
+            }
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+            if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted = true;
+            }
+            else {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    ActivityCompat.requestPermissions(myActivity,
+                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                }
+                else
+                    mLocationPermissionGranted = false;
+            }
+
+            if (mLocationPermissionGranted) {
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mMap.getUiSettings().setMapToolbarEnabled(false);
+            }
+            else
+            {
+                mMap.setMyLocationEnabled(false);
+                mMap.getUiSettings().setMapToolbarEnabled(false);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mLastKnownLocation = null;//?
+            }
+        }
+
+        //region GPS Enable?
+        private void checkGPSEnable()
+        {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                //Toast.makeText(myActivity, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
+            }else{
+                showGPSDisabledAlertToUser();
+            }
+        }
+
+        private void showGPSDisabledAlertToUser(){
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(myActivity);
+            alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
+                    .setCancelable(false)
+                    .setPositiveButton("Goto Settings Page To Enable GPS",
+                            new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int id){
+                                    Intent callGPSSettingIntent = new Intent(
+                                            android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(callGPSSettingIntent);
+                                }
+                            });
+            alertDialogBuilder.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int id){
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        }
+        //endregion
+
+
+        @Override
+        public void onResume()
+        {
+            super.onResume();
+            if(isHidden()==false)
+            {
+                getActivity().setTitle("Travel");
+                mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
+                mapFragment.getMapAsync(this);
+
+            }
+
+        }
+
+        //region NavigationInstruction
+        private void drawNavigationInstruction()
+        {
+            if(getActivity()!=null)
+            {
+                myActivity=getActivity();
+                RelativeLayout allInstruction=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+                allInstruction.setVisibility(View.VISIBLE);
+            }
+            //ins.invalidate();
+        }
+        private void drawMap()
+        {
+            if(getActivity()!=null)
+            {
+                myActivity=getActivity();
+                //PercentRelativeLayout allTravel=(PercentRelativeLayout)myActivity.findViewById(R.id.allTravel);
+                //allTravel.bringToFront();
+                //allTravel.invalidate();
+                RelativeLayout allInstruction=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+                allInstruction.setVisibility(View.GONE);
+
+            }
+        }
+        private void setBigInstruction(String direction)
+        {
+            ImageView imageFirstInstruction = (ImageView) myActivity.findViewById(R.id.imageFirstInstruction);
+            TextView textFirstInstruction = (TextView)myActivity.findViewById(R.id.textFirstInstruction);
+            switch (direction)
+            {
+                case "left":
+                    imageFirstInstruction.setImageResource(R.drawable.left);
+                    textFirstInstruction.setText("turn left");
+                    break;
+                case "right":
+                    textFirstInstruction.setText("turn right");
+                    break;
+                case "straight":
+                    break;
+                case "left U-turn":
+                    break;
+
+            }
+        }
+        private void setSmallInstructionP(String direction)
+        {
+            ImageView imageSecondInstruction = (ImageView) myActivity.findViewById(R.id.imageSecondInstruction);
+            switch (direction)
+            {
+                case "left":
+                    break;
+                case "right":
+                    imageSecondInstruction.setImageResource(R.drawable.rigth);
+                    break;
+                case "straight":
+                    break;
+                case "left U-turn":
+                    break;
+            }
+        }
+        //endregion
+
+        //region custom marker
+        //@Override
+        //public void onLocationChanged(Location location) {
+        //    if (location == null)
+        //        return;
+        //    if (mPositionMarker == null) {
+        //        mPositionMarker = mMap.addMarker(new MarkerOptions()
+        //                .flat(true)
+        //                .anchor(0.5f, 0.5f)
+        //                .icon(BitmapDescriptorFactory
+        //                        .fromResource(R.drawable.taxi))
+        //                .position(
+        //                        new LatLng(location.getLatitude(), location
+        //                                .getLongitude())));
+        //    }
+//
+//
+        //    animateMarker(mPositionMarker, location); // Helper method for smooth
+        //    // animation
+//
+        //    mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location
+        //            .getLatitude(), location.getLongitude())));
+        //}
+
+        public void animateMarker(final Marker marker, final Location location) {
+            final Handler handler = new Handler();
+            final long start = SystemClock.uptimeMillis();
+            final LatLng startLatLng = marker.getPosition();
+            final double startRotation = marker.getRotation();
+            final long duration = 500;
+            final Interpolator interpolator = new LinearInterpolator();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    long elapsed = SystemClock.uptimeMillis() - start;
+                    float t = interpolator.getInterpolation((float) elapsed
+                            / duration);
+
+                    double lng = t * location.getLongitude() + (1 - t)
+                            * startLatLng.longitude;
+                    double lat = t * location.getLatitude() + (1 - t)
+                            * startLatLng.latitude;
+
+                    float rotation = (float) (t * location.getBearing() + (1 - t)
+                            * startRotation);
+
+                    marker.setPosition(new LatLng(lat, lng));
+                    marker.setRotation(rotation);
+
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16);
+                    }
+                }
+            });
+        }
     //endregion
 }

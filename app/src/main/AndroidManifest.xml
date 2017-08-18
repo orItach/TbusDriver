@@ -34,24 +34,30 @@
             android:value="@string/google_maps_key" />
 
         <!-- maybe not need the not history -->
-        <activity android:name=".Controller.Activitys.MainActivity">
+        <activity android:name=".Controller.Activitys.MainActivity"
+            android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controller.Activitys.LoginAuth"></activity>
+        <activity android:name=".Controller.Activitys.LoginAuth"
+            android:screenOrientation="portrait"
+         >
+
+        </activity>
         <activity
             android:name=".Controller.Activitys.Main4Activity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Base" />
         <activity
             android:name=".Controller.Activitys.OtherActivity"
             android:label="@string/title_activity_other"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Controller.firstTry">
-
-        </activity>
+        <activity android:name=".Controller.firstTry"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

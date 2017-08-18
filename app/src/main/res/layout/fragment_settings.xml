@@ -1,93 +1,96 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="project.java.tbusdriver.Controller.Fragments.Settings">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:paddingTop="@dimen/activity_horizontal_margin"
+        android:id="@+id/allRegion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Spinner
+            android:id="@+id/region"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
-            <EditText
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="52dp"
-                android:id="@+id/ERegion"
-                android:hint="Region"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="52dp"
-                android:id="@+id/EFarInMinutes"
-                android:hint="Far In Minutes"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="52dp"
-                android:id="@+id/ETimeForReplay"
-                android:hint="Time For Replay"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="52dp"
-                android:id="@+id/ETimeForNotFound"
-                android:hint="Time For Not Found"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="52dp"
-                android:id="@+id/EDistanceForNotFound"
-                android:hint="Distance For Not Found"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <Button
-            android:layout_width="150dp"
+            android:spinnerMode="dropdown"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp"
+            >
+        </Spinner>
+        <TextView
+            android:text="pick a region"
+            android:id="@+id/TVRegion"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/update"
-            android:text="update"
-            android:onClick="onClickUpdate"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textSize="20sp"
+            >
+        </TextView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/allFirstTime"
+        android:layout_below="@+id/allRegion"
+        >
+        <TextView
+            android:id="@+id/TVTime"
+            android:text="pick a time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp"
             />
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="start time:"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textSize="20sp"
+            />
+    </RelativeLayout>
 
-</FrameLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/allSecondTime"
+        android:layout_below="@+id/allFirstTime"
+        >
+        <TextView
+            android:id="@+id/TVSecondTime"
+            android:text="pick a time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="end time:"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textSize="20sp"
+            />
+    </RelativeLayout>
+
+    <Button
+        android:paddingTop="@dimen/activity_horizontal_margin"
+        android:id="@+id/update"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="update"
+        android:layout_below="@+id/allSecondTime"
+        />
+
+</RelativeLayout>

@@ -1,6 +1,5 @@
 package project.java.tbusdriver.Controller.Activitys;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import project.java.tbusdriver.Controller.Fragments.AvailableRide;
 import project.java.tbusdriver.Controller.Fragments.MyRide;
+import project.java.tbusdriver.Controller.Fragments.Settings;
 import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity
         implements MyRide.OnFragmentInteractionListener,
         AvailableRide.OnFragmentInteractionListener,
         Travel.OnFragmentInteractionListener,
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener,
+        Settings.OnFragmentInteractionListener{
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity
     RWSetting rwSettings = null;
     SupportMapFragment mapFragment;
     Travel travelFragment;
+    MyRide myRideFragment;
+    AvailableRide availableRideFragment;
+    Settings settingsFragment;
 
 
     @Override
@@ -78,7 +82,13 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        setFragment("travel");
+        //set Travel to be the first fragment
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        travelFragment = newInstance();
+        fragmentTransaction.add(R.id.content_main,travelFragment);
+        fragmentTransaction.commit();
+
 
 
         //mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
@@ -133,16 +143,9 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        Intent intent=new Intent(this,OtherActivity.class);
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            intent.putExtra("index","settings");
-            startActivity(intent);
-        }
-        if (id == R.id.historicRide) {
-            intent.putExtra("index","historicRide");
-            startActivity(intent);
-        }
+            setFragment(convertIdToName(id));
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -153,12 +156,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.settings) {
-            Intent intent=new Intent(this,OtherActivity.class);
-            /// 2 for settings
-            intent.putExtra("index","settings");
-            startActivity(intent);
-        }
+       setFragment(convertIdToName(id));
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -184,16 +182,38 @@ public class MainActivity extends AppCompatActivity
         {
             case "travel":
                 travelFragment = newInstance();
-                fragmentTransaction.add(R.id.content_main,travelFragment);
+                fragmentTransaction.replace(R.id.content_main,travelFragment);
                 break;
             case "myRide":
+                myRideFragment= new MyRide();
+                fragmentTransaction.replace(R.id.content_main,myRideFragment);
                 break;
             case "availableRide":
+                availableRideFragment=new AvailableRide();
+                fragmentTransaction.replace(R.id.content_main,availableRideFragment);
+                break;
+            case "settings":
+                settingsFragment = new Settings();
+                fragmentTransaction.replace(R.id.content_main,settingsFragment);
+                break;
+            default:
+                travelFragment = newInstance();
+                fragmentTransaction.replace(R.id.content_main,travelFragment);
                 break;
         }
         fragmentTransaction.commit();
-
     }
+    private String convertIdToName(int id)
+    {
+        switch (id)
+        {
+            case R.id.Travel: return "travel";
+            case R.id.myRide: return "myRide";
+            case R.id.availableRide: return "availableRide";
+            case R.id.action_settings: return "settings";
 
+        }
+        return "myRide";
+    }
 
 }

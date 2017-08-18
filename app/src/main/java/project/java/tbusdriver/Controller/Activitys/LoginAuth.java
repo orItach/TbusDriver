@@ -15,7 +15,9 @@ import project.java.tbusdriver.Controller.Fragments.Login;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 
-public class LoginAuth extends AppCompatActivity implements Login.OnFragmentInteractionListener,Auth.OnFragmentInteractionListener {
+public class LoginAuth extends AppCompatActivity implements
+        Login.OnFragmentInteractionListener,
+        Auth.OnFragmentInteractionListener {
 
     Context context=this;
     FragmentManager fragmentManager;
