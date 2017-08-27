@@ -136,12 +136,12 @@ public class OtherActivity extends AppCompatActivity
                 fragmentTransaction = fragmentManager.beginTransaction();
                 if(!haveCommit)
                 {
-                    fragmentTransaction.add(R.id.otherContainer,historicalRideFragment);
+                    //fragmentTransaction.add(R.id.otherContainer,historicalRideFragment);
                     haveCommit=true;
                 }
                 else
                 {
-                    fragmentTransaction.replace(R.id.otherContainer,historicalRideFragment);
+                    //fragmentTransaction.replace(R.id.otherContainer,historicalRideFragment);
                 }
                 fragmentTransaction.commit();
                 break;

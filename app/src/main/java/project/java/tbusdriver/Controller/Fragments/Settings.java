@@ -1,5 +1,6 @@
 package project.java.tbusdriver.Controller.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -41,6 +42,7 @@ public class Settings extends Fragment implements
     TextView TVTime;
     TextView TVSecondTime;
     View myView;
+    Activity myActivity;
     final int REQUEST_CODE=0;
 
     public Settings() {
@@ -121,6 +123,7 @@ public class Settings extends Fragment implements
                 break;
         }
     }
+
     void showDialog(int source) {
         TimePickerDialog dialog = new TimePickerDialog();
         dialog.setTargetFragment(this, source);
@@ -198,12 +201,11 @@ public class Settings extends Fragment implements
         //    EDistanceForNotFound.setText("");
         //}
     }
-
-    void showAlert(String alert)
+    @Override
+    public void onResume()
     {
-        //AlertDialog.Builder myAlert=new AlertDialog.Builder(this);
-        //myAlert.setMessage(alert).create();
-        //myAlert.show();
+        super.onResume();
+        myActivity=getActivity();
+        myActivity.setTitle("זמני עבודה");
     }
-
 }

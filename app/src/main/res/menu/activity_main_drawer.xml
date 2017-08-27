@@ -4,21 +4,21 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/Travel"
-            android:title="Travel" />
+            android:title="נסיעה" />
         <item
             android:id="@+id/myRide"
-            android:title="my Ride" />
+            android:title="נסיעות שלי" />
         <item
             android:id="@+id/availableRide"
-            android:title="available Ride" />
+            android:title="נסיעות פנויות" />
         <item
             android:id="@+id/historicRide"
-            android:title="historic Ride" />
+            android:title="היסטוריית נסיעות" />
         <item
             android:id="@+id/settings"
-            android:title="Settings" />
+            android:title="זמני עבודה" />
         <item
             android:id="@+id/exit"
-            android:title="exit" />
+            android:title="יציאה" />
     </group>
 </menu>

@@ -141,4 +141,9 @@ public class Main4Activity extends AppCompatActivity implements
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mapFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    @Override
+    public void onFragmentInteraction(String str) {
+
+    }
 }

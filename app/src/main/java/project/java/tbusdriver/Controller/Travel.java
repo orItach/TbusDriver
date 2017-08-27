@@ -177,8 +177,7 @@ public class Travel extends Fragment
             mListener = null;
         }
 
-
-                    /**
+                /**
          * This interface must be implemented by activities that contain this
          * fragment to allow an interaction in this fragment to be communicated
          * to the activity and potentially other fragments contained in that
@@ -389,7 +388,8 @@ public class Travel extends Fragment
                             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
                 }
                 else
-                    mLocationPermissionGranted = false;
+                    /////////////////////////check maybe need to be false
+                    mLocationPermissionGranted = true;
             }
 
             if (mLocationPermissionGranted) {
@@ -446,12 +446,18 @@ public class Travel extends Fragment
             super.onResume();
             if(isHidden()==false)
             {
-                getActivity().setTitle("Travel");
+                myActivity=getActivity();
+                myActivity.setTitle("Travel");
                 mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
                 mapFragment.getMapAsync(this);
 
             }
-
+        }
+        @Override
+        public void onPause()
+        {
+            super.onPause();
+            drawMap();
         }
 
         //region NavigationInstruction

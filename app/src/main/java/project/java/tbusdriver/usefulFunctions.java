@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class usefulFunctions {
 
-    public static String Token=null;
+    public static String Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTExLCJpYXQiOjE1MDMyNTQ2NTN9.IZiyUQEs5TC_SkkK7UL5hLUNUWfq8N-GVBzj3wEUixQ";
 
     public static boolean busy=false;//
 
@@ -35,6 +35,8 @@ public class usefulFunctions {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
+        if(Token!=null)
+            con.setRequestProperty("Authorization","JWT "+Token);
         if (con.getResponseCode() == HttpURLConnection.HTTP_OK) { // success
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     con.getInputStream()));
@@ -45,13 +47,14 @@ public class usefulFunctions {
                 response.append(inputLine);
             }
             in.close();
-
             // print result
+            //return "try"+con.toString();
             return response.toString();
         } else {
             return "";
         }
     }
+
 
     @NonNull
     public static String POST(String url, Map<String,Object> params) throws IOException {
@@ -69,6 +72,8 @@ public class usefulFunctions {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
+        if(Token!=null)
+            con.setRequestProperty("Authorization","JWT "+Token);
 
         // For POST only - START
         con.setDoOutput(true);

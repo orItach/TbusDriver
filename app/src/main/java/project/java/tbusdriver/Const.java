@@ -3,8 +3,6 @@ package project.java.tbusdriver;
 import android.content.UriMatcher;
 import android.net.Uri;
 
-import java.util.ArrayList;
-
 /**
  * Created by אור איטח on 12/06/2017.
  */
@@ -19,7 +17,7 @@ public class Const {
     }
 
 
-    public static final String PROVIDE_NAME = "http://ec2-34-250-193-161.eu-west-1.compute.amazonaws.com/api";
+    public static final String PROVIDE_NAME = "http://52.16.221.155/api";
 
     static final String URL_LOGIN = PROVIDE_NAME + "/account/login";
 

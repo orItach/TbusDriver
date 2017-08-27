@@ -1,55 +1,44 @@
 package project.java.tbusdriver.Entities;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Time;
 
 /**
  * Created by אור איטח on 27/06/2017.
  */
 
 public class Ride {
-    ArrayList<MyLocation> myLocations;
-    Date startTime;
-    Date estimatedFinishTime;
-    int numberOfPassenger;
 
-    public Ride(ArrayList<MyLocation> myLocations, Date startTime, Date estimatedFinishTime, int numberOfPassenger) {
-        this.myLocations = myLocations;
-        this.startTime = startTime;
-        this.estimatedFinishTime = estimatedFinishTime;
-        this.numberOfPassenger = numberOfPassenger;
+    Route route;
+    Time travelTime;
+    int rideId;
+
+    public Ride(Route route, Time travelTime, int rideId) {
+        this.route = route;
+        this.travelTime = travelTime;
+        this.rideId = rideId;
     }
 
-
-    public ArrayList<MyLocation> getMyLocations() {
-        return myLocations;
+    public Route getRoute() {
+        return route;
     }
 
-    public void setMyLocations(ArrayList<MyLocation> myLocations) {
-        this.myLocations = myLocations;
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
-    public Date getStartTime() {
-        return startTime;
+    public Time getTravelTime() {
+        return travelTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setTravelTime(Time travelTime) {
+        this.travelTime = travelTime;
     }
 
-    public Date getEstimatedFinishTime() {
-        return estimatedFinishTime;
+    public int getRideId() {
+        return rideId;
     }
 
-    public void setEstimatedFinishTime(Date estimatedFinishTime) {
-        this.estimatedFinishTime = estimatedFinishTime;
-    }
-
-    public int getNumberOfPassenger() {
-        return numberOfPassenger;
-    }
-
-    public void setNumberOfPassenger(int numberOfPassenger) {
-        this.numberOfPassenger = numberOfPassenger;
+    public void setRideId(int rideId) {
+        this.rideId = rideId;
     }
 }

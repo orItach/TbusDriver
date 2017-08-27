@@ -2,13 +2,21 @@ package project.java.tbusdriver.Database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.AsyncTask;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import project.java.tbusdriver.Entities.MyLocation;
 import project.java.tbusdriver.Entities.Ride;
+import project.java.tbusdriver.Entities.Route;
 
 /**
  * Created by אור איטח on 27/06/2017.
@@ -19,6 +27,7 @@ public class ListDsManager {
     private static ArrayList<Ride> HistoricRides;
     private static ArrayList<String> Region;
     Context context;
+    DateFormat formatter ;
 
     public ListDsManager(Context context)
     {
@@ -26,9 +35,10 @@ public class ListDsManager {
         AvailableRides=new ArrayList<Ride>();
         HistoricRides=new ArrayList<Ride>();
         Region=new ArrayList<String>();
-        new UpdateDataTask().execute(0);//update agency
-        new UpdateDataTask().execute(1);//update trips
-        new UpdateDataTask().execute(2);
+        formatter = new SimpleDateFormat("HH:mm");
+        //new UpdateDataTask().execute(0);//update agency
+        //new UpdateDataTask().execute(1);//update trips
+        //new UpdateDataTask().execute(2);
     }
 
     public static ArrayList<Ride> getAvailableRides() {
@@ -72,25 +82,84 @@ public class ListDsManager {
 
     }
 
-    public void updateAvailableRides(Cursor matrixTrip) {
-        try {
+    public void updateAvailableRides(String input) {
+        try
+        {
             AvailableRides.clear();
-            if (matrixTrip == null) throw new Exception("The trips are empty");
-            for (matrixTrip.moveToFirst(); !matrixTrip.isAfterLast(); matrixTrip.moveToNext()) {
-                //if(Description.values()[matrixTrip.getInt(matrixTrip.getColumnIndex("description"))]==Description.Travel)
-                //AvailableRides.add(new Ride(Description.values()[matrixTrip.getInt(matrixTrip.getColumnIndex("description"))],
-                //        matrixTrip.getString(matrixTrip.getColumnIndex("countryName")),
-                //        new Date(matrixTrip.getLong(matrixTrip.getColumnIndex("startDate"))),
-                //        new Date(matrixTrip.getLong(matrixTrip.getColumnIndex("endDate"))),
-                //        matrixTrip.getInt(matrixTrip.getColumnIndex("price")),
-                //        matrixTrip.getString(matrixTrip.getColumnIndex("des")),
-                //        matrixTrip.getLong(matrixTrip.getColumnIndex("businessID")),
-                //        matrixTrip.getString(matrixTrip.getColumnIndex("image")),
-                //        matrixTrip.getString(matrixTrip.getColumnIndex("link"))));
-            }
-        } catch (Exception e) {
+            StringRidesToJson(input);
+        }
+        catch (Exception e)
+        {
 
         }
+    }
+
+    private void StringRidesToJson(String input)
+    {
+        if (input != null) {
+            try {
+                JSONObject result = new JSONObject(input);
+                // Getting JSON Array node
+                JSONArray rides = result.getJSONArray("rides");
+                int id;
+                String travel_time;
+                Route route=null;
+                // looping through All Contacts
+                for (int i = 0; i < rides.length(); i++) {
+                    JSONObject c = rides.getJSONObject(i);
+                    travel_time = c.getString("travel_time");
+                    id=c.getInt("id");
+                    if (!c.isNull("json_route")) {
+                        route=JsonRouteToRoute(c.getJSONObject("json_route"));
+                    }
+                    if(travel_time.equalsIgnoreCase("null"))
+                        travel_time="15:00:00";
+                    Ride ride=new Ride(route,Time.valueOf(travel_time),id);
+                    AvailableRides.add(ride);
+                    //ride.setTravelTime(c.getString("travel_time"));
+                }
+            } catch ( Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    private Route JsonRouteToRoute(JSONObject jsonRoute)
+    {
+        Location geom=new Location("");
+        MyLocation myLocation=new MyLocation(0,geom,5);
+        ArrayList<MyLocation> temp=new ArrayList<>();
+        Route result=new Route(temp);
+        if(jsonRoute!=null)
+        {
+            try {
+                for (int i = 0; i < jsonRoute.length(); i++) {
+                    JSONObject point = jsonRoute.getJSONObject(String.valueOf(i));
+                    String id = String.valueOf(i);
+                    geom.setLatitude(point.getJSONObject("geom").getDouble("lat"));
+                    geom.setLongitude(point.getJSONObject("geom").getDouble("lng"));
+                    //Double distance=
+                    // tmp hash map for single contact
+                    myLocation.setDistance(point.getDouble("distance"));
+                    myLocation.setLocationId(i);
+                    myLocation.setMyLocation(geom);
+                    // adding contact to contact list
+                    result.getLocations().add(myLocation);
+                }
+            }
+            catch (final JSONException e) {
+
+            }
+        }
+        else
+        {
+            return null;
+        }
+        return result;
     }
 
     public class UpdateDataTask extends AsyncTask<Integer, String, String> {

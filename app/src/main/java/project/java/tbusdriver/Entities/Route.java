@@ -1,7 +1,5 @@
 package project.java.tbusdriver.Entities;
 
-import android.location.Location;
-
 import java.util.ArrayList;
 
 /**
@@ -10,20 +8,10 @@ import java.util.ArrayList;
 
 public class Route
 {
-    private int numberOfLocation;
     private ArrayList<MyLocation> Locations;
 
-    public Route(int numberOfLocation, ArrayList<MyLocation> locations) {
-        this.numberOfLocation = numberOfLocation;
+    public Route( ArrayList<MyLocation> locations) {
         Locations = locations;
-    }
-
-    public int getNumberOfLocation() {
-        return numberOfLocation;
-    }
-
-    public void setNumberOfLocation(int numberOfLocation) {
-        this.numberOfLocation = numberOfLocation;
     }
 
     public ArrayList<MyLocation> getLocations() {
@@ -33,4 +21,5 @@ public class Route
     public void setLocations(ArrayList<MyLocation> locations) {
         Locations = locations;
     }
+
 }

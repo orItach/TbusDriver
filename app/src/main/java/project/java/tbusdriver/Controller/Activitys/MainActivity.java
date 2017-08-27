@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import project.java.tbusdriver.Controller.Fragments.AvailableRide;
+import project.java.tbusdriver.Controller.Fragments.HistoricalRide;
 import project.java.tbusdriver.Controller.Fragments.MyRide;
 import project.java.tbusdriver.Controller.Fragments.Settings;
 import project.java.tbusdriver.Controller.Travel;
@@ -29,6 +30,7 @@ import static project.java.tbusdriver.Controller.Travel.newInstance;
 public class MainActivity extends AppCompatActivity
         implements MyRide.OnFragmentInteractionListener,
         AvailableRide.OnFragmentInteractionListener,
+        HistoricalRide.OnFragmentInteractionListener,
         Travel.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
         Settings.OnFragmentInteractionListener{
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     MyRide myRideFragment;
     AvailableRide availableRideFragment;
     Settings settingsFragment;
+    HistoricalRide historicalRideFragment;
 
 
     @Override
@@ -144,9 +147,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-            setFragment(convertIdToName(id));
-
-
+        setFragment(convertIdToName(id));
         return super.onOptionsItemSelected(item);
     }
 
@@ -155,9 +156,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-       setFragment(convertIdToName(id));
-
+        setFragment(convertIdToName(id));
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -192,6 +191,10 @@ public class MainActivity extends AppCompatActivity
                 availableRideFragment=new AvailableRide();
                 fragmentTransaction.replace(R.id.content_main,availableRideFragment);
                 break;
+            case "historicRide":
+                historicalRideFragment=new HistoricalRide();
+                fragmentTransaction.replace(R.id.content_main,historicalRideFragment);
+                break;
             case "settings":
                 settingsFragment = new Settings();
                 fragmentTransaction.replace(R.id.content_main,settingsFragment);
@@ -210,10 +213,15 @@ public class MainActivity extends AppCompatActivity
             case R.id.Travel: return "travel";
             case R.id.myRide: return "myRide";
             case R.id.availableRide: return "availableRide";
-            case R.id.action_settings: return "settings";
+            case R.id.historicRide: return "historicRide";
+            case R.id.settings: return "settings";
 
         }
         return "myRide";
     }
 
+    @Override
+    public void onFragmentInteraction(String str) {
+
+    }
 }

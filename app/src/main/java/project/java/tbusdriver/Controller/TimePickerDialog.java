@@ -1,9 +1,9 @@
 package project.java.tbusdriver.Controller;
 
-import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -45,16 +45,17 @@ public class TimePickerDialog extends DialogFragment implements DialogInterface.
     }
 
     @Override
-    @TargetApi(23)
     public void onClick(DialogInterface dialogInterface, int i) {
         switch (i)
         {
             //ok
             case -1:
                 clock = (TimePicker) myView.findViewById(R.id.clock);
-                clock.getHour();
-                clock.getMinute();
-                sendResult(0, clock.getHour()+":"+clock.getMinute());
+                if (Build.VERSION.SDK_INT >= 23) {
+                    sendResult(0, clock.getHour()+":"+clock.getMinute());
+                }
+                else
+                    sendResult(0, clock.getCurrentHour()+":"+clock.getCurrentMinute());
                 break;
             //cancel
             case -2:
@@ -62,8 +63,6 @@ public class TimePickerDialog extends DialogFragment implements DialogInterface.
                 break;
         }
     }
-
-
 
     private void sendResult(int REQUEST_CODE, String time) {
         Intent intent = new Intent();

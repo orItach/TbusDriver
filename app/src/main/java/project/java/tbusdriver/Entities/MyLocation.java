@@ -8,16 +8,16 @@ import android.location.Location;
 
 public class MyLocation {
 
+    private int locationId;
     private Location myLocation;
-    private String instruction;
-    private String phone;
-    private boolean manLocation;
+    private double distance;
 
-    public MyLocation(Location myLocation,String instruction, String phone,boolean manLocation) {
-        this.myLocation = myLocation;
-        this.instruction=instruction;
-        this.phone = phone;
-        this.manLocation=manLocation;
+    public int getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
     }
 
     public Location getMyLocation() {
@@ -28,27 +28,20 @@ public class MyLocation {
         this.myLocation = myLocation;
     }
 
-    public String getInstruction() {
-        return instruction;
+    public double getDistance() {
+        return distance;
     }
 
-    public void setInstruction(String instruction) {
-        this.instruction = instruction;
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
-    public String getPhone() {
-        return phone;
+    public MyLocation(int locationId, Location myLocation, double distance) {
+        this.locationId = locationId;
+        this.myLocation = myLocation;
+        this.distance = distance;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 
-    public boolean isManLocation() {
-        return manLocation;
-    }
 
-    public void setManLocation(boolean manLocation) {
-        this.manLocation = manLocation;
-    }
 }

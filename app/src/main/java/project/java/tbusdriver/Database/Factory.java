@@ -7,17 +7,17 @@ import android.content.Context;
  */
 
 public class Factory {
-    private static ListDsManager ourInstance;
-    //public static ListDsManager getInstance() throws Exception {
-    //    if(ourInstance == null)
-    //        throw new Exception("No Instance found");
-    //    return ourInstance;
-    //}
+    static Context context;
+    private static ListDsManager theInstance;
+    public Factory(Context context)
+    {
+        this.context=context;
+    }
 
-    public static ListDsManager getInstance(Context context){
-        if(ourInstance == null)
-            ourInstance = new ListDsManager(context);
-        return ourInstance;
+    public static ListDsManager getInstance(){
+        if(theInstance == null)
+            theInstance = new ListDsManager(context);
+        return theInstance;
     }
 
     private Factory() {}
