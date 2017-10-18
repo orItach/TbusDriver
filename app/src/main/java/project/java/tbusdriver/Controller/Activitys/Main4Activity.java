@@ -146,4 +146,5 @@ public class Main4Activity extends AppCompatActivity implements
     public void onFragmentInteraction(String str) {
 
     }
+
 }

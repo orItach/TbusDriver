@@ -24,17 +24,19 @@ import static project.java.tbusdriver.usefulFunctions.POST;
 import static project.java.tbusdriver.usefulFunctions.showAlert;
 
 /**
- * Created by אור איטח on 22/08/2017.
+ * Created by אור איטח on 28/08/2017.
  */
 
-public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnClickListener {
+public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickListener {
     ArrayList<Ride> content;
     ArrayList<Ride> agencyList;
     Context context;
     ListDsManager listDsManager;
     View listView;
+    OnFragmentInteractionListener mCallBack;
 
-    public AvailableRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> content) {
+
+    public MyRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> content) {
         super(c, textViewResourceId, content);
         context = c;
         this.content=new ArrayList<Ride>();
@@ -42,9 +44,9 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         this.agencyList=new ArrayList<Ride>();
         this.agencyList.addAll(content);
         listDsManager=(ListDsManager) new Factory(c).getInstance();
-        this.notifyDataSetChanged();
-    }
+        mCallBack = (OnFragmentInteractionListener) context;
 
+    }
     @Override
     public int getCount() {
         return content.size();
@@ -60,22 +62,23 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-
         if (convertView == null) {
 
             //listView = new View(context);
 
             // get layout from resources
-            listView=inflater.inflate(R.layout.item_available_ride,null);
+            listView=inflater.inflate(R.layout.item_my_ride,null);
 
             // set image based on selected text
-            Button btn = (Button) listView.findViewById(R.id.button_item_ride);
-            TextView TVID = (TextView) listView.findViewById(R.id.name);
+            Button unclaim = (Button) listView.findViewById(R.id.unclaim);
+            Button startRide = (Button) listView.findViewById(R.id.startRide);
 
+            TextView TVID = (TextView) listView.findViewById(R.id.name);
             String id=String.valueOf(content.get(position).getRideId());
 
             TVID.setText(id);
-            btn.setOnClickListener(this);
+            unclaim.setOnClickListener(this);
+            startRide.setOnClickListener(this);
         } else {
             listView = (View) convertView;
         }
@@ -84,28 +87,23 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
     @Override
     public void onClick(View view) {
+        TextView rideID=(TextView)listView.findViewById(R.id.name);
         switch(view.getId()) {
-            case R.id.button_item_ride:
+            case R.id.unclaim:
                 //claim(view);
-                TextView rideID=(TextView)listView.findViewById(R.id.name);
                 String [] user=new String[1];
                 user[0]=rideID.getText().toString();
-                new AvailableRideAdapter.UsersTask().execute(user);
+                new MyRideAdapter.UsersTask().execute(user);
+                break;
+            case R.id.startRide:
+                mCallBack.onMyRideAdapterFragmentInteraction(Integer.parseInt(rideID.getText().toString()));
                 break;
             default:
                 break;
         }
     }
 
-    public void claim(View view)
-    {
-        String rideID=((TextView)listView.findViewById(R.id.name)).getText().toString();
-        Ride temp=listDsManager.getAvailableRides().get(listDsManager.convertRideIdToIndex("AvailableRides",Integer.parseInt(rideID)));
-        listDsManager.getMyRide().add(temp);
-        listDsManager.getAvailableRides().remove(listDsManager.convertRideIdToIndex("AvailableRides",Integer.parseInt(rideID)));
-        //new AvailableRideAdapter.UsersTask().execute(rideID);
 
-    }
     class UsersTask extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -118,8 +116,10 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
                 String httpResult = new JSONObject(toReturn).getString("status");
                 if (httpResult.compareTo("OK")==0) {
                     //// TODO: 25/08/2017 add the ride to my ride
-
-                    publishProgress(params[0]);
+                    Ride temp=listDsManager.getMyRide().get(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
+                    listDsManager.getAvailableRides().add(temp);
+                    listDsManager.getMyRide().remove(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
+                    publishProgress("");
                     toReturn="";
                 } else {
                     publishProgress("something get wrong\n" + toReturn);
@@ -136,7 +136,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
             if(result.equals("")) {
                 //every thing is okay
-
+                //mListener.onFragmentInteraction("");
             }
         }
 
@@ -149,21 +149,17 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            try {
-                int rideID= Integer.parseInt(values[0]);
-                Ride temp=listDsManager.getAvailableRides().get(listDsManager.convertRideIdToIndex("AvailableRides",rideID));
-                listDsManager.getMyRide().add(temp);
-                listDsManager.getAvailableRides().remove(listDsManager.convertRideIdToIndex("AvailableRides",rideID));
-            }
-            catch (Exception e)
-            {
+            if(values[0].length()>1)
                 showAlert(context,values[0]);
+            else {
+
+                //mCallBack.OnLoginFragmentInteractionListener(1);
             }
-            //if()
-            //
-            //else {
-            //    //mCallBack.OnLoginFragmentInteractionListener(1);
-            //}
         }
+    }
+
+    public interface OnFragmentInteractionListener {
+        //the fragmentReturn mean if the login work 1 for good 0 for bad
+        void onMyRideAdapterFragmentInteraction(int rideId);
     }
 }

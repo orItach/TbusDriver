@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import project.java.tbusdriver.Entities.MyLocation;
+import project.java.tbusdriver.Entities.Region;
 import project.java.tbusdriver.Entities.Ride;
 import project.java.tbusdriver.Entities.Route;
 
@@ -24,8 +26,9 @@ import project.java.tbusdriver.Entities.Route;
 
 public class ListDsManager {
     private static ArrayList<Ride> AvailableRides;
+    private static ArrayList<Ride> MyRide;
     private static ArrayList<Ride> HistoricRides;
-    private static ArrayList<String> Region;
+    private static ArrayList<Region> Regions;
     Context context;
     DateFormat formatter ;
 
@@ -33,8 +36,9 @@ public class ListDsManager {
     {
         this.context=context;
         AvailableRides=new ArrayList<Ride>();
+        MyRide=new ArrayList<Ride>();
         HistoricRides=new ArrayList<Ride>();
-        Region=new ArrayList<String>();
+        Regions=new ArrayList<Region>();
         formatter = new SimpleDateFormat("HH:mm");
         //new UpdateDataTask().execute(0);//update agency
         //new UpdateDataTask().execute(1);//update trips
@@ -49,12 +53,28 @@ public class ListDsManager {
         AvailableRides = availableRides;
     }
 
+    public static ArrayList<Ride> getMyRide() {
+        return MyRide;
+    }
+
+    public static void setMyRide(ArrayList<Ride> myRide) {
+        MyRide = myRide;
+    }
+
+
     public static ArrayList<Ride> getHistoricRide() {
         return HistoricRides;
     }
 
     public static void setHistoricRide(ArrayList<Ride> historicRide) {
         HistoricRides = historicRide;
+    }
+    public static ArrayList<Region> getRegions() {
+        return Regions;
+    }
+
+    public static void setRegions(ArrayList<Ride> Regions) {
+        Regions = Regions;
     }
 
     public void updateHistoricRides(Cursor matrixAgency)
@@ -86,7 +106,19 @@ public class ListDsManager {
         try
         {
             AvailableRides.clear();
-            StringRidesToJson(input);
+            StringAvailableRidesToJson(input);
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+    public void updateMyRides(String input)
+    {
+        try
+        {
+            MyRide.clear();
+            StringMyRidesToJson(input);
         }
         catch (Exception e)
         {
@@ -94,7 +126,41 @@ public class ListDsManager {
         }
     }
 
-    private void StringRidesToJson(String input)
+    private void StringMyRidesToJson(String input)
+    {
+        if (input != null) {
+            try {
+                JSONObject result = new JSONObject(input);
+                // Getting JSON Array node
+                JSONArray rides = result.getJSONArray("rides");
+                int id;
+                String travel_time;
+                Route route=null;
+                // looping through All Contacts
+                for (int i = 0; i < rides.length(); i++) {
+                    JSONObject c = rides.getJSONObject(i);
+                    travel_time = c.getString("travel_time");
+                    id=c.getInt("id");
+                    if (!c.isNull("json_route")) {
+                        route=JsonRouteToRoute(c.getJSONObject("json_route"));
+                    }
+                    if(travel_time.equalsIgnoreCase("null"))
+                        travel_time="15:00:00";
+                    Ride ride=new Ride(route,Time.valueOf(travel_time),id);
+                    MyRide.add(ride);
+                    //ride.setTravelTime(c.getString("travel_time"));
+                }
+            } catch ( Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    private void StringAvailableRidesToJson(String input)
     {
         if (input != null) {
             try {
@@ -128,6 +194,7 @@ public class ListDsManager {
         }
     }
 
+    @Nullable
     private Route JsonRouteToRoute(JSONObject jsonRoute)
     {
         Location geom=new Location("");
@@ -195,6 +262,37 @@ public class ListDsManager {
             myAlert.show();
             //Toast.makeText(context, values[0], Toast.LENGTH_LONG).show();
         }
+    }
+
+    public int convertRideIdToIndex(String list,int rideId)
+    {
+        switch (list)
+        {
+            case "AvailableRides":
+                for (int i=0; i<AvailableRides.size();i++)
+                {
+                    if(AvailableRides.get(i).getRideId()==rideId)
+                        return i;
+                }
+                break;
+            case "MyRide":
+                for (int i=0; i<MyRide.size();i++)
+                {
+                    if(MyRide.get(i).getRideId()==rideId)
+                        return i;
+                }
+                break;
+            case "HistoricRides":
+                for (int i=0; i<HistoricRides.size();i++)
+                {
+                    if(HistoricRides.get(i).getRideId()==rideId)
+                        return i;
+                }
+                break;
+            default:
+                return -1;
+        }
+        return 0;
     }
 
 

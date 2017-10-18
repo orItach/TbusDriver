@@ -37,10 +37,10 @@ public class TimePickerDialog extends DialogFragment implements DialogInterface.
 
         // Build dialog
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-        builder.setTitle("pick a time");
+        builder.setTitle("בחר זמן");
         builder.setView(myView);
-        builder.setPositiveButton("ok",this);
-        builder.setNegativeButton("cancel",this);
+        builder.setPositiveButton("בחר",this);
+        builder.setNegativeButton("בטל",this);
         return builder.create();
     }
 

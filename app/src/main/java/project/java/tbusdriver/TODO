@@ -1,4 +1,5 @@
 #1 change name, support two lan'
-#2 fix the Adapter-probaly race condion
+#2 fix the Adapter-probably race condition
 #3 complete the feedback
-#4 contnime with order proccedear
+#4 continue with order proceeded
+#5 notifyDataSetChanged to all the adepter

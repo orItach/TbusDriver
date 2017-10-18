@@ -3,6 +3,7 @@ package project.java.tbusdriver.Controller.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,16 +16,21 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import project.java.tbusdriver.Controller.TimePickerDialog;
+import project.java.tbusdriver.Database.Factory;
+import project.java.tbusdriver.Database.ListDsManager;
+import project.java.tbusdriver.Entities.Day;
+import project.java.tbusdriver.Entities.Region;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link Settings.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
+import static project.java.tbusdriver.usefulFunctions.showAlert;
+
+
 public class Settings extends Fragment implements
         View.OnClickListener,
         AdapterView.OnItemSelectedListener
@@ -37,12 +43,15 @@ public class Settings extends Fragment implements
     private String Region;
     private int FarInMinutes,TimeForReplay,TimeForNotFound,DistanceForNotFound;
 
-
+    private Day[] userDays=new Day[7];
+    Spinner spinnerRegion;
     Button updateButton;
     TextView TVTime;
     TextView TVSecondTime;
     View myView;
     Activity myActivity;
+    DateFormat formatter;
+
     final int REQUEST_CODE=0;
 
     public Settings() {
@@ -60,8 +69,8 @@ public class Settings extends Fragment implements
         // Inflate the layout for this fragment
         myView=inflater.inflate(R.layout.fragment_settings, container, false);
         getActivity().setTitle("Setting");
-        String[] region = new String[]{"jerusalem", "bney-brak", "tel-aviv"};
-        Spinner spinnerRegion = (Spinner)myView.findViewById(R.id.region);
+        String[] region = new String[]{"ירושלים", "בני-ברק", "תל-אביב"};
+        spinnerRegion = (Spinner)myView.findViewById(R.id.region);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, region);
         spinnerRegion.setAdapter(spinnerAdapter);
         spinnerRegion.setOnItemSelectedListener(this);
@@ -73,6 +82,25 @@ public class Settings extends Fragment implements
         TVTime.setOnClickListener(this);
         TVSecondTime=(TextView)myView.findViewById(R.id.TVSecondTime);
         TVSecondTime.setOnClickListener(this);
+        //Days button
+        Button firstDay=(Button)myView.findViewById(R.id.firstDay);
+        firstDay.setOnClickListener(this);
+        Button secondDay=(Button)myView.findViewById(R.id.secondDay);
+        secondDay.setOnClickListener(this);
+        Button thirdDay=(Button)myView.findViewById(R.id.thirdDay);
+        thirdDay.setOnClickListener(this);
+        Button fourthDay=(Button)myView.findViewById(R.id.fourthDay);
+        fourthDay.setOnClickListener(this);
+        Button fifthDay=(Button)myView.findViewById(R.id.fifthDay);
+        fifthDay.setOnClickListener(this);
+        Button sixthDay=(Button)myView.findViewById(R.id.sixthDay);
+        sixthDay.setOnClickListener(this);
+        Button seventhDay=(Button)myView.findViewById(R.id.seventhDay);
+        seventhDay.setOnClickListener(this);
+
+
+
+        formatter = new SimpleDateFormat("HH:mm");
         return myView;
     }
 
@@ -102,8 +130,55 @@ public class Settings extends Fragment implements
 
     public void updateSettings(View v)
     {
-        if (mListener != null) {
+        String regionName=spinnerRegion.getSelectedItem().toString();
+        Region temp = new Region(regionName,userDays);
+        ListDsManager listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+        listDsManager.getRegions().add(temp);
+    }
+    public void updateUserDay(View v)
+    {
+        Button dayButton=(Button) v.findViewById(v.getId());
+        String dayName=dayButton.getText().toString();
+        if(userDays[dayNameToIndex(dayName)]!=null)
+        {
+            userDays[dayNameToIndex(dayName)]=null;
+            dayButton.setBackgroundColor(Color.DKGRAY);
+        }
+        else
+        {
+            String dayStartTimeString=TVTime.getText().toString();
+            String dayFinishTimeString=TVSecondTime.getText().toString();
+            if(dayStartTimeString.equalsIgnoreCase("בחר זמן") ||dayFinishTimeString.equalsIgnoreCase("בחר זמן")){
+                //// TODO: 16/10/2017 show massage for user
+                showAlert(myActivity, "pleas choose time before choose day");
+                return;
+            }
+            dayStartTimeString=dayStartTimeString+":00";
+            dayFinishTimeString=dayFinishTimeString+":00";
+            userDays[dayNameToIndex(dayName)]=new Day(dayName, Time.valueOf(dayStartTimeString),Time.valueOf(dayFinishTimeString));
+            dayButton.setBackgroundColor(Color.GREEN);
+        }
+    }
 
+    private int dayNameToIndex(String dayName)
+    {
+        switch(dayName) {
+            case "א":
+                return 0;
+            case "ב":
+                return 1;
+            case "ג":
+                return 2;
+            case "ד":
+                return 3;
+            case "ה":
+                return 4;
+            case "ו":
+                return 5;
+            case "ש":
+                return 6;
+            default:
+                return 0;
         }
     }
 
@@ -118,6 +193,15 @@ public class Settings extends Fragment implements
                 break;
             case R.id.TVSecondTime:
                 showDialog(R.id.TVSecondTime);
+                break;
+            case R.id.firstDay:
+            case R.id.secondDay:
+            case R.id.thirdDay:
+            case R.id.fourthDay:
+            case R.id.fifthDay:
+            case R.id.sixthDay:
+            case R.id.seventhDay:
+                updateUserDay(v);
                 break;
             default:
                 break;
@@ -206,6 +290,8 @@ public class Settings extends Fragment implements
     {
         super.onResume();
         myActivity=getActivity();
-        myActivity.setTitle("זמני עבודה");
+        myActivity.setTitle("הגדרת זמני עבודה");
     }
+
+
 }

@@ -108,7 +108,9 @@ public class AvailableRide extends Fragment {
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
             availableRideAdapter=new AvailableRideAdapter(myActivity,R.layout.item_available_ride,listDsManager.getAvailableRides());
+            availableRideAdapter.notifyDataSetChanged();
             listView.setAdapter(availableRideAdapter);
+            //listView.deferNotifyDataSetChanged();
         }
     }
 

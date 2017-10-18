@@ -15,7 +15,7 @@
             android:id="@+id/historicRide"
             android:title="היסטוריית נסיעות" />
         <item
-            android:id="@+id/settings"
+            android:id="@+id/myRegion"
             android:title="זמני עבודה" />
         <item
             android:id="@+id/exit"

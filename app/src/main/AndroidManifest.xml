@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <!-- To access Google+ APIs: -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -34,20 +37,18 @@
             android:value="@string/google_maps_key" />
 
         <!-- maybe not need the not history -->
-        <activity android:name=".Controller.Activitys.MainActivity"
+        <activity
+            android:name=".Controller.Activitys.MainActivity"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controller.Activitys.LoginAuth"
-            android:screenOrientation="portrait"
-         >
-
-        </activity>
+        <activity
+            android:name=".Controller.Activitys.LoginAuth"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".Controller.Activitys.Main4Activity"
             android:screenOrientation="portrait"
@@ -56,8 +57,9 @@
             android:name=".Controller.Activitys.OtherActivity"
             android:label="@string/title_activity_other"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Controller.firstTry"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Controller.firstTry"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

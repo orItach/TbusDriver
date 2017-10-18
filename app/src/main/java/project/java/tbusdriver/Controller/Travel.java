@@ -34,6 +34,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,25 +48,39 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
+import project.java.tbusdriver.Database.Factory;
+import project.java.tbusdriver.Database.ListDsManager;
+import project.java.tbusdriver.Entities.MyLocation;
+import project.java.tbusdriver.Entities.Ride;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.usefulFunctions;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static java.lang.Math.pow;
 
 public class Travel extends Fragment
             implements OnMapReadyCallback,
             GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener,
-            View.OnClickListener
-            {
+            View.OnClickListener{
 
         //region Variable
         private static int DEFAULT_ZOOM =10 ;
         private GoogleApiClient mGoogleApiClient;
         private GoogleMap mMap;
+
+        boolean mRequestingLocationUpdates=true;
+        FusedLocationProviderClient mFusedLocationClient;
+        LocationCallback mLocationCallback;
+        LocationRequest mLocationRequest;
+
         private boolean mLocationPermissionGranted=false;
         private Location mLastKnownLocation=null;
+        private Location mPreviousLastKnownLocation=null;
         private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=1;
         private LatLng mDefaultLocation;
         private CameraPosition mCameraPosition;
@@ -79,6 +97,9 @@ public class Travel extends Fragment
         LocationManager locationManager;
         Marker mPositionMarker;
         boolean doZoom;
+        ListDsManager listDsManager;
+        Ride temp;
+        boolean inRoute;
         //endregion
 
         public Travel() {
@@ -109,10 +130,35 @@ public class Travel extends Fragment
             SupportMapFragment mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
                     .findFragmentById(R.id.map);
 
+            listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
             //mapFragment.getMapAsync(this);
             // Do other setup activities here too, as described elsewhere in this tutorial.
             // Build the Play services client for use by the Fused Location Provider and the Places API.
             // Use the addApi() method to request the Google Places API and the Fused Location Provider.
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(myActivity);
+            mLocationRequest=new LocationRequest();
+            mLocationRequest.setInterval(3000000);
+            mLocationRequest.setFastestInterval(5000);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+            mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+
+                    for (Location location : locationResult.getLocations()) {
+                        if(mPreviousLastKnownLocation!=null)
+                        {   double LKLLo=mPreviousLastKnownLocation.getLongitude();
+                            double LKLLa=mPreviousLastKnownLocation.getLatitude();
+                            double LLo=location.getLongitude();
+                            double LLa=location.getLatitude();
+                            double deviation=0.01;
+                            if (pow(deviation,2)<pow((LKLLa-LLa),2)+pow((LKLLo-LLo),2))
+                                usefulFunctions.showAlert(myActivity,"the location change");
+                        }
+                    }
+                }
+            };
+
             if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
                 mGoogleApiClient = new GoogleApiClient.Builder(myActivity)
                         .enableAutoManage(myActivity /* FragmentActivity */,
@@ -248,6 +294,19 @@ public class Travel extends Fragment
         public void onMapReady(GoogleMap map) {
             mMap =map;
             //// Get the current location of the device and set the position of the map.
+            if(temp!=null && inRoute==true)
+            {
+                drawMap();
+                drawStation(temp.getRoute().getLocations());
+                ArrayList<MyLocation> station=temp.getRoute().getLocations();
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(
+                                station.get(0).getMyLocation().getLatitude(),
+                                station.get(0).getMyLocation().getLongitude()))
+                        .title("station")
+
+                ).showInfoWindow();
+            }
             getDeviceLocation();
         }
 
@@ -262,6 +321,8 @@ public class Travel extends Fragment
                 drawNavigationInstruction();
                 setBigInstruction("left");
                 setSmallInstructionP("right");
+                drawStation(temp.getRoute().getLocations());
+                //drawStation(listDsManager.getAvailableRides().get(2).getRoute().getLocations());
             }
         }
 
@@ -323,8 +384,19 @@ public class Travel extends Fragment
                         PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
             if (mLocationPermissionGranted) {
+                mPreviousLastKnownLocation=mLastKnownLocation;
                 mLastKnownLocation = LocationServices.FusedLocationApi
                         .getLastLocation(mGoogleApiClient);
+                //mFusedLocationClient.getLastLocation()
+                //        .addOnSuccessListener((Executor) myActivity, new OnSuccessListener<Location>() {
+                //            @Override
+                //            public void onSuccess(Location location) {
+                //                // Got last known location. In some rare situations this can be null.
+                //                if (location != null) {
+                //                    // ...
+                //                }
+                //            }
+                //        });
             }
             // Set the map's camera position to the current location of the device.
             //look like the problem is here
@@ -444,13 +516,44 @@ public class Travel extends Fragment
         public void onResume()
         {
             super.onResume();
+
             if(isHidden()==false)
             {
+                int rideid;
+                int index;
                 myActivity=getActivity();
-                myActivity.setTitle("Travel");
+                Bundle bundle = this.getArguments();
+                if (bundle != null) {
+                    rideid = bundle.getInt("RIDEID", 0);
+                    index = listDsManager.convertRideIdToIndex("MyRide", rideid);
+                    temp = listDsManager.getMyRide().get(index);
+                    inRoute=true;
+                }
+                myActivity.setTitle("נסיעה");
                 mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
                 mapFragment.getMapAsync(this);
 
+                if (mRequestingLocationUpdates) {
+                    startLocationUpdates();
+                }
+            }
+        }
+
+        private void startLocationUpdates() {
+            if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED)
+            {
+                mLocationPermissionGranted = true;
+            } else {
+                ActivityCompat.requestPermissions(myActivity,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
+            if (mLocationPermissionGranted) {
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                        mLocationCallback,
+                        null /* Looper */);
             }
         }
         @Override
@@ -481,7 +584,6 @@ public class Travel extends Fragment
                 //allTravel.invalidate();
                 RelativeLayout allInstruction=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
                 allInstruction.setVisibility(View.GONE);
-
             }
         }
         private void setBigInstruction(String direction)
@@ -523,28 +625,29 @@ public class Travel extends Fragment
         //endregion
 
         //region custom marker
-        //@Override
-        //public void onLocationChanged(Location location) {
-        //    if (location == null)
-        //        return;
-        //    if (mPositionMarker == null) {
-        //        mPositionMarker = mMap.addMarker(new MarkerOptions()
-        //                .flat(true)
-        //                .anchor(0.5f, 0.5f)
-        //                .icon(BitmapDescriptorFactory
-        //                        .fromResource(R.drawable.taxi))
-        //                .position(
-        //                        new LatLng(location.getLatitude(), location
-        //                                .getLongitude())));
-        //    }
+
+
+        public void mLocationCallback(Location location) {
+            if (location == null)
+                return;
+            //if (mPositionMarker == null) {
+            //    mPositionMarker = mMap.addMarker(new MarkerOptions()
+            //            .flat(false)
+            //            .anchor(0.5f, 0.5f)
+            //            .icon(BitmapDescriptorFactory
+            //                    .fromResource(R.drawable.taxi))
+            //            .position(
+            //                    new LatLng(location.getLatitude(), location
+            //                            .getLongitude())));
+            //}
 //
 //
-        //    animateMarker(mPositionMarker, location); // Helper method for smooth
-        //    // animation
+            //animateMarker(mPositionMarker, location); // Helper method for smooth
+            // animation
 //
-        //    mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location
-        //            .getLatitude(), location.getLongitude())));
-        //}
+            //mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(location
+            //        .getLatitude(), location.getLongitude())));
+        }
 
         public void animateMarker(final Marker marker, final Location location) {
             final Handler handler = new Handler();
@@ -580,4 +683,18 @@ public class Travel extends Fragment
             });
         }
     //endregion
+    //region routeAndDraw
+    public void drawStation(ArrayList<MyLocation> station )
+    {
+        for (int i = 0; i < station.size(); i++)
+        {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(
+                            station.get(i).getMyLocation().getLatitude(),
+                            station.get(i).getMyLocation().getLongitude()))
+                    .title("station"+i)
+            ).showInfoWindow();
+        }
+    }
+    //end region
 }

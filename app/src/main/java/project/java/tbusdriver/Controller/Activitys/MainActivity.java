@@ -16,8 +16,10 @@ import android.view.MenuItem;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+import project.java.tbusdriver.Controller.Adapter.MyRideAdapter;
 import project.java.tbusdriver.Controller.Fragments.AvailableRide;
 import project.java.tbusdriver.Controller.Fragments.HistoricalRide;
+import project.java.tbusdriver.Controller.Fragments.MyRegion;
 import project.java.tbusdriver.Controller.Fragments.MyRide;
 import project.java.tbusdriver.Controller.Fragments.Settings;
 import project.java.tbusdriver.Controller.Travel;
@@ -32,8 +34,10 @@ public class MainActivity extends AppCompatActivity
         AvailableRide.OnFragmentInteractionListener,
         HistoricalRide.OnFragmentInteractionListener,
         Travel.OnFragmentInteractionListener,
+        MyRideAdapter.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
-        Settings.OnFragmentInteractionListener{
+        Settings.OnFragmentInteractionListener,
+        MyRegion.OnFragmentInteractionListener{
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity
     MyRide myRideFragment;
     AvailableRide availableRideFragment;
     Settings settingsFragment;
+    MyRegion myRegionFragment;
     HistoricalRide historicalRideFragment;
 
 
@@ -130,7 +135,9 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //maybe not so good idea
+            //super.onBackPressed();
+            setFragment("travel");
         }
     }
 
@@ -195,9 +202,16 @@ public class MainActivity extends AppCompatActivity
                 historicalRideFragment=new HistoricalRide();
                 fragmentTransaction.replace(R.id.content_main,historicalRideFragment);
                 break;
-            case "settings":
+            case "myRegion":
+                myRegionFragment = new MyRegion();
+                fragmentTransaction.replace(R.id.content_main,myRegionFragment);
+                break;
+            case "setting":
                 settingsFragment = new Settings();
                 fragmentTransaction.replace(R.id.content_main,settingsFragment);
+                break;
+            case "exit":
+                exitApp();
                 break;
             default:
                 travelFragment = newInstance();
@@ -206,6 +220,7 @@ public class MainActivity extends AppCompatActivity
         }
         fragmentTransaction.commit();
     }
+
     private String convertIdToName(int id)
     {
         switch (id)
@@ -214,14 +229,36 @@ public class MainActivity extends AppCompatActivity
             case R.id.myRide: return "myRide";
             case R.id.availableRide: return "availableRide";
             case R.id.historicRide: return "historicRide";
-            case R.id.settings: return "settings";
+            case R.id.myRegion: return "myRegion";
+            case R.id.exit: return "exit";
 
         }
         return "myRide";
     }
 
+    private void exitApp()
+    {
+        this.finish();
+    }
+
+
+
     @Override
     public void onFragmentInteraction(String str) {
 
+    }
+
+    @Override
+    public void onMyRideAdapterFragmentInteraction(int rideId) {
+        Bundle bundle=new Bundle();
+        bundle.putInt("RIDEID",rideId);
+        travelFragment.setArguments(bundle);
+        setFragment("travel");
+    }
+
+
+    @Override
+    public void onRegionFragmentInteraction(int sign) {
+        setFragment("setting");
     }
 }
