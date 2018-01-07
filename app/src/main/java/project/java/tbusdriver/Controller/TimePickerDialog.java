@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -23,9 +24,11 @@ public class TimePickerDialog extends DialogFragment implements DialogInterface.
     TimePicker clock;
     public TimePickerDialog()
     {
+        int x =5;
     }
 
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
@@ -52,15 +55,49 @@ public class TimePickerDialog extends DialogFragment implements DialogInterface.
             case -1:
                 clock = (TimePicker) myView.findViewById(R.id.clock);
                 if (Build.VERSION.SDK_INT >= 23) {
-                    sendResult(0, clock.getHour()+":"+clock.getMinute());
+                    // 11/11/17 Or: a little work around fo 10:09
+                    if(clock.getHour()<10 && clock.getMinute()<10)
+                    {
+                        sendResult(0, "0"+clock.getHour()+":0"+clock.getMinute());
+                        return;
+                    }
+
+                    if(clock.getMinute()<10) {
+                        sendResult(0, clock.getHour() + ":0" + clock.getMinute());
+                        return;
+                    }
+                    if(clock.getHour()<10) {
+                        sendResult(0, "0" + clock.getHour() + ":" + clock.getMinute());
+                        return;
+                    }
+                    if(clock.getHour()>10 || clock.getMinute()>10) {
+                        sendResult(0, clock.getHour() + ":" + clock.getMinute());
+                        return;
+                    }
+                    break;
                 }
                 else
-                    sendResult(0, clock.getCurrentHour()+":"+clock.getCurrentMinute());
-                break;
+                    if(clock.getCurrentHour()<10 && clock.getCurrentMinute()<10) {
+                        sendResult(0, "0" + clock.getCurrentHour() + ":0" + clock.getCurrentMinute());
+                        return;
+                    }
+                    if(clock.getCurrentMinute()<10) {
+                        sendResult(0, clock.getCurrentHour() + ":0" + clock.getCurrentMinute());
+                        return;
+                    }
+                    if(clock.getCurrentHour()<10) {
+                        sendResult(0, "0" + clock.getCurrentHour() + ":" + clock.getCurrentMinute());
+                        return;
+                    }
+                    if(clock.getCurrentHour()>10 || clock.getCurrentMinute()>10) {
+                        sendResult(0, clock.getCurrentHour() + ":" + clock.getCurrentMinute());
+                        return;
+                    }
+                    break;
             //cancel
             case -2:
-                sendResult(0, "");
-                break;
+                sendResult(0, "--:--");
+                return;
         }
     }
 

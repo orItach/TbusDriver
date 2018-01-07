@@ -39,7 +39,7 @@ public class WorkTime extends Fragment implements View.OnClickListener {
      * @param param2 Parameter 2.
      * @return A new instance of fragment WorkTime.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static WorkTime newInstance(String param1, String param2) {
         WorkTime fragment = new WorkTime();
         return fragment;

@@ -1,18 +1,16 @@
 package project.java.tbusdriver.Entities;
 
-import java.sql.Time;
-
 /**
  * Created by אור איטח on 27/06/2017.
  */
 
 public class Ride {
 
-    Route route;
-    Time travelTime;
-    int rideId;
+    private int rideId;
+    private Route route;
+    private String travelTime;
 
-    public Ride(Route route, Time travelTime, int rideId) {
+    public Ride(Route route, String  travelTime, int rideId) {
         this.route = route;
         this.travelTime = travelTime;
         this.rideId = rideId;
@@ -26,11 +24,11 @@ public class Ride {
         this.route = route;
     }
 
-    public Time getTravelTime() {
+    public String  getTravelTime() {
         return travelTime;
     }
 
-    public void setTravelTime(Time travelTime) {
+    public void setTravelTime(String travelTime) {
         this.travelTime = travelTime;
     }
 

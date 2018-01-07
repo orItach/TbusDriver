@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import org.json.JSONObject;
@@ -52,9 +53,20 @@ public class MyRide extends Fragment  {
         super.onCreate(savedInstanceState);
         myActivity=getActivity();
         listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+
         fillMyRide();
     }
     private void fillMyRide(){new MyRide.UsersTask().execute();}
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        //getActivity().setTitle("My Ride");
+        myView=inflater.inflate(R.layout.fragment_my_ride, container, false);
+        listView=(ListView) myView.findViewById(R.id.myRideList);
+        return myView;
+    }
 
     class UsersTask extends AsyncTask<String, String, String> {
         @Override
@@ -100,26 +112,18 @@ public class MyRide extends Fragment  {
             if(values[0].length()>1)
                 showAlert(myActivity,values[0]);
             else {
-
+                //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
             myRideAdapter=new MyRideAdapter(myActivity,R.layout.item_available_ride,listDsManager.getMyRide());
-            myRideAdapter.notifyDataSetChanged();
             listView.setAdapter(myRideAdapter);
-            //listView.deferNotifyDataSetChanged();
+            myRideAdapter.notifyDataSetChanged();
+            ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
+            listView.invalidateViews();
+            listView.scrollBy(0, 0);
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        //getActivity().setTitle("My Ride");
-        myView=inflater.inflate(R.layout.fragment_my_ride, container, false);
-        listView=(ListView) myView.findViewById(R.id.myRideList);
-
-        return myView;
-    }
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

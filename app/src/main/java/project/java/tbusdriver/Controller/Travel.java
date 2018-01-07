@@ -98,7 +98,7 @@ public class Travel extends Fragment
         Marker mPositionMarker;
         boolean doZoom;
         ListDsManager listDsManager;
-        Ride temp;
+        Ride ride;
         boolean inRoute;
         //endregion
 
@@ -294,20 +294,28 @@ public class Travel extends Fragment
         public void onMapReady(GoogleMap map) {
             mMap =map;
             //// Get the current location of the device and set the position of the map.
-            if(temp!=null && inRoute==true)
+            if (mRequestingLocationUpdates) {
+                startLocationUpdates();
+                //getDeviceLocation();
+            }
+            if(mMap!=null)
+            {
+                //// Get the current location of the device and set the position of the map.
+                DEFAULT_ZOOM=14;
+                getDeviceLocation();
+                updateLocationUI();
+            }
+
+            if(ride !=null && inRoute==true)
             {
                 drawMap();
-                drawStation(temp.getRoute().getLocations());
-                ArrayList<MyLocation> station=temp.getRoute().getLocations();
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(
-                                station.get(0).getMyLocation().getLatitude(),
-                                station.get(0).getMyLocation().getLongitude()))
-                        .title("station")
-
-                ).showInfoWindow();
+                drawStation(ride.getRoute().getLocations());
+                drawRoute(ride.getRoute().getLocations());
+                DEFAULT_ZOOM = 13;
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
             }
-            getDeviceLocation();
         }
 
         //region Button Handler
@@ -318,11 +326,10 @@ public class Travel extends Fragment
                 busyButton.setBackgroundResource(R.drawable.busy);
                 availableButton.setBackgroundResource(R.drawable.start);
                 usefulFunctions.busy=true;
-                drawNavigationInstruction();
-                setBigInstruction("left");
-                setSmallInstructionP("right");
-                drawStation(temp.getRoute().getLocations());
-                //drawStation(listDsManager.getAvailableRides().get(2).getRoute().getLocations());
+                //drawNavigationInstruction();
+                //setBigInstruction("left");
+                //setSmallInstructionP("right");
+                //drawStation(ride.getRoute().getLocations());
             }
         }
 
@@ -350,7 +357,7 @@ public class Travel extends Fragment
                     break;
                 case R.id.getMyLocation:
                     if(mMap != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
-                        ///DEFAULT_ZOOM =14; // TODO: 30/06/2017 good for view nibgerood
+                        ///DEFAULT_ZOOM =14; // good for view nibgerood
                         if(doZoom) {
                             DEFAULT_ZOOM = 16;
                             doZoom=false;
@@ -517,26 +524,37 @@ public class Travel extends Fragment
         {
             super.onResume();
 
+            if (mRequestingLocationUpdates) {
+                startLocationUpdates();
+                //getDeviceLocation();
+            }
+            if(mMap!=null)
+            {
+                //// Get the current location of the device and set the position of the map.
+                DEFAULT_ZOOM=14;
+                getDeviceLocation();
+                updateLocationUI();
+            }
+
             if(isHidden()==false)
             {
-                int rideid;
+                int rideId;
                 int index;
                 myActivity=getActivity();
                 Bundle bundle = this.getArguments();
                 if (bundle != null) {
-                    rideid = bundle.getInt("RIDEID", 0);
-                    index = listDsManager.convertRideIdToIndex("MyRide", rideid);
-                    temp = listDsManager.getMyRide().get(index);
+                    rideId = bundle.getInt("RIDEID", 0);
+                    index = listDsManager.convertRideIdToIndex("MyRide", rideId);
+                    ride = listDsManager.getMyRide().get(index);
                     inRoute=true;
                 }
                 myActivity.setTitle("נסיעה");
                 mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
                 mapFragment.getMapAsync(this);
 
-                if (mRequestingLocationUpdates) {
-                    startLocationUpdates();
-                }
+
             }
+
         }
 
         private void startLocationUpdates() {
@@ -556,6 +574,7 @@ public class Travel extends Fragment
                         null /* Looper */);
             }
         }
+
         @Override
         public void onPause()
         {
@@ -574,6 +593,7 @@ public class Travel extends Fragment
             }
             //ins.invalidate();
         }
+
         private void drawMap()
         {
             if(getActivity()!=null)
@@ -586,6 +606,7 @@ public class Travel extends Fragment
                 allInstruction.setVisibility(View.GONE);
             }
         }
+
         private void setBigInstruction(String direction)
         {
             ImageView imageFirstInstruction = (ImageView) myActivity.findViewById(R.id.imageFirstInstruction);
@@ -606,6 +627,7 @@ public class Travel extends Fragment
 
             }
         }
+
         private void setSmallInstructionP(String direction)
         {
             ImageView imageSecondInstruction = (ImageView) myActivity.findViewById(R.id.imageSecondInstruction);
@@ -683,18 +705,36 @@ public class Travel extends Fragment
             });
         }
     //endregion
-    //region routeAndDraw
-    public void drawStation(ArrayList<MyLocation> station )
-    {
-        for (int i = 0; i < station.size(); i++)
+
+        //region routeAndDraw
+        private void drawStation(ArrayList<MyLocation> station)
         {
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(
-                            station.get(i).getMyLocation().getLatitude(),
-                            station.get(i).getMyLocation().getLongitude()))
-                    .title("station"+i)
-            ).showInfoWindow();
+            for (int i = 0; i < station.size(); i++)
+            {
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(
+                                station.get(i).getMyLocation().getLatitude(),
+                                station.get(i).getMyLocation().getLongitude()))
+                        .title("station "+i)
+                ).showInfoWindow();
+            }
         }
-    }
+
+        private void drawRoute (ArrayList<MyLocation> station )
+        {
+            //for (int i=0; i< station.size()-1; i++)
+            //{
+            //    mMap.addPolygon(new PolygonOptions()
+            //            .add(new LatLng(
+            //                    station.get(i).getMyLocation().getLatitude(),
+            //                    station.get(i).getMyLocation().getLongitude()))
+            //            .add(new LatLng(
+            //                    station.get(i+1).getMyLocation().getLatitude(),
+            //                    station.get(i+1).getMyLocation().getLongitude())
+            //            )
+            //    );
+            //}
+        }
+
     //end region
 }

@@ -65,7 +65,6 @@
             android:textSize="20sp"
             />
     </RelativeLayout>
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -133,13 +132,35 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
-    <Button
-        android:paddingTop="@dimen/activity_horizontal_margin"
-        android:id="@+id/update"
-        android:layout_width="150dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="הוסף"
-        android:layout_below="@+id/allDays"
-        />
+        android:layout_below="@+id/allDays">
+        <Button
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:id="@+id/update"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="הוסף"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:text="כל היום?"/>
+            <CheckBox
+                android:id="@+id/allDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+
 
 </RelativeLayout>

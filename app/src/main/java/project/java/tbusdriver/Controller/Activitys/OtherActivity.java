@@ -183,4 +183,9 @@ public class OtherActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void onSettingsFragmentInteraction(int sign) {
+
+    }
 }

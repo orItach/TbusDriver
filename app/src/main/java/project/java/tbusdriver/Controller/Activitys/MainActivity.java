@@ -1,9 +1,12 @@
 package project.java.tbusdriver.Controller.Activitys;
 
+
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -13,19 +16,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
 import project.java.tbusdriver.Controller.Adapter.MyRideAdapter;
+import project.java.tbusdriver.Controller.Adapter.RegionAdapter;
 import project.java.tbusdriver.Controller.Fragments.AvailableRide;
 import project.java.tbusdriver.Controller.Fragments.HistoricalRide;
 import project.java.tbusdriver.Controller.Fragments.MyRegion;
 import project.java.tbusdriver.Controller.Fragments.MyRide;
 import project.java.tbusdriver.Controller.Fragments.Settings;
 import project.java.tbusdriver.Controller.Travel;
+import project.java.tbusdriver.Database.Factory;
+import project.java.tbusdriver.Database.ListDsManager;
+import project.java.tbusdriver.Entities.Day;
+import project.java.tbusdriver.Entities.Region;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 
+import static project.java.tbusdriver.Const.TravelFragmentName;
+import static project.java.tbusdriver.Const.availableRideFragmentName;
+import static project.java.tbusdriver.Const.historicRideFragmentName;
+import static project.java.tbusdriver.Const.myRegionFragmentName;
+import static project.java.tbusdriver.Const.myRideFragmentName;
+import static project.java.tbusdriver.Const.settingFragmentName;
 import static project.java.tbusdriver.Controller.Travel.newInstance;
 
 
@@ -37,7 +52,8 @@ public class MainActivity extends AppCompatActivity
         MyRideAdapter.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
         Settings.OnFragmentInteractionListener,
-        MyRegion.OnFragmentInteractionListener{
+        MyRegion.OnFragmentInteractionListener,
+        RegionAdapter.OnRegionAdapterInteractionListener{
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -53,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     Settings settingsFragment;
     MyRegion myRegionFragment;
     HistoricalRide historicalRideFragment;
+    boolean doubleBackToExitPressedOnce = false;
 
 
     @Override
@@ -101,6 +118,41 @@ public class MainActivity extends AppCompatActivity
 
         //mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment=SupportMapFragment.newInstance();
+        // need to be deleted after sync with the server
+        {
+            ListDsManager listDsManager = (ListDsManager) new Factory(this).getInstance();
+            String[] region = new String[]{"ירושלים", "בני-ברק", "תל-אביב"};
+            Day[] userDaysJ = new Day[7];
+            userDaysJ[0] = new Day("א", "00:01", "23:59");
+            userDaysJ[1] = new Day("ב", "00:01", "23:59");
+            userDaysJ[2] = new Day("ג", "00:01", "23:59");
+            userDaysJ[3] = new Day("ד", "00:01", "23:59");
+            userDaysJ[4] = new Day("ה", "00:01", "23:59");
+            userDaysJ[5] = new Day("ו", "00:01", "23:59");
+            userDaysJ[6] = new Day("ש", "00:01", "23:59");
+            Region tempRegionJ = new Region(region[0], userDaysJ);
+            ListDsManager.getRegions().add(tempRegionJ);
+            Day[] userDaysB = new Day[7];
+            userDaysB[0] = new Day("א", "00:01", "23:59");
+            userDaysB[1] = new Day("ב", "00:01", "23:59");
+            userDaysB[2] = new Day("ג", "00:01", "23:59");
+            userDaysB[3] = new Day("ד", "00:01", "23:59");
+            userDaysB[4] = new Day("ה", "00:01", "23:59");
+            userDaysB[5] = new Day("ו", "00:01", "23:59");
+            userDaysB[6] = new Day("ש", "00:01", "23:59");
+            Region tempRegionB = new Region(region[1], userDaysB);
+            ListDsManager.getRegions().add(tempRegionB);
+            Day[] userDaysT = new Day[7];
+            userDaysT[0] = new Day("א", "00:01", "23:59");
+            userDaysT[1] = new Day("ב", "00:01", "23:59");
+            userDaysT[2] = new Day("ג", "00:01", "23:59");
+            userDaysT[3] = new Day("ד", "00:01", "23:59");
+            userDaysT[4] = new Day("ה", "00:01", "23:59");
+            userDaysT[5] = new Day("ו", "00:01", "23:59");
+            userDaysT[6] = new Day("ש", "00:01", "23:59");
+            Region tempRegionT = new Region(region[2], userDaysT);
+            ListDsManager.getRegions().add(tempRegionT);
+        }
         //final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         //final PagerAdapter adapter = new PagerAdapter
         //        (getSupportFragmentManager(), tabLayout.getTabCount());
@@ -131,13 +183,37 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //maybe not so good idea
             //super.onBackPressed();
-            setFragment("travel");
+            Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.content_main);
+            if (currentFragment instanceof Travel) {
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                    exitApp();
+                    return;
+                }
+                this.doubleBackToExitPressedOnce = true;
+                Toast.makeText(this,"לחץ חזור שוב כדי לצאת", Toast.LENGTH_SHORT);
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce=false;
+                    }
+                }, 2000);
+            }
+            if (currentFragment instanceof Settings) {
+                setFragment("myRegion");
+            }
+            else
+            {
+                setFragment(TravelFragmentName);
+            }
         }
     }
 
@@ -164,8 +240,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         setFragment(convertIdToName(id));
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        //drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -186,29 +262,40 @@ public class MainActivity extends AppCompatActivity
         //fragmentTransaction.replace(R.id.fragment_container, loginFragment);
         switch (fragmentName)
         {
-            case "travel":
+            case TravelFragmentName:
                 travelFragment = newInstance();
                 fragmentTransaction.replace(R.id.content_main,travelFragment);
+                navigationView.setCheckedItem(R.id.Travel);
+                drawer.closeDrawers();
                 break;
-            case "myRide":
+            case myRideFragmentName:
                 myRideFragment= new MyRide();
                 fragmentTransaction.replace(R.id.content_main,myRideFragment);
+                navigationView.setCheckedItem(R.id.myRide);
+                drawer.closeDrawers();
                 break;
-            case "availableRide":
+            case availableRideFragmentName:
                 availableRideFragment=new AvailableRide();
                 fragmentTransaction.replace(R.id.content_main,availableRideFragment);
+                navigationView.setCheckedItem(R.id.availableRide);
+                drawer.closeDrawers();
                 break;
-            case "historicRide":
+            case historicRideFragmentName:
                 historicalRideFragment=new HistoricalRide();
                 fragmentTransaction.replace(R.id.content_main,historicalRideFragment);
+                navigationView.setCheckedItem(R.id.historicRide);
+                drawer.closeDrawers();
                 break;
-            case "myRegion":
+            case myRegionFragmentName:
                 myRegionFragment = new MyRegion();
                 fragmentTransaction.replace(R.id.content_main,myRegionFragment);
+                navigationView.setCheckedItem(R.id.myRegion);
+                drawer.closeDrawers();
                 break;
-            case "setting":
-                settingsFragment = new Settings();
+            case settingFragmentName:
+                settingsFragment = Settings.newInstance();
                 fragmentTransaction.replace(R.id.content_main,settingsFragment);
+                //navigationView.setCheckedItem(R.id.settings);
                 break;
             case "exit":
                 exitApp();
@@ -216,24 +303,27 @@ public class MainActivity extends AppCompatActivity
             default:
                 travelFragment = newInstance();
                 fragmentTransaction.replace(R.id.content_main,travelFragment);
+                navigationView.setCheckedItem(R.id.Travel);
+                drawer.closeDrawers();
                 break;
         }
         fragmentTransaction.commit();
+
     }
 
     private String convertIdToName(int id)
     {
         switch (id)
         {
-            case R.id.Travel: return "travel";
-            case R.id.myRide: return "myRide";
-            case R.id.availableRide: return "availableRide";
-            case R.id.historicRide: return "historicRide";
-            case R.id.myRegion: return "myRegion";
+            case R.id.Travel: return TravelFragmentName;
+            case R.id.myRide: return myRideFragmentName;
+            case R.id.availableRide: return availableRideFragmentName;
+            case R.id.historicRide: return historicRideFragmentName;
+            case R.id.myRegion: return myRegionFragmentName;
             case R.id.exit: return "exit";
 
         }
-        return "myRide";
+        return myRideFragmentName;
     }
 
     private void exitApp()
@@ -242,10 +332,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
     public void onFragmentInteraction(String str) {
-
     }
 
     @Override
@@ -256,9 +344,29 @@ public class MainActivity extends AppCompatActivity
         setFragment("travel");
     }
 
-
     @Override
     public void onRegionFragmentInteraction(int sign) {
-        setFragment("setting");
+        settingsFragment =Settings.newInstance();
+        settingsFragment.setArguments(null);
+        setFragment(settingFragmentName);
+    }
+
+    @Override
+    public void onSettingsFragmentInteraction(int sign) {
+        setFragment(myRegionFragmentName);
+    }
+
+    @Override
+    public void OnRegionAdapterInteractionListener(int regionId) {
+        if(regionId == -2) //mean we delete object
+        {
+
+        }
+        settingsFragment =Settings.newInstance();
+        Bundle bundle = new Bundle();
+        bundle.putInt("REGIONID",regionId);
+        settingsFragment.setArguments(bundle);
+        setFragment(settingFragmentName);
+
     }
 }

@@ -51,8 +51,9 @@ public class MyRegion extends Fragment implements View.OnClickListener{
     public void fillMyRegion()
     {
         myRegionAdapter=new RegionAdapter(myActivity,R.layout.item_region,listDsManager.getRegions());
-        myRegionAdapter.notifyDataSetChanged();
+        //myRegionAdapter.notifyDataSetChanged();
         listView.setAdapter(myRegionAdapter);
+
     }
 
     @Override
@@ -68,8 +69,8 @@ public class MyRegion extends Fragment implements View.OnClickListener{
         return  myView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(int sign) {
+
+    public void onAddButtonPressed(int sign) {
         if (mListener != null) {
             mListener.onRegionFragmentInteraction(sign);
         }
@@ -98,12 +99,17 @@ public class MyRegion extends Fragment implements View.OnClickListener{
         {
             case R.id.addRegion:
                 // 1 mean add Region
-                onButtonPressed(1);
+                onAddButtonPressed(1);
                 break;
             default:
                 break;
         }
     }
+
+    //@Override
+    //public void OnRegionAdapterDelete(int regionId) {
+    //    myRegionAdapter.notifyDataSetChanged();
+    //}
 
     /**
      * This interface must be implemented by activities that contain this
@@ -116,7 +122,7 @@ public class MyRegion extends Fragment implements View.OnClickListener{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onRegionFragmentInteraction(int sign);
     }
     @Override

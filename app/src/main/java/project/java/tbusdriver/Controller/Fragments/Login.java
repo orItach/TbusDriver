@@ -1,12 +1,12 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +49,7 @@ public class Login extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
     **/
-    // TODO: Rename and change types and number of parameters
+
     //public static Login1 newInstance() {
     //    Login1 fragment = new Login1();
     //    Bundle args = new Bundle();

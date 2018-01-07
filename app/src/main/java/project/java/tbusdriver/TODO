@@ -1,5 +1,29 @@
 #1 change name, support two lan'
-#2 fix the Adapter-probably race condition
 #3 complete the feedback
 #4 continue with order proceeded
 #5 notifyDataSetChanged to all the adepter
+
+
+08/11/17
+done 1. fix bugs in work time definition
+done 2. if ride time = null; , use --:--
+done 3. change word in button if update or new
+done 4. generate list of all region with full time work
+done 5. add checkbox to choose all day
+
+
+18/11/17
+done 1. move lisner to object in region adapter
+done 2. make massege when take ride success
+done 3. auto refresh after taking ride succes
+done 4. fix foucos in navigationdrawer
+
+26/11/17
+1. show current location when app go up
+2. change in one region change everyone
+see mail
+
+07/07/2018
+1. make zoom in the current location
+2. show route
+3. make historic ride screen

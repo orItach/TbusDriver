@@ -33,6 +33,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
     Context context;
     ListDsManager listDsManager;
     View listView;
+    MyRideAdapter instance;
     OnFragmentInteractionListener mCallBack;
 
 
@@ -45,6 +46,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
         this.agencyList.addAll(content);
         listDsManager=(ListDsManager) new Factory(c).getInstance();
         mCallBack = (OnFragmentInteractionListener) context;
+        instance=this;
 
     }
     @Override
@@ -62,7 +64,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (convertView == null) {
+        //if (convertView == null) {
 
             //listView = new View(context);
 
@@ -75,13 +77,24 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
 
             TextView TVID = (TextView) listView.findViewById(R.id.name);
             String id=String.valueOf(content.get(position).getRideId());
-
             TVID.setText(id);
-            unclaim.setOnClickListener(this);
+
+            TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
+            String travelTime= String.valueOf(content.get(position).getTravelTime());
+            TVTravelTime.setText(travelTime);
+            unclaim.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String rideID=String.valueOf(content.get(position).getRideId());
+                    String [] user=new String[1];
+                    user[0]=rideID;
+                    new MyRideAdapter.UsersTask().execute(user);
+                }
+            });
             startRide.setOnClickListener(this);
-        } else {
-            listView = (View) convertView;
-        }
+        //} else {
+        //    listView = (View) convertView;
+        //}
         return listView;
     }
 
@@ -119,6 +132,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
                     Ride temp=listDsManager.getMyRide().get(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
                     listDsManager.getAvailableRides().add(temp);
                     listDsManager.getMyRide().remove(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
+                    content = listDsManager.getMyRide();
                     publishProgress("");
                     toReturn="";
                 } else {
@@ -135,6 +149,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
         protected void onPostExecute(String result) {
 
             if(result.equals("")) {
+                instance.notifyDataSetChanged();
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
             }
@@ -152,7 +167,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
             if(values[0].length()>1)
                 showAlert(context,values[0]);
             else {
-
+                instance.notifyDataSetChanged();
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
         }

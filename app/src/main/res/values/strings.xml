@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TbusDriver</string>
+    <string name="app_name">Tbus Driver</string>
     <string name="title_activity_travel">Travel</string>
     <string name="busy">busy</string>
     <string name="available">available</string>

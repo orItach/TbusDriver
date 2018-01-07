@@ -42,5 +42,21 @@ public class Const {
     static final String URL_CLAIM_A_RIDE = PROVIDE_NAME + "/taxi/claim/";
 
     public static final Uri CLAIM_A_RIDE_URI = Uri.parse(URL_CLAIM_A_RIDE);
+    
+    
+    /////////////////////// App Constant //////////////////////////////////////
+    
+    /////// TODO: 20/10/2017  add all constant like fragment name keys and so on to here
+    //public static final Enum FragmentName=;
+    public static final String AvailableRidesListName ="AvailableRides";
+    public static final String MyRideListName ="MyRide";
+    public static final String HistoricRidesListName ="HistoricRides";
+    public static final String RegionsListName ="Regions";
 
+    public static final String TravelFragmentName ="travel";
+    public static final String myRideFragmentName ="myRide";
+    public static final String availableRideFragmentName ="availableRide";
+    public static final String historicRideFragmentName ="historicRide";
+    public static final String myRegionFragmentName = "myRegion";
+    public static final String settingFragmentName = "setting";
 }

@@ -45,14 +45,6 @@ public class RideView extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         myView=inflater.inflate(R.layout.fragment_ride_view, container, false);
-        //ListView sem0 = (ListView) myView.findViewById(R.id.listSem0);
-        //ListView sem1 = (ListView) myView.findViewById(R.id.listSem1);
-        //ListView sem2 = (ListView) myView.findViewById(R.id.listSem2);
-
-
-        ////sem0.setAdapter(new GradeAdapter(getActivity(),R.layout.fragment_grades_view,sem0List.getList()));
-        ////sem1.setAdapter(new GradeAdapter(getActivity(),R.layout.fragment_grades_view,sem1List.getList()));
-        ////sem2.setAdapter(new GradeAdapter(getActivity(),R.layout.fragment_grades_view,sem2List.getList()));
         //int totalHeight=0;
         //ViewGroup.LayoutParams params = sem0.getLayoutParams();
         //params.height = totalHeight + (sem0.getDividerHeight() );

@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +18,11 @@ import project.java.tbusdriver.Entities.MyLocation;
 import project.java.tbusdriver.Entities.Region;
 import project.java.tbusdriver.Entities.Ride;
 import project.java.tbusdriver.Entities.Route;
+
+import static project.java.tbusdriver.Const.AvailableRidesListName;
+import static project.java.tbusdriver.Const.HistoricRidesListName;
+import static project.java.tbusdriver.Const.MyRideListName;
+import static project.java.tbusdriver.Const.RegionsListName;
 
 /**
  * Created by אור איטח on 27/06/2017.
@@ -29,8 +33,8 @@ public class ListDsManager {
     private static ArrayList<Ride> MyRide;
     private static ArrayList<Ride> HistoricRides;
     private static ArrayList<Region> Regions;
-    Context context;
-    DateFormat formatter ;
+    private Context context;
+    private DateFormat formatter ;
 
     public ListDsManager(Context context)
     {
@@ -73,7 +77,7 @@ public class ListDsManager {
         return Regions;
     }
 
-    public static void setRegions(ArrayList<Ride> Regions) {
+    public static void setRegions(ArrayList<Region> Regions) {
         Regions = Regions;
     }
 
@@ -113,6 +117,8 @@ public class ListDsManager {
 
         }
     }
+
+
     public void updateMyRides(String input)
     {
         try
@@ -145,8 +151,8 @@ public class ListDsManager {
                         route=JsonRouteToRoute(c.getJSONObject("json_route"));
                     }
                     if(travel_time.equalsIgnoreCase("null"))
-                        travel_time="15:00:00";
-                    Ride ride=new Ride(route,Time.valueOf(travel_time),id);
+                        travel_time="--:--";
+                    Ride ride=new Ride(route,travel_time,id);
                     MyRide.add(ride);
                     //ride.setTravelTime(c.getString("travel_time"));
                 }
@@ -156,7 +162,6 @@ public class ListDsManager {
         }
         else
         {
-
         }
     }
 
@@ -179,8 +184,8 @@ public class ListDsManager {
                         route=JsonRouteToRoute(c.getJSONObject("json_route"));
                     }
                     if(travel_time.equalsIgnoreCase("null"))
-                        travel_time="15:00:00";
-                    Ride ride=new Ride(route,Time.valueOf(travel_time),id);
+                        travel_time="--:--";
+                    Ride ride=new Ride(route,travel_time,id);
                     AvailableRides.add(ride);
                     //ride.setTravelTime(c.getString("travel_time"));
                 }
@@ -197,20 +202,21 @@ public class ListDsManager {
     @Nullable
     private Route JsonRouteToRoute(JSONObject jsonRoute)
     {
-        Location geom=new Location("");
-        MyLocation myLocation=new MyLocation(0,geom,5);
         ArrayList<MyLocation> temp=new ArrayList<>();
         Route result=new Route(temp);
+        //JSONObject point;
         if(jsonRoute!=null)
         {
             try {
                 for (int i = 0; i < jsonRoute.length(); i++) {
                     JSONObject point = jsonRoute.getJSONObject(String.valueOf(i));
                     String id = String.valueOf(i);
+                    Location geom=new Location("");
                     geom.setLatitude(point.getJSONObject("geom").getDouble("lat"));
                     geom.setLongitude(point.getJSONObject("geom").getDouble("lng"));
                     //Double distance=
                     // tmp hash map for single contact
+                    MyLocation myLocation=new MyLocation(0,geom,5);
                     myLocation.setDistance(point.getDouble("distance"));
                     myLocation.setLocationId(i);
                     myLocation.setMyLocation(geom);
@@ -264,39 +270,41 @@ public class ListDsManager {
         }
     }
 
-    public int convertRideIdToIndex(String list,int rideId)
+    public static int convertRideIdToIndex(String list,int rideId)
     {
         switch (list)
         {
-            case "AvailableRides":
+            case AvailableRidesListName:
                 for (int i=0; i<AvailableRides.size();i++)
                 {
                     if(AvailableRides.get(i).getRideId()==rideId)
                         return i;
                 }
                 break;
-            case "MyRide":
+            case MyRideListName:
                 for (int i=0; i<MyRide.size();i++)
                 {
                     if(MyRide.get(i).getRideId()==rideId)
                         return i;
                 }
                 break;
-            case "HistoricRides":
+            case HistoricRidesListName:
                 for (int i=0; i<HistoricRides.size();i++)
                 {
                     if(HistoricRides.get(i).getRideId()==rideId)
                         return i;
                 }
                 break;
+            case RegionsListName:
+                for (int i = 0; i <Regions.size() ; i++)
+                {
+                    if (Regions.get(i).getRegionID()==rideId)
+                        return  i;
+                }
             default:
                 return -1;
         }
         return 0;
     }
-
-
-
-
 
 }

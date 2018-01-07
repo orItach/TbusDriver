@@ -5,12 +5,25 @@ package project.java.tbusdriver.Entities;
  */
 
 public class Region {
-    String regionName;
-    Day[] days;
+    static  int oldRegionID;
+    private int regionID;
+    private String regionName;
+    private Day[] days;
 
     public Region(String regionName, Day[] days) {
+        this.regionID=oldRegionID+1;
+        oldRegionID=this.regionID;
         this.regionName = regionName;
         this.days = days;
+    }
+
+
+    public int getRegionID() {
+        return regionID;
+    }
+
+    public void setRegionID(int regionID) {
+        this.regionID = regionID;
     }
 
     public String getRegionName() {
@@ -28,4 +41,8 @@ public class Region {
     public void setDays(Day[] days) {
         this.days = days;
     }
+
+
+
+
 }
