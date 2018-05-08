@@ -1,16 +1,36 @@
 package project.java.tbusdriver.Entities;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+//import com.google.gson.Gson;
+
+import java.io.Serializable;
 
 /**
  * Created by אור איטח on 26/06/2017.
  */
 
-public class MyLocation {
+public class MyLocation implements Serializable,Parcelable {
+
+    private static final long serialVersionUID = 0L;
 
     private int locationId;
     private Location myLocation;
     private double distance;
+
+    public static final Creator<MyLocation> CREATOR = new Creator<MyLocation>() {
+        @Override
+        public MyLocation createFromParcel(Parcel in) {
+            return new MyLocation(in);
+        }
+
+        @Override
+        public MyLocation[] newArray(int size) {
+            return new MyLocation[size];
+        }
+    };
 
     public int getLocationId() {
         return locationId;
@@ -42,6 +62,30 @@ public class MyLocation {
         this.distance = distance;
     }
 
+    public MyLocation(Parcel in){
+        //Gson gson = new Gson();
+        //String jsonData = in.readString();
+        //this.locationId = gson.fromJson(jsonData,int.class);
+        //jsonData = in.readString();
+        //this.myLocation = gson.fromJson(jsonData,Location.class);
+        //jsonData = in.readString();
+        //this.distance = gson.fromJson(jsonData,double.class);
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        //Gson gson = new Gson();
+        //String json = gson.toJson(locationId);
+        //dest.writeString(json);
+        //json = gson.toJson(myLocation);
+        //dest.writeString(json);
+        //json = gson.toJson(distance);
+        //dest.writeString(json);
+    }
 
 }

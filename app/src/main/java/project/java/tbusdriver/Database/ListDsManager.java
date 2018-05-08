@@ -13,6 +13,8 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import project.java.tbusdriver.Entities.MyLocation;
 import project.java.tbusdriver.Entities.Region;
@@ -81,29 +83,17 @@ public class ListDsManager {
         Regions = Regions;
     }
 
-    public void updateHistoricRides(Cursor matrixAgency)
+    public void updateHistoricRides(String input)
     {
-        try{
-            if (matrixAgency==null)
-                throw new Exception("The Agencies are empty");
+        try
+        {
             HistoricRides.clear();
-            for (matrixAgency.moveToFirst(); !matrixAgency.isAfterLast(); matrixAgency.moveToNext()) {
-                //HistoricRides.add(new Ride(matrixAgency.getLong(matrixAgency.getColumnIndex("ID")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("name")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("country")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("city")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("street")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("phoneNum")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("email")),
-                //        matrixAgency.getString(matrixAgency.getColumnIndex("link")),
-                //        "https://d30y9cdsu7xlg0.cloudfront.net/png/17241-200.png"));
-                }
+            StringHistoricalRidesToJson(input);
         }
         catch (Exception e)
-            {
-            //Toast.makeText(context,e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        {
 
+        }
     }
 
     public void updateAvailableRides(String input) {
@@ -146,6 +136,15 @@ public class ListDsManager {
                 for (int i = 0; i < rides.length(); i++) {
                     JSONObject c = rides.getJSONObject(i);
                     travel_time = c.getString("travel_time");
+                    Date now = new Date();
+                    DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ENGLISH);
+                    try {
+                        travel_time = format.format(now);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                     id=c.getInt("id");
                     if (!c.isNull("json_route")) {
                         route=JsonRouteToRoute(c.getJSONObject("json_route"));
@@ -187,6 +186,39 @@ public class ListDsManager {
                         travel_time="--:--";
                     Ride ride=new Ride(route,travel_time,id);
                     AvailableRides.add(ride);
+                    //ride.setTravelTime(c.getString("travel_time"));
+                }
+            } catch ( Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+
+        }
+    }
+    private void StringHistoricalRidesToJson(String input)
+    {
+        if (input != null) {
+            try {
+                JSONObject result = new JSONObject(input);
+                // Getting JSON Array node
+                JSONArray rides = result.getJSONArray("rides");
+                int id;
+                String travel_time;
+                Route route=null;
+                // looping through All Contacts
+                for (int i = 0; i < rides.length(); i++) {
+                    JSONObject c = rides.getJSONObject(i);
+                    travel_time = c.getString("travel_time");
+                    id=c.getInt("id");
+                    if (!c.isNull("json_route")) {
+                        route=JsonRouteToRoute(c.getJSONObject("json_route"));
+                    }
+                    if(travel_time.equalsIgnoreCase("null"))
+                        travel_time="--:--";
+                    Ride ride=new Ride(route,travel_time,id);
+                    HistoricRides.add(ride);
                     //ride.setTravelTime(c.getString("travel_time"));
                 }
             } catch ( Exception e) {

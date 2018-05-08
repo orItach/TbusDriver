@@ -180,12 +180,12 @@ public class OtherActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onSettingsFragmentInteraction(int sign) {
 
     }
 
     @Override
-    public void onSettingsFragmentInteraction(int sign) {
+    public void onFragmentInteraction(String str) {
 
     }
 }

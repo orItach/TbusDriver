@@ -18,6 +18,9 @@
             android:id="@+id/myRegion"
             android:title="זמני עבודה" />
         <item
+            android:id="@+id/personalInfo"
+            android:title="פרטיים אישיים" />
+        <item
             android:id="@+id/exit"
             android:title="יציאה" />
     </group>

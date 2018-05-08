@@ -136,6 +136,7 @@ public class Settings extends Fragment implements
 
         allDay = (CheckBox) myView.findViewById(R.id.allDay);
         allDay.setOnClickListener(this);
+        allDay.setChecked(false);
         formatter = new SimpleDateFormat("HH:mm");
         return myView;
     }
@@ -174,7 +175,10 @@ public class Settings extends Fragment implements
         if (allDay.isChecked()) {
             dayStartTimeString = "00:01";
             dayFinishTimeString = "23:59";
+            TVTime.setText(dayStartTimeString);
+            TVSecondTime.setText(dayFinishTimeString);
         }
+        // if new time added
         if (bundle == null) {
             String regionName = spinnerRegion.getSelectedItem().toString();
             if (dayStartTimeString.equalsIgnoreCase("בחר זמן") || dayFinishTimeString.equalsIgnoreCase("בחר זמן")) {
@@ -200,11 +204,12 @@ public class Settings extends Fragment implements
             }
             temp = new Region(regionName, newDays);
             boolean isNewRegion = checkIfNewRegion(temp);
-            if (isNewRegion != false) {
+            if (isNewRegion == false) {
                 showAlert(myActivity, "הכנס אזור עבודה חדש");
                 return;
             }
             ListDsManager.getRegions().add(temp);
+            showAlert(myActivity, "אזור עבודה נוסף בהצלחה");
         }
         //if send some RegionId- its mean update
         else {
@@ -231,12 +236,11 @@ public class Settings extends Fragment implements
                 }
             }
             temp.setDays(newDays);
+            showAlert(myActivity, "אזור עבודה עודכן בהצלחה");
         }
-        showAlert(myActivity, "אזור עבודה עודכן בהצלחה");
         if (mListener != null) {
             mListener.onSettingsFragmentInteraction(1);
         }
-
     }
 
     public void updateUserDay(View v) {
@@ -317,6 +321,14 @@ public class Settings extends Fragment implements
             TVSecondTime.setClickable(false);
             TVTime.setAlpha(0.5f);
             TVSecondTime.setAlpha(0.5f);
+            for (Day userDay: userDays) {
+                if (userDay != null) {
+                    userDay.setStartTime("00:01:00");
+                    userDay.setEndTime("23:59:00");
+                }
+            }
+            TVTime.setText("00:01");
+            TVSecondTime.setText("23:59");
         } else {
             TVTime.setEnabled(true);
             TVSecondTime.setEnabled(true);

@@ -1,6 +1,10 @@
 package project.java.tbusdriver.Controller.Adapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import project.java.tbusdriver.Controller.Activitys.MainActivity;
+import project.java.tbusdriver.Controller.Fragments.MyRegion;
 import project.java.tbusdriver.Database.Factory;
 import project.java.tbusdriver.Database.ListDsManager;
 import project.java.tbusdriver.Entities.Region;
@@ -30,6 +36,7 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
     private ListDsManager listDsManager;
     View listView;
     private RegionAdapter instance;
+    Activity myActivity;
 
     private OnRegionAdapterInteractionListener mListener;
     
@@ -57,6 +64,7 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
     @Override
     public View getView(final int position, View convertView, @NonNull final ViewGroup parent) {
 
+        myActivity = (MainActivity)context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         //if (convertView == null) {
@@ -88,12 +96,8 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String regionId = String.valueOf(content.get(position).getRegionID());
-                    int regionIndex = convertRideIdToIndex("Regions",Integer.parseInt(regionId));
-                    //Region regionToDelete= (regionId);
-                    ListDsManager.getRegions().remove(regionIndex);
-                    content = ListDsManager.getRegions();
-                    instance.notifyDataSetChanged();
+                    showSureDelete(position);
+
 
                 }
             });
@@ -103,6 +107,33 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
         //}
         return listView;
     }
+
+    private void showSureDelete(int position){
+        final int tempPosition= position;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(myActivity);
+        alertDialogBuilder.setMessage("האם אתה בטוח?")
+                .setCancelable(false)
+                .setPositiveButton("מחק",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                String regionId = String.valueOf(content.get(tempPosition).getRegionID());
+                                int regionIndex = convertRideIdToIndex("Regions",Integer.parseInt(regionId));
+                                //Region regionToDelete= (regionId);
+                                ListDsManager.getRegions().remove(regionIndex);
+                                content = ListDsManager.getRegions();
+                                instance.notifyDataSetChanged();
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("בטל",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
 
     //@Override
     //@Deprecated

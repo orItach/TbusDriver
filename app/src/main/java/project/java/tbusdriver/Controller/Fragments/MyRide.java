@@ -2,6 +2,7 @@ package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,11 +15,15 @@ import android.widget.ListView;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import project.java.tbusdriver.Const;
 import project.java.tbusdriver.Controller.Adapter.MyRideAdapter;
 import project.java.tbusdriver.Database.Factory;
 import project.java.tbusdriver.Database.ListDsManager;
+import project.java.tbusdriver.Entities.Ride;
 import project.java.tbusdriver.R;
+import project.java.tbusdriver.Service.rideStartService;
 
 import static project.java.tbusdriver.usefulFunctions.GET;
 import static project.java.tbusdriver.usefulFunctions.showAlert;
@@ -75,7 +80,7 @@ public class MyRide extends Fragment  {
             String toReturn = "";
 
             try {
-                toReturn = GET(Const.USER_HISTORIC_RIDE_URI.toString());
+                toReturn = GET(Const.USER_MY_RIDE_URI.toString());
                 String httpResult = new JSONObject(toReturn).getString("status");
                 if (httpResult.compareTo("OK")==0) {
                     listDsManager.updateMyRides(toReturn);
@@ -115,12 +120,24 @@ public class MyRide extends Fragment  {
                 //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
+
             myRideAdapter=new MyRideAdapter(myActivity,R.layout.item_available_ride,listDsManager.getMyRide());
             listView.setAdapter(myRideAdapter);
             myRideAdapter.notifyDataSetChanged();
             ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
             listView.invalidateViews();
             listView.scrollBy(0, 0);
+            //Intent myRideStartServiceIntent = new Intent(getActivity(), rideStartService.class);
+            //ArrayList<Ride> temp =listDsManager.getMyRide();
+
+            //myRideStartServiceIntent.putExtra("myRide", temp);
+            //try {
+            //    getContext().startService(myRideStartServiceIntent);
+            //}
+            //catch (Exception e)
+            {
+                int x =5;
+            }
         }
     }
 

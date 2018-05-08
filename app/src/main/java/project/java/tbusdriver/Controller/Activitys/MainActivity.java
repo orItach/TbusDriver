@@ -1,6 +1,10 @@
 package project.java.tbusdriver.Controller.Activitys;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +13,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,6 +21,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -26,6 +34,7 @@ import project.java.tbusdriver.Controller.Fragments.AvailableRide;
 import project.java.tbusdriver.Controller.Fragments.HistoricalRide;
 import project.java.tbusdriver.Controller.Fragments.MyRegion;
 import project.java.tbusdriver.Controller.Fragments.MyRide;
+import project.java.tbusdriver.Controller.Fragments.PersonalInfo;
 import project.java.tbusdriver.Controller.Fragments.Settings;
 import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.Database.Factory;
@@ -35,6 +44,7 @@ import project.java.tbusdriver.Entities.Region;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 
+import static project.java.tbusdriver.Const.personalInfoFragmentName;
 import static project.java.tbusdriver.Const.TravelFragmentName;
 import static project.java.tbusdriver.Const.availableRideFragmentName;
 import static project.java.tbusdriver.Const.historicRideFragmentName;
@@ -53,7 +63,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView.OnNavigationItemSelectedListener,
         Settings.OnFragmentInteractionListener,
         MyRegion.OnFragmentInteractionListener,
-        RegionAdapter.OnRegionAdapterInteractionListener{
+        RegionAdapter.OnRegionAdapterInteractionListener,
+        PersonalInfo.OnFragmentInteractionListener{
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -62,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     Toolbar toolbar;
     RWSetting rwSettings = null;
+    ImageView menuImage;
     SupportMapFragment mapFragment;
     Travel travelFragment;
     MyRide myRideFragment;
@@ -69,7 +81,12 @@ public class MainActivity extends AppCompatActivity
     Settings settingsFragment;
     MyRegion myRegionFragment;
     HistoricalRide historicalRideFragment;
+    PersonalInfo personalInfoFragment;
     boolean doubleBackToExitPressedOnce = false;
+
+    public static final String RECEIVE_JSON = "com.your.package.RECEIVE_RIDE_START";
+    private BroadcastReceiver bReceiver;
+
 
 
     @Override
@@ -107,6 +124,12 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        LinearLayout nevHeader= (LinearLayout)  navigationView.getHeaderView(0);
+        menuImage = (ImageView) nevHeader.findViewById(R.id.menuImage);
+        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //View hView =  navigationView.getHeaderView(0);
+        //TextView nav_user = (TextView)hView.findViewById(R.id.nav_name);
+        //nav_user.setText(user);
         //set Travel to be the first fragment
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -118,6 +141,14 @@ public class MainActivity extends AppCompatActivity
 
         //mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment=SupportMapFragment.newInstance();
+        menuImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                setFragment(personalInfoFragmentName);
+            }
+
+        });
         // need to be deleted after sync with the server
         {
             ListDsManager listDsManager = (ListDsManager) new Factory(this).getInstance();
@@ -179,6 +210,21 @@ public class MainActivity extends AppCompatActivity
         //int tabIndex=getIntent().getIntExtra("index",0);
 
         //viewPager.setCurrentItem(tabIndex);
+
+        bReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getAction().equals(RECEIVE_JSON)) {
+                    String fragmentToSet = intent.getStringExtra("fragment");
+                    setFragment(fragmentToSet);
+                    //Do something with the string
+                }
+            }
+        };
+        LocalBroadcastManager bManager= LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RECEIVE_JSON);
+        bManager.registerReceiver(bReceiver, intentFilter);
     }
 
     @Override
@@ -300,6 +346,12 @@ public class MainActivity extends AppCompatActivity
             case "exit":
                 exitApp();
                 break;
+            case personalInfoFragmentName:
+                personalInfoFragment = new PersonalInfo();
+                fragmentTransaction.replace(R.id.content_main,personalInfoFragment);
+                //navigationView.setCheckedItem(R.id.);
+                drawer.closeDrawers();
+                break;
             default:
                 travelFragment = newInstance();
                 fragmentTransaction.replace(R.id.content_main,travelFragment);
@@ -320,6 +372,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.availableRide: return availableRideFragmentName;
             case R.id.historicRide: return historicRideFragmentName;
             case R.id.myRegion: return myRegionFragmentName;
+            case R.id.personalInfo: return personalInfoFragmentName;
             case R.id.exit: return "exit";
 
         }

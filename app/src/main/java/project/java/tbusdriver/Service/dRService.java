@@ -3,13 +3,18 @@ package project.java.tbusdriver.Service;
 /**
  * Created by אור איטח on 12/06/2017.
  */
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.usefulFunctions;
+
+import static project.java.tbusdriver.Controller.Travel.newInstance;
 
 public class dRService extends Service {
 
@@ -19,7 +24,9 @@ public class dRService extends Service {
         return null;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void onCreate() {
+        int x =4;
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -41,7 +48,8 @@ public class dRService extends Service {
                                 if (usefulFunctions.busy==false && usefulFunctions.Token!=null)
                                 {
                                     //// TODO: 17/07/2017 send update to server
-                                    // send location update
+                                    Travel travelFragment = newInstance();
+                                    Location mLastKnowLocation= travelFragment.getmLastKnownLocation();
                                 }
 
                                 //send query to the data base and count him

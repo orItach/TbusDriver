@@ -71,6 +71,10 @@
             </intent-filter>
 
         </receiver>
+        <service android:name=".Service.dRService" />
+        <service android:name=".Service.rideStartService" />
+        <service android:name=".Service.updateLocationService" />
+        <service android:name=".Service.startAlarmService" />
     </application>
 
 </manifest>

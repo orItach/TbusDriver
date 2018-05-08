@@ -35,6 +35,10 @@ public class Const {
 
     public static final Uri USER_HISTORIC_RIDE_URI = Uri.parse(URL_USER_HISTORIC_RIDE);
 
+    static final String URL_USER_MY_RIDE = PROVIDE_NAME + "/taxi/MyRides";
+
+    public static final Uri USER_MY_RIDE_URI = Uri.parse(URL_USER_MY_RIDE);
+
     static final String URL_UPDATE_LOCATION = PROVIDE_NAME + "/taxi/location";
 
     public static final Uri UPDATE_LOCATION_URI = Uri.parse(URL_UPDATE_LOCATION);
@@ -42,6 +46,10 @@ public class Const {
     static final String URL_CLAIM_A_RIDE = PROVIDE_NAME + "/taxi/claim/";
 
     public static final Uri CLAIM_A_RIDE_URI = Uri.parse(URL_CLAIM_A_RIDE);
+
+    static final String URL_PRESONAL_INFO = PROVIDE_NAME + "/account/me/";
+
+    public static final Uri PRESONAL_INFO_URI = Uri.parse(URL_PRESONAL_INFO);
     
     
     /////////////////////// App Constant //////////////////////////////////////
@@ -59,4 +67,5 @@ public class Const {
     public static final String historicRideFragmentName ="historicRide";
     public static final String myRegionFragmentName = "myRegion";
     public static final String settingFragmentName = "setting";
+    public static final String personalInfoFragmentName = "personalInfo";
 }
