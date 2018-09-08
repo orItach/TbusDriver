@@ -20,6 +20,9 @@ import project.java.tbusdriver.Controller.Fragments.MyRide;
 import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.R;
 
+////////////////////////////////////////////////////////////////////
+/////////////////////////// NOT IN USE ////////////////////////////
+////////////////////////////////////////////////////////////////////
 public class Main4Activity extends AppCompatActivity implements
         MyRide.OnFragmentInteractionListener,
         AvailableRide.OnFragmentInteractionListener,

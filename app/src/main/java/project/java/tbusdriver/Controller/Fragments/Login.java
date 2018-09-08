@@ -1,7 +1,7 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -140,6 +140,7 @@ public class Login extends Fragment {
 
             parameters.put("username",params[1]);
             parameters.put("phone",params[0]);
+            parameters.put("taxiFlag",1);
 
             try {
                 toReturn = POST(Const.LOGIN_URI.toString() ,parameters);

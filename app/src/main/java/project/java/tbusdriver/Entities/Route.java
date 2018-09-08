@@ -12,11 +12,12 @@ import java.util.ArrayList;
 /**
  * Created by אור איטח on 04/06/2017.
  */
-
+//////////////////////////////////////////////////////
+//////////////////// Route //////////////////////////
+////////////////////////////////////////////////////
 public class Route implements Serializable,Parcelable
 {
-    private static final long serialVersionUID = 0L;
-
+    // list of location
     private ArrayList<MyLocation> Locations;
 
     public Route( ArrayList<MyLocation> locations) {

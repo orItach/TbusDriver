@@ -17,13 +17,16 @@ import java.util.Map;
 
 import project.java.tbusdriver.Const;
 import project.java.tbusdriver.Controller.Travel;
+import project.java.tbusdriver.usefulFunctions;
 
 import static project.java.tbusdriver.usefulFunctions.POST;
 
 /**
  * Created by אור איטח on 02/05/2018.
  */
-
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////update the server with the current location of the driver //////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 public class updateLocationService extends Service {
 
     double Lat;
@@ -34,17 +37,29 @@ public class updateLocationService extends Service {
         LatLng currentLocation;
         Double[] LatLng =new Double[2];
         try {
-
+            Travel travelFragment = Travel.newInstance();
             Bundle data = intent.getExtras();
             if (data!=null) {
                 LatLng[0] = data.getDouble("Lat");
                 LatLng[1] = data.getDouble("Lng");
             }
             else {
-                Travel travelFragment = Travel.newInstance();
                 Location lastKnownLocation = travelFragment.getmLastKnownLocation();
-                LatLng[0] = lastKnownLocation.getLatitude();
-                LatLng[1] = lastKnownLocation.getLongitude();
+                if (lastKnownLocation!=null) {
+                    LatLng[0] = lastKnownLocation.getLatitude();
+                    LatLng[1] = lastKnownLocation.getLongitude();
+                }
+                else
+                {
+                    LatLng[0] = (double) 5;
+                    LatLng[1] = (double) 5;
+                }
+            }
+            // if the driver is busy we send null
+            if (usefulFunctions.busy==true)
+            {
+                LatLng[0] = null;
+                LatLng[1] = null;
             }
             //currentMyRide = temp.getParcelable("myRide");
             //currentMyRide = intent.getParcelableExtra("myRide");

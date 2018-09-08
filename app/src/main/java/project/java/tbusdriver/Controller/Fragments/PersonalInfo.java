@@ -43,10 +43,10 @@ public class PersonalInfo extends Fragment implements
 
     Activity myActivity;
     View myView;
-    EditText name;
-    EditText phone;
-    EditText email;
-    EditText address;
+    TextView name;
+    TextView phone;
+    TextView email;
+    TextView address;
     String gender;
     Spinner spinnerGender;
     Button update;
@@ -73,12 +73,12 @@ public class PersonalInfo extends Fragment implements
 
 
         // Inflate the layout for this fragment
-        name = (EditText) myView.findViewById(R.id.name);
-        phone = (EditText) myView.findViewById(R.id.phone);
-        email = (EditText) myView.findViewById(R.id.email);
-        address = (EditText) myView.findViewById(R.id.address);
+        name = (TextView) myView.findViewById(R.id.name);
+        phone = (TextView) myView.findViewById(R.id.phone);
+        email = (TextView) myView.findViewById(R.id.email);
+        address = (TextView) myView.findViewById(R.id.address);
         spinnerGender = (Spinner) myView.findViewById(R.id.gender);
-        String[] genders = new String[]{"זכר", "נקבה", "אחר"};
+        String[] genders = new String[]{"זכר", "נקבה",};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, genders);
         spinnerGender.setAdapter(spinnerAdapter);
         spinnerGender.setOnItemSelectedListener(this);

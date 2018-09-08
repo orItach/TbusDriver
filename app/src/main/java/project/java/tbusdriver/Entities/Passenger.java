@@ -6,6 +6,9 @@ import android.location.Location;
  * Created by אור איטח on 04/06/2017.
  */
 
+//////////////////////////////////////////////////////
+//////////////////// Passenger //////////////////////
+////////////////////////////////////////////////////
 public class Passenger
 {
     private int passengerNumber;
@@ -13,7 +16,7 @@ public class Passenger
     private String phone;
     private String note;
     private Location source;
-    private Location distension;
+    private Location destination;
     private String paymentType;
 
     public int getPassengerNumber() {
@@ -36,8 +39,8 @@ public class Passenger
         return phone;
     }
 
-    public Location getDistension() {
-        return distension;
+    public Location getdestination() {
+        return destination;
     }
 
     public String getPaymentType() {
@@ -64,8 +67,8 @@ public class Passenger
         this.source = source;
     }
 
-    public void setDistension(Location distension) {
-        this.distension = distension;
+    public void setdestination(Location destination) {
+        this.destination = destination;
     }
 
 
@@ -73,14 +76,14 @@ public class Passenger
         this.paymentType = paymentType;
     }
 
-    public Passenger(int passengerNumber_in,String name_in,String phone_in,String note_in,Location source_in,Location distension_in,String paymentType_in)
+    public Passenger(int passengerNumber_in,String name_in,String phone_in,String note_in,Location source_in,Location destination_in,String paymentType_in)
     {
         this.passengerNumber=passengerNumber_in;
         this.name=name_in;
         this.phone=phone_in;
         this.note=note_in;
         this.source=source_in;
-        this.distension=distension_in;
+        this.destination=destination_in;
         this.paymentType=paymentType_in;
     }
 

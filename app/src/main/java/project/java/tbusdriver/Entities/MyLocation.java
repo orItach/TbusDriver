@@ -11,14 +11,20 @@ import java.io.Serializable;
 /**
  * Created by אור איטח on 26/06/2017.
  */
-
+//////////////////////////////////////////////////////
+//////////////////// MyLocation //////////////////////
+////////////////////////////////////////////////////
 public class MyLocation implements Serializable,Parcelable {
-
-    private static final long serialVersionUID = 0L;
 
     private int locationId;
     private Location myLocation;
     private double distance;
+    // flag mean the station is down or up
+    private boolean isPickUp;
+    private String passenger;
+    private String username;
+    private String phone;
+    private String destinationAddress;
 
     public static final Creator<MyLocation> CREATOR = new Creator<MyLocation>() {
         @Override
@@ -56,10 +62,59 @@ public class MyLocation implements Serializable,Parcelable {
         this.distance = distance;
     }
 
+    public boolean isPickUp() {
+        return isPickUp;
+    }
+
+    public void setPickUp(boolean pickUp) {
+        isPickUp = pickUp;
+    }
+
+    public String getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(String passenger) {
+        this.passenger = passenger;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDestinationAddress() {
+        return destinationAddress;
+    }
+
+    public void setDestinationAddress(String destinationAddress) {
+        this.destinationAddress = destinationAddress;
+    }
+
     public MyLocation(int locationId, Location myLocation, double distance) {
         this.locationId = locationId;
         this.myLocation = myLocation;
         this.distance = distance;
+    }
+    public MyLocation(int locationId, Location myLocation, double distance,boolean isPickUp, String passenger,String username, String phone) {
+        this.locationId = locationId;
+        this.myLocation = myLocation;
+        this.distance = distance;
+        this.isPickUp = isPickUp;
+        this.passenger = passenger;
+        this.username = username;
+        this.phone = phone;
     }
 
     public MyLocation(Parcel in){
@@ -87,5 +142,7 @@ public class MyLocation implements Serializable,Parcelable {
         //json = gson.toJson(distance);
         //dest.writeString(json);
     }
+
+
 
 }

@@ -18,6 +18,10 @@ import project.java.tbusdriver.Controller.Fragments.HistoricalRide;
 import project.java.tbusdriver.Controller.Fragments.Settings;
 import project.java.tbusdriver.R;
 
+////////////////////////////////////////////////////////////////////
+/////////////////////////// NOT IN USE ////////////////////////////
+////////////////////////////////////////////////////////////////////
+
 public class OtherActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         Settings.OnFragmentInteractionListener,

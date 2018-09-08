@@ -16,11 +16,17 @@ import java.util.Map;
 /**
  * Created by אור איטח on 22/06/2017.
  */
-
+//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////// Here have some global functions and global data //////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 public class usefulFunctions {
 
-    public static String Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTExLCJpYXQiOjE1MDYyNTcwMDF9.dn17ItRw6f55wfbO_YhAOMuNxU14fUY-dVx0y98M-bo";
 
+    //public static String Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTExLCJpYXQiOjE1MDYyNTcwMDF9.dn17ItRw6f55wfbO_YhAOMuNxU14fUY-dVx0y98M-bo";
+    // the driver token
+    public static String Token=null;
+
+    // flag that say if the driver want to get new rides
     public static boolean busy=false;
 
     public static void showAlert(Context context, String alert)
@@ -30,6 +36,7 @@ public class usefulFunctions {
         myAlert.show();
     }
 
+    // get req
     @NonNull
     public static String GET(String url) throws Exception {
         URL obj = new URL(url);
@@ -56,6 +63,7 @@ public class usefulFunctions {
     }
 
 
+    // post req
     @NonNull
     public static String POST(String url, Map<String,Object> params) throws IOException {
 
@@ -102,6 +110,7 @@ public class usefulFunctions {
             return "";
     }
 
+    // put req
     @NonNull
     public static String PUT(String url, Map<String,Object> params) throws IOException {
 

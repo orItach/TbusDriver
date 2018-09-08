@@ -29,8 +29,11 @@ import static project.java.tbusdriver.Const.RegionsListName;
 /**
  * Created by אור איטח on 27/06/2017.
  */
-
+/////////////////////////////////////////////////////
+///////////// the app DB ////////////////////////////
+////////////////////////////////////////////////////
 public class ListDsManager {
+
     private static ArrayList<Ride> AvailableRides;
     private static ArrayList<Ride> MyRide;
     private static ArrayList<Ride> HistoricRides;
@@ -252,6 +255,29 @@ public class ListDsManager {
                     myLocation.setDistance(point.getDouble("distance"));
                     myLocation.setLocationId(i);
                     myLocation.setMyLocation(geom);
+                    String test = point.getString("name");
+                    if (jsonRoute.toString().contains("username")){
+                        myLocation.setUsername(point.getString("username"));
+                    }
+                    if (jsonRoute.toString().contains("phone")){
+                        myLocation.setPhone(point.getString("phone"));
+                    }
+                    if (test != null && test.contains("-d")) {
+                        myLocation.setPickUp(true);
+                        myLocation.setPassenger(test.replace("-d",""));
+                    }
+                    else {
+                        myLocation.setPickUp(false);
+                        myLocation.setPassenger(test);
+                    }
+                    if (jsonRoute.toString().contains("junction_name"))
+                    {
+                        myLocation.setDestinationAddress(point.getString("junction_name"));
+                    }
+                    else
+                    {
+                        myLocation.setDestinationAddress("לא ידוע");
+                    }
                     // adding contact to contact list
                     result.getLocations().add(myLocation);
                 }

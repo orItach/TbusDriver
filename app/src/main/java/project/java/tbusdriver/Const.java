@@ -6,7 +6,9 @@ import android.net.Uri;
 /**
  * Created by אור איטח on 12/06/2017.
  */
-
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////// Here go the app constant like URL and on on /////////////
+/////////////////////////////////////////////////////////////////// ///////////////////
 public class Const {
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     //region const and URI
@@ -50,6 +52,10 @@ public class Const {
     static final String URL_PRESONAL_INFO = PROVIDE_NAME + "/account/me/";
 
     public static final Uri PRESONAL_INFO_URI = Uri.parse(URL_PRESONAL_INFO);
+
+    static final String URL_NOTIFICATION_TOKEN = PROVIDE_NAME + "/account/taxiDriverToken";
+
+    public static final Uri NOTIFICATION_TOKEN_URI = Uri.parse(URL_NOTIFICATION_TOKEN);
     
     
     /////////////////////// App Constant //////////////////////////////////////

@@ -1,5 +1,6 @@
 package project.java.tbusdriver.Controller;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -75,7 +76,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import project.java.tbusdriver.Const;
 import project.java.tbusdriver.Controller.Adapter.StationsAdapter;
 import project.java.tbusdriver.Database.Factory;
 import project.java.tbusdriver.Database.ListDsManager;
@@ -87,6 +90,7 @@ import project.java.tbusdriver.usefulFunctions;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static java.lang.Math.pow;
+import static project.java.tbusdriver.usefulFunctions.POST;
 
 public class Travel extends Fragment
             implements OnMapReadyCallback,
@@ -130,7 +134,8 @@ public class Travel extends Fragment
     boolean doZoom;
     ListDsManager listDsManager;
     Ride ride;
-    boolean inRoute;
+    public boolean inRoute;
+    boolean showStations; ///SHOWSTATIONS
     ListView stationsList;
     ArrayList<MyLocation> stations;
     StationsAdapter stationsAdapter;
@@ -257,8 +262,7 @@ public class Travel extends Fragment
                 PercentRelativeLayout.LayoutParams layoutParams = (PercentRelativeLayout.LayoutParams) v.getLayoutParams();
                 DisplayMetrics displayMetrics = myActivity.getResources().getDisplayMetrics();
 
-                // dpHeight is the 100% ?
-                float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+                // dpWidth is the 100% ?
                 float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
                 switch(action) {
                     case DragEvent.ACTION_DRAG_STARTED:
@@ -266,7 +270,6 @@ public class Travel extends Fragment
 
                         int x_cord = (int) event.getX();
                         int y_cord = (int) event.getY();
-
 
                         v.invalidate();
                         // Invalidate the view to force a redraw in the new tint
@@ -279,27 +282,7 @@ public class Travel extends Fragment
 
                         x_cord = (int) event.getX();
                         y_cord = (int) event.getY();
-                        availableButton.setVisibility(View.GONE);
-                        busyButton.setVisibility(View.GONE);
-                        myFloating.setVisibility(View.GONE);
-                        if (mapFragment.getView() != null){
-                            ViewGroup.LayoutParams mapFragmentParams = mapFragment.getView().getLayoutParams();
-                            mapFragmentParams.height = (int)(dpHeight*1.50);
-                            mapFragment.getView().setLayoutParams(mapFragmentParams);
-                        }
-                        ViewGroup.LayoutParams stationsListParams = stationsList.getLayoutParams();
-
-                        stationsListParams.height = (int)(dpHeight*0.20);
-                        stationsList.setLayoutParams(stationsListParams);
-                        stationsList.setVisibility(View.VISIBLE);
-                        v.invalidate();
-                        stationsAdapter = new StationsAdapter(myActivity,R.layout.item_station,stations);
-                        stationsList.setAdapter(stationsAdapter);
-                        RelativeLayout.LayoutParams draggableLayoutParams = (RelativeLayout.LayoutParams) DragbleText.getLayoutParams();
-                        draggableLayoutParams.removeRule(RelativeLayout.ABOVE);
-                        draggableLayoutParams.addRule(RelativeLayout.ABOVE, R.id.stationList );
-                        DragbleText.setText("אתה בנסיעה עם תחנות, גרור למטה על מנת להעלימן");
-                        stationsList.invalidateViews();
+                        ShowListStations();
                         //usefulFunctions.showAlert(myActivity, "ACTION_DRAG_ENTERED x: " +x_cord + "y: " + y_cord);
                         // Invalidate the view to force a redraw in the new tint
                         v.invalidate();
@@ -468,6 +451,7 @@ public class Travel extends Fragment
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
      */
+    @SuppressLint("NewApi")
     @Override
     public void onMapReady(GoogleMap map) {
         mMap =map;
@@ -485,12 +469,33 @@ public class Travel extends Fragment
             drawMap();
             drawStation(ride.getRoute().getLocations());
             stations = ride.getRoute().getLocations();
+            if(showStations){
+                ShowListStations();
+            }
             drawRoute(ride.getRoute().getLocations());
             DEFAULT_ZOOM = 13;
             if(mLastKnownLocation!=null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(mLastKnownLocation.getLatitude(),
                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+            }
+            if(mLastKnownLocation==null && ride!=null && ride.getRoute()!=null){
+
+                MyLocation firstLocation = ride.getRoute().getLocations().get(0);
+                LatLng newMapLocation = new LatLng(firstLocation.getMyLocation().getLatitude(),
+                        firstLocation.getMyLocation().getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        newMapLocation, DEFAULT_ZOOM));
+            }
+        }
+        else
+        {
+            try {
+                RemoveListStations();
+            }
+            catch (Exception e)
+            {
+                Log.e("error", e.toString());
             }
         }
     }
@@ -508,6 +513,63 @@ public class Travel extends Fragment
             //setBigInstruction("left");
             //setSmallInstructionP("right");
             //drawStation(ride.getRoute().getLocations());
+            Double[] LatLng =new Double[2];
+            LatLng[0]=null;
+            LatLng[1] = null;
+            new Travel.UpdateLocation().execute(LatLng);
+        }
+    }
+    class UpdateLocation extends AsyncTask<Double, String, String> {
+        @Override
+        protected String doInBackground(Double... params) {
+            //user[0]=Phone user[1]=User Name
+            String toReturn = "";
+
+            try {
+                Map<String,Object> parameters = new HashMap<String, Object>();
+                parameters.put("lat",params[0]);
+                parameters.put("lng",params[1]);
+                toReturn = POST(Const.UPDATE_LOCATION_URI.toString(),parameters);
+                String httpResult = new JSONObject(toReturn).getString("status");
+                if (httpResult.compareTo("OK")==0) {
+                    //listDsManager.updateMyRides(toReturn);
+                    publishProgress("");
+                    toReturn="";
+                } else {
+                    publishProgress("something get wrong      " + toReturn);
+                }
+            } catch (Exception e) {
+                publishProgress(e.getMessage());
+
+            }
+            return toReturn;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            if(result.equals("")) {
+                //every thing is okay
+                //mListener.onFragmentInteraction("");
+            }
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            //user[0]=Phone user[1]=User Name
+            //check if have any error
+            if(values[0].length()>1) {
+                //showAlert(myActivity,values[0]);
+            }
+            else {
+                //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
+                //mCallBack.OnLoginFragmentInteractionListener(1);
+            }
         }
     }
 
@@ -725,6 +787,11 @@ public class Travel extends Fragment
                 rideId = bundle.getInt("RIDEID", 0);
                 index = ListDsManager.convertRideIdToIndex("MyRide", rideId);
                 ride = ListDsManager.getMyRide().get(index);
+                boolean showRide = bundle.getBoolean("SHOWSTATIONS"); ///SHOWRIDE
+                if (showRide)
+                {
+                    showStations =true;
+                }
                 inRoute=true;
             }
             myActivity.setTitle("נסיעה");
@@ -1217,4 +1284,67 @@ public class Travel extends Fragment
         handleNewLocation(location);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void ShowListStations(){
+        float dpHeight = getDpHeight();
+        availableButton.setVisibility(View.GONE);
+        busyButton.setVisibility(View.GONE);
+        myFloating.setVisibility(View.GONE);
+        if (mapFragment.getView() != null){
+            ViewGroup.LayoutParams mapFragmentParams = mapFragment.getView().getLayoutParams();
+            mapFragmentParams.height = (int)(dpHeight*1.50);
+            mapFragment.getView().setLayoutParams(mapFragmentParams);
+        }
+        ViewGroup.LayoutParams stationsListParams = stationsList.getLayoutParams();
+
+        stationsListParams.height = (int)(dpHeight*0.20);
+        stationsList.setLayoutParams(stationsListParams);
+        stationsList.setVisibility(View.VISIBLE);
+        stationsAdapter = new StationsAdapter(myActivity,R.layout.item_station,stations);
+        stationsList.setAdapter(stationsAdapter);
+        RelativeLayout.LayoutParams draggableLayoutParams = (RelativeLayout.LayoutParams) DragbleText.getLayoutParams();
+        draggableLayoutParams.removeRule(RelativeLayout.ABOVE);
+        draggableLayoutParams.addRule(RelativeLayout.ABOVE, R.id.stationList );
+        DragbleText.setText("אתה בנסיעה עם תחנות, גרור למטה על מנת להעלימן");
+        stationsList.invalidateViews();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void RemoveListStations(){
+        DisplayMetrics displayMetrics = myActivity.getResources().getDisplayMetrics();
+        float dpHeight = getDpHeight();
+        availableButton.setVisibility(View.VISIBLE);
+        busyButton.setVisibility(View.VISIBLE);
+        myFloating.setVisibility(View.VISIBLE);
+        if (mapFragment.getView() != null){
+            ViewGroup.LayoutParams mapFragmentParams = mapFragment.getView().getLayoutParams();
+            mapFragmentParams.height = (int)(displayMetrics.heightPixels);
+            mapFragment.getView().setLayoutParams(mapFragmentParams);
+        }
+        ViewGroup.LayoutParams stationsListParams = stationsList.getLayoutParams();
+
+        stationsListParams.height = (int)(0);
+        stationsList.setLayoutParams(stationsListParams);
+        stationsList.setVisibility(View.GONE);
+        //stationsAdapter = new StationsAdapter(myActivity,R.layout.item_station,stations);
+        //stationsList.setAdapter(stationsAdapter);
+        RelativeLayout.LayoutParams draggableLayoutParams = (RelativeLayout.LayoutParams) DragbleText.getLayoutParams();
+        draggableLayoutParams.removeRule(RelativeLayout.ABOVE);
+        draggableLayoutParams.addRule(RelativeLayout.BELOW, R.id.stationList );
+        DragbleText.setText("אתה בנסיעה עם תחנות, גרור למטה על מנת להעלימן");
+        stationsList.invalidateViews();
+    }
+
+    private float getDpHeight()
+    {
+        DisplayMetrics displayMetrics = myActivity.getResources().getDisplayMetrics();
+
+        // dpHeight is the 100% ?
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        return dpHeight;
+    }
+
+    public void setInRoute(boolean inRoute) {
+        this.inRoute = inRoute;
+    }
 }

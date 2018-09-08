@@ -4,81 +4,95 @@
     android:layout_height="match_parent"
     tools:context="project.java.tbusdriver.Controller.Fragments.PersonalInfo">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="wrap_content"
-            android:id="@+id/inputName"
+        android:orientation="vertical"
+        android:padding="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:paddingTop="15dp">
-            <EditText
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="שם: "
+                android:inputType="none"
+                android:textSize="20sp"
+                />
+            <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="11"
-                android:hint="שם:"
                 android:inputType="none"
+                android:textSize="20sp"
                 />
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/inputPhone"
-            android:layout_below="@id/inputName"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true">
-            <EditText
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="11"
+                android:text="מס' טלפון: "
+                android:inputType="none"
+                android:textSize="20sp"
+                />
+            <TextView
                 android:id="@+id/phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="11"
-                android:hint="מס' טלפון"
-                android:inputType="none"
+                android:textSize="15sp"
                 />
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/inputEmail"
-            android:layout_below="@id/inputPhone"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true">
-            <EditText
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="מייל: "
+                android:textSize="20sp"
+                />
+            <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="11"
-                android:hint="מייל:"
                 android:inputType="none"
+                android:textSize="20sp"
                 />
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/inputAddress"
-            android:layout_below="@id/inputEmail"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true">
-            <EditText
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="כתובת: "
+                android:inputType="none"
+                android:textSize="20sp"
+                />
+            <TextView
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="11"
-                android:hint="כתובת"
                 android:inputType="none"
+                android:textSize="20sp"
                 />
-        </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+
         <android.support.v7.widget.AppCompatSpinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/gender"
-            android:layout_below="@id/inputAddress"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true">
+            android:textSize="20sp">
         </android.support.v7.widget.AppCompatSpinner>
 
         <android.support.design.widget.TextInputLayout
@@ -95,5 +109,5 @@
                 android:visibility="gone"
                 />
         </android.support.design.widget.TextInputLayout>
-    </RelativeLayout>
+    </LinearLayout>
 </FrameLayout>

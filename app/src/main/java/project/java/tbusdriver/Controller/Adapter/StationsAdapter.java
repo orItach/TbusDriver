@@ -8,7 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import junit.framework.Test;
+
 import java.util.ArrayList;
+
+import javax.sql.StatementEvent;
 
 import project.java.tbusdriver.Database.Factory;
 import project.java.tbusdriver.Entities.MyLocation;
@@ -67,6 +71,22 @@ public class StationsAdapter extends ArrayAdapter<MyLocation> {
         TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
         String travelTime= String.valueOf(content.get(position).getDistance());
         TVTravelTime.setText(travelTime);
+
+        TextView isPickup = (TextView) listView.findViewById(R.id.isPickup);
+        if (content.get(position).isPickUp()){
+            isPickup.setText("עליה ");
+        }
+        else {
+            isPickup.setText("ירידה ");
+        }
+        TextView TVPassenger = (TextView) listView.findViewById(R.id.passenger);
+        String passenger = content.get(position).getPassenger();
+        if (content.get(position).getUsername()==null && content.get(position).getPhone()==null){
+            TVPassenger.setText(passenger);
+        }
+        else {
+            TVPassenger.setText(content.get(position).getUsername() +" "+ content.get(position).getPhone());
+        }
         //Ride currentRide= ListDsManager.getHistoricRide().get(convertRideIdToIndex(HistoricRidesListName, Integer.valueOf(id)));
 
 

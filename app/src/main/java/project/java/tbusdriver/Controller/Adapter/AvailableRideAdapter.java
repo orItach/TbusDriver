@@ -1,7 +1,12 @@
 package project.java.tbusdriver.Controller.Adapter;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +16,21 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import project.java.tbusdriver.Controller.Activitys.MainActivity;
 import project.java.tbusdriver.Database.Factory;
 import project.java.tbusdriver.Database.ListDsManager;
 import project.java.tbusdriver.Entities.Ride;
 import project.java.tbusdriver.R;
 
 import static project.java.tbusdriver.Const.AvailableRidesListName;
+import static project.java.tbusdriver.Controller.Travel.TAG;
 import static project.java.tbusdriver.Database.ListDsManager.convertRideIdToIndex;
 import static project.java.tbusdriver.usefulFunctions.POST;
 import static project.java.tbusdriver.usefulFunctions.showAlert;
@@ -36,6 +46,8 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
     ListDsManager listDsManager;
     View listView;
     AvailableRideAdapter instance;
+    OnFragmentInteractionListener mCallBack;
+
 
     public AvailableRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> content) {
         super(c, textViewResourceId, content);
@@ -46,6 +58,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         this.agencyList.addAll(content);
         listDsManager=(ListDsManager) new Factory(c).getInstance();
         instance=this;
+        mCallBack = (OnFragmentInteractionListener) context;
         this.notifyDataSetChanged();
     }
 
@@ -74,6 +87,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
             // set image based on selected text
             Button btn = (Button) listView.findViewById(R.id.button_item_ride);
+            Button showRide =(Button) listView.findViewById(R.id.showRide);
             TextView TVID = (TextView) listView.findViewById(R.id.name);
             String id=String.valueOf(content.get(position).getRideId());
             TVID.setText(id);
@@ -87,22 +101,16 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
                 if(amountOfStation>1)
                 {
                     TextView firstStation = (TextView) listView.findViewById(R.id.firstStation);
-                    firstStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(0).getMyLocation().getLongitude())
-                            +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(0).getMyLocation().getLatitude()));
+                    String firstStationAddress = currentRide.getRoute().getLocations().get(0).getDestinationAddress(); //convertLocationToAddress((currentRide.getRoute().getLocations().get(0).getMyLocation()));
+                    firstStation.setText(firstStationAddress);
                     TextView lastStation = (TextView) listView.findViewById(R.id.lastStation);
 
-                    lastStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLongitude())
-                            +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLatitude()));
+                    //lastStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLongitude())
+                    //        +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLatitude()));
+                    String lastStationAddress =currentRide.getRoute().getLocations().get(currentRide.getRoute().getLocations().size()-1).getDestinationAddress();//convertLocationToAddress((currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation()));
+                    lastStation.setText(lastStationAddress);
                 }
             }
-
-            //Route route =content.get(position).getRoute();
-            //if(route != null) {
-            //    TextView TVFirstStation = (TextView) listView.findViewById(R.id.firstStation);
-            //    TVFirstStation.setText(route.getLocations().get(0).getLocationId());
-            //    TextView TVLastStation = (TextView) listView.findViewById(R.id.lastStation);
-            //    TVLastStation.setText(route.getLocations().get(route.getLocations().size() - 1).getLocationId());
-            //}
 
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -113,6 +121,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
                     new AvailableRideAdapter.UsersTask().execute(user);
                 }
             });
+            showRide.setOnClickListener(this);
         //} else {
         //    listView = (View) convertView;
         //}
@@ -121,6 +130,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
     @Override
     public void onClick(View view) {
+        TextView rideID=(TextView)listView.findViewById(R.id.name);
         switch(view.getId()) {
             case R.id.button_item_ride:
                 //claim(view);
@@ -128,6 +138,9 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
                 //String [] user=new String[1];
                 //user[0]=rideID.getText().toString();
                 //new AvailableRideAdapter.UsersTask().execute(user);
+                break;
+            case R.id.showRide:
+                mCallBack.onAvailableRideAdapterFragmentInteraction(Integer.parseInt(rideID.getText().toString()));
                 break;
             default:
                 break;
@@ -143,6 +156,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         //new AvailableRideAdapter.UsersTask().execute(rideID);
 
     }
+
     private class UsersTask extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -215,5 +229,48 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
             //    //mCallBack.OnLoginFragmentInteractionListener(1);
             //}
         }
+    }
+
+    private String convertLocationToAddress(Location location) {
+        String addressText = location.getLatitude()+" "+location.getLongitude();
+
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        List<Address> addresses = null;
+
+        try {
+            addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1
+            );
+        } catch (IOException ioException) {
+            // Network or other I/O issues
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // Invalid long / lat
+        }
+
+        // No address was found
+        if (addresses == null || addresses.size() == 0) {
+
+        } else {
+            Address address = addresses.get(0);
+            ArrayList<String> addressFragments = new ArrayList<>();
+
+            // Fetch the address lines, join them, and return to thread
+            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
+            addressText =
+                    TextUtils.join(System.getProperty("line.separator"),
+                            addressFragments);
+        }
+
+        return addressText;
+    }
+
+    public interface OnFragmentInteractionListener {
+        //the fragmentReturn mean if the login work 1 for good 0 for bad
+        void onAvailableRideAdapterFragmentInteraction(int rideId);
     }
 }

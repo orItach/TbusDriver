@@ -7,7 +7,7 @@ import android.content.Intent;
 /**
  * Created by אור איטח on 25/11/2017.
  */
-
+//////////////////////////// currently not in use /////////////////////
 public class DataReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

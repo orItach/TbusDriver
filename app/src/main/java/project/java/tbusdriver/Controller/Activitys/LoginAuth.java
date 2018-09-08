@@ -1,7 +1,7 @@
 package project.java.tbusdriver.Controller.Activitys;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,7 +33,7 @@ public class LoginAuth extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_auth);
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         loginFragment= new Login();
         authFragment= new Auth();
         fragmentTransaction = fragmentManager.beginTransaction();

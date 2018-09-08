@@ -10,13 +10,18 @@ import java.io.Serializable;
 /**
  * Created by אור איטח on 27/06/2017.
  */
-//Parcelable
+//////////////////////////////////////////////////////
+//////////////////// Ride //////////////////////////
+////////////////////////////////////////////////////
 public class Ride implements Serializable,Parcelable {
 
     private static final long serialVersionUID = 0L;
 
+    // the id of ride
     private int rideId;
+    // the route
     private Route route;
+    // the travelTime- how much the all ride took
     private String travelTime;
 
     public Ride(Route route, String  travelTime, int rideId) {
