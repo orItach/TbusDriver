@@ -2,6 +2,7 @@ package project.java.tbusdriver.Controller.Adapter;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,22 +29,19 @@ import static project.java.tbusdriver.usefulFunctions.showAlert;
  */
 
 public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickListener {
-    ArrayList<Ride> content;
-    ArrayList<Ride> agencyList;
-    Context context;
-    ListDsManager listDsManager;
-    View listView;
-    MyRideAdapter instance;
-    OnFragmentInteractionListener mCallBack;
+    private ArrayList<Ride> rideList;
+    private Context context;
+    private ListDsManager listDsManager;
+    private View listView;
+    private MyRideAdapter instance;
+    private OnFragmentInteractionListener mCallBack;
 
 
-    public MyRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> content) {
-        super(c, textViewResourceId, content);
+    public MyRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> rideList) {
+        super(c, textViewResourceId, rideList);
         context = c;
-        this.content=new ArrayList<Ride>();
-        this.content.addAll(content);
-        this.agencyList=new ArrayList<Ride>();
-        this.agencyList.addAll(content);
+        this.rideList=new ArrayList<Ride>();
+        this.rideList.addAll(rideList);
         listDsManager=(ListDsManager) new Factory(c).getInstance();
         mCallBack = (OnFragmentInteractionListener) context;
         instance=this;
@@ -51,14 +49,15 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
     }
     @Override
     public int getCount() {
-        return content.size();
+        return rideList.size();
     }
 
     @Override
     public Ride getItem(int position) {
-        return content.get(position);
+        return rideList.get(position);
     }
 
+    @NonNull
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
 
@@ -69,32 +68,29 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
             //listView = new View(context);
 
             // get layout from resources
-            listView=inflater.inflate(R.layout.item_my_ride,null);
+        listView=inflater.inflate(R.layout.item_my_ride,null);
 
-            // set image based on selected text
-            Button unclaim = (Button) listView.findViewById(R.id.unclaim);
-            Button startRide = (Button) listView.findViewById(R.id.startRide);
+        // set image based on selected text
+        Button unclaim = (Button) listView.findViewById(R.id.unclaim);
+        Button startRide = (Button) listView.findViewById(R.id.startRide);
 
-            TextView TVID = (TextView) listView.findViewById(R.id.name);
-            String id=String.valueOf(content.get(position).getRideId());
-            TVID.setText(id);
+        TextView TVID = (TextView) listView.findViewById(R.id.name);
+        String id=String.valueOf(rideList.get(position).getRideId());
+        TVID.setText(id);
 
-            TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-            String travelTime= String.valueOf(content.get(position).getTravelTime());
-            TVTravelTime.setText(travelTime);
-            unclaim.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String rideID=String.valueOf(content.get(position).getRideId());
-                    String [] user=new String[1];
-                    user[0]=rideID;
-                    new MyRideAdapter.UsersTask().execute(user);
-                }
-            });
-            startRide.setOnClickListener(this);
-        //} else {
-        //    listView = (View) convertView;
-        //}
+        TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
+        String travelTime= String.valueOf(rideList.get(position).getTravelTime());
+        TVTravelTime.setText(travelTime);
+        unclaim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String rideID=String.valueOf(rideList.get(position).getRideId());
+                String [] user=new String[1];
+                user[0]=rideID;
+                new MyRideAdapter.ClaimRide().execute(user);
+            }
+        });
+        startRide.setOnClickListener(this);
         return listView;
     }
 
@@ -106,7 +102,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
                 //claim(view);
                 String [] user=new String[1];
                 user[0]=rideID.getText().toString();
-                new MyRideAdapter.UsersTask().execute(user);
+                new MyRideAdapter.ClaimRide().execute(user);
                 break;
             case R.id.startRide:
                 mCallBack.onMyRideAdapterFragmentInteraction(Integer.parseInt(rideID.getText().toString()));
@@ -117,7 +113,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
     }
 
 
-    class UsersTask extends AsyncTask<String, String, String> {
+    class ClaimRide extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
             //user[0]= groupID    user[1]=User Name
@@ -132,7 +128,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
                     Ride temp=listDsManager.getMyRide().get(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
                     listDsManager.getAvailableRides().add(temp);
                     listDsManager.getMyRide().remove(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
-                    content = listDsManager.getMyRide();
+                    rideList = listDsManager.getMyRide();
                     publishProgress("");
                     toReturn="";
                 } else {

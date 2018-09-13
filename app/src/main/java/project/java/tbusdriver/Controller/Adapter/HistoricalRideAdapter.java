@@ -21,41 +21,35 @@ import project.java.tbusdriver.R;
 
 import static project.java.tbusdriver.Const.HistoricRidesListName;
 import static project.java.tbusdriver.Database.ListDsManager.convertRideIdToIndex;
-import static project.java.tbusdriver.usefulFunctions.POST;
-import static project.java.tbusdriver.usefulFunctions.showAlert;
+
 
 /**
  * Created by אור איטח on 07/01/2018.
  */
 
 public class HistoricalRideAdapter extends ArrayAdapter<Ride> {
-    ArrayList<Ride> content;
-    ArrayList<Ride> agencyList;
-    Context context;
-    ListDsManager listDsManager;
-    View listView;
-    HistoricalRideAdapter instance;
+    private ArrayList<Ride> rideList;
+    private Context context;
+    private ListDsManager listDsManager;
+    private View listView;
 
-    public HistoricalRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> content) {
-        super(c, textViewResourceId, content);
+    public HistoricalRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> rideList) {
+        super(c, textViewResourceId, rideList);
         context = c;
-        this.content=new ArrayList<Ride>();
-        this.content.addAll(content);
-        this.agencyList=new ArrayList<Ride>();
-        this.agencyList.addAll(content);
+        this.rideList=new ArrayList<Ride>();
+        this.rideList.addAll(rideList);
         listDsManager=(ListDsManager) new Factory(c).getInstance();
-        instance=this;
         this.notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return content.size();
+        return rideList.size();
     }
 
     @Override
     public Ride getItem(int position) {
-        return content.get(position);
+        return rideList.get(position);
     }
 
     @Override
@@ -74,10 +68,10 @@ public class HistoricalRideAdapter extends ArrayAdapter<Ride> {
 
         // set image based on selected text
         TextView TVID = (TextView) listView.findViewById(R.id.name);
-        String id=String.valueOf(content.get(position).getRideId());
+        String id=String.valueOf(rideList.get(position).getRideId());
         TVID.setText(id);
         TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-        String travelTime= String.valueOf(content.get(position).getTravelTime());
+        String travelTime= String.valueOf(rideList.get(position).getTravelTime());
         TVTravelTime.setText(travelTime);
         Ride currentRide= ListDsManager.getHistoricRide().get(convertRideIdToIndex(HistoricRidesListName, Integer.valueOf(id)));
         if(currentRide.getRoute() != null)
@@ -95,7 +89,7 @@ public class HistoricalRideAdapter extends ArrayAdapter<Ride> {
             }
         }
 
-        //Route route =content.get(position).getRoute();
+        //Route route =rideList.get(position).getRoute();
         //if(route != null) {
         //    TextView TVFirstStation = (TextView) listView.findViewById(R.id.firstStation);
         //    TVFirstStation.setText(route.getLocations().get(0).getLocationId());

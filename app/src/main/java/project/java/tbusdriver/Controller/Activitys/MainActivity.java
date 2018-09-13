@@ -254,6 +254,8 @@ public class MainActivity extends AppCompatActivity
         bManager.registerReceiver(bReceiver, intentFilter);
         Intent intent = new Intent(this, NotificationIDService.class);
         startService(intent);
+        ///until here
+
         //com.google.firebase.FirebaseApp.initializeApp(this);
         //new MainActivity.SendNotficationToken().execute("");
     }
@@ -403,9 +405,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    //not implemented
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        //throw new Exception();
     }
 
     @Override
@@ -464,6 +467,7 @@ public class MainActivity extends AppCompatActivity
                 travelFragment.setArguments(null);;
                 settingsFragment = Settings.newInstance();
                 fragmentTransaction.replace(R.id.content_main,settingsFragment);
+
                 //navigationView.setCheckedItem(R.id.settings);
                 break;
             case "exit":
@@ -499,7 +503,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.myRegion: return myRegionFragmentName;
             case R.id.personalInfo: return personalInfoFragmentName;
             case R.id.exit: return "exit";
-
         }
         return myRideFragmentName;
     }
@@ -521,7 +524,7 @@ public class MainActivity extends AppCompatActivity
         bundle.putInt("RIDEID",rideId);
         bundle.putBoolean("SHOWSTATIONS",true);
         travelFragment.setArguments(bundle);
-        setFragment("travel");
+        setFragment(TravelFragmentName);
     }
 
     @Override
@@ -547,6 +550,5 @@ public class MainActivity extends AppCompatActivity
         bundle.putInt("REGIONID",regionId);
         settingsFragment.setArguments(bundle);
         setFragment(settingFragmentName);
-
     }
 }

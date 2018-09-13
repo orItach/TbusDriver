@@ -38,8 +38,8 @@ import static project.java.tbusdriver.usefulFunctions.showAlert;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class PersonalInfo extends Fragment implements
-        AdapterView.OnItemSelectedListener{
+public class PersonalInfo extends Fragment
+        implements AdapterView.OnItemSelectedListener{
 
     Activity myActivity;
     View myView;
@@ -61,15 +61,14 @@ public class PersonalInfo extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-
+        myActivity = getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //getActivity().setTitle("Available Ride");
-        myView= inflater.inflate(R.layout.fragment_personal_info, container, false);
+        myView = inflater.inflate(R.layout.fragment_personal_info, container, false);
 
 
         // Inflate the layout for this fragment
@@ -103,7 +102,6 @@ public class PersonalInfo extends Fragment implements
         fillPersonalInfo();
         // Inflate the layout for this fragment
         return myView;
-
     }
 
     public void onButtonPressed(Uri uri) {
@@ -128,6 +126,7 @@ public class PersonalInfo extends Fragment implements
         super.onDetach();
         mListener = null;
     }
+
     private void fillPersonalInfo()
     {
         new PersonalInfo.GetUser().execute();
@@ -152,7 +151,7 @@ public class PersonalInfo extends Fragment implements
 
             try {
                 toReturn = GET(Const.PRESONAL_INFO_URI.toString());
-                resultUser =parsePersonalInfo(toReturn);
+                resultUser = parsePersonalInfo(toReturn);
                 if (resultUser!=null) {
                     //listDsManager.updateAvailableRides(toReturn);
                     publishProgress(resultUser);
@@ -216,7 +215,7 @@ public class PersonalInfo extends Fragment implements
 
             try {
                 toReturn = PUT(Const.PRESONAL_INFO_URI.toString() ,parameters);
-                updatedUser =parsePersonalInfo(toReturn);
+                updatedUser = parsePersonalInfo(toReturn);
                 if (updatedUser!=null) {
                     //listDsManager.updateAvailableRides(toReturn);
                     publishProgress(updatedUser);
@@ -282,6 +281,7 @@ public class PersonalInfo extends Fragment implements
         //JSONObject c = rides.getJSONObject(i);
         //travel_time = c.getString("travel_time");
         //String name =
+        ///{ user: {name: x, id:}
         try {
             String userData = new JSONObject(data).getString("user");
             int driverNumber = new JSONObject(userData).getInt("id");

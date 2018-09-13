@@ -23,37 +23,28 @@ import project.java.tbusdriver.R;
  */
 //MyLocation
 public class StationsAdapter extends ArrayAdapter<MyLocation> {
-    ArrayList<MyLocation> content;
-    ArrayList<MyLocation> agencyList;
+    ArrayList<MyLocation> stationList;
     Context context;
     View listView;
+    //TODO check if we need the instance
     StationsAdapter instance;
 
-    public StationsAdapter(Context c, int textViewResourceId, ArrayList<MyLocation> content) {
-        super(c, textViewResourceId, content);
+    public StationsAdapter(Context c, int textViewResourceId, ArrayList<MyLocation> stationList) {
+        super(c, textViewResourceId, stationList);
         context = c;
-        this.content=new ArrayList<MyLocation>();
-        this.content.addAll(content);
-        this.agencyList=new ArrayList<MyLocation>();
-        this.agencyList.addAll(content);
-        instance=this;
+        this.stationList=new ArrayList<MyLocation>();
+        this.stationList.addAll(stationList);
         //this.notifyDataSetChanged();
-        int i =0;
-        for(MyLocation station:content )
-        {
-            getItem(i);
-            i++;
-        }
     }
 
     @Override
     public int getCount() {
-        return content.size();
+        return stationList.size();
     }
 
     @Override
     public MyLocation getItem(int position) {
-        return content.get(position);
+        return stationList.get(position);
     }
 
     @NonNull
@@ -65,31 +56,31 @@ public class StationsAdapter extends ArrayAdapter<MyLocation> {
         listView=inflater.inflate(R.layout.item_station,null);
 
         // set image based on selected text
+        //TVID is text view for ride id R.id.name is used for ride id
         TextView TVID = (TextView) listView.findViewById(R.id.name);
-        String id=String.valueOf(content.get(position).getLocationId());
+        String id = String.valueOf(stationList.get(position).getLocationId());
         TVID.setText(id);
+        // travel time is used as distance
         TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-        String travelTime= String.valueOf(content.get(position).getDistance());
+        String travelTime= String.valueOf(stationList.get(position).getDistance());
         TVTravelTime.setText(travelTime);
 
         TextView isPickup = (TextView) listView.findViewById(R.id.isPickup);
-        if (content.get(position).isPickUp()){
+        if (stationList.get(position).isPickUp()){
             isPickup.setText("עליה ");
         }
         else {
             isPickup.setText("ירידה ");
         }
         TextView TVPassenger = (TextView) listView.findViewById(R.id.passenger);
-        String passenger = content.get(position).getPassenger();
-        if (content.get(position).getUsername()==null && content.get(position).getPhone()==null){
+        String passenger = stationList.get(position).getPassenger();
+        if (stationList.get(position).getUsername()==null && stationList.get(position).getPhone()==null){
             TVPassenger.setText(passenger);
         }
         else {
-            TVPassenger.setText(content.get(position).getUsername() +" "+ content.get(position).getPhone());
+            TVPassenger.setText(stationList.get(position).getUsername() +" "+ stationList.get(position).getPhone());
         }
         //Ride currentRide= ListDsManager.getHistoricRide().get(convertRideIdToIndex(HistoricRidesListName, Integer.valueOf(id)));
-
-
         return listView;
     }
 }

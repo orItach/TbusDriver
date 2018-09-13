@@ -40,22 +40,19 @@ import static project.java.tbusdriver.usefulFunctions.showAlert;
  */
 
 public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnClickListener {
-    ArrayList<Ride> content;
-    ArrayList<Ride> agencyList;
-    Context context;
-    ListDsManager listDsManager;
-    View listView;
-    AvailableRideAdapter instance;
-    OnFragmentInteractionListener mCallBack;
+    private ArrayList<Ride> rideList;
+    private Context context;
+    private ListDsManager listDsManager;
+    private View listView;
+    private AvailableRideAdapter instance;
+    private OnFragmentInteractionListener mCallBack;
 
 
-    public AvailableRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> content) {
-        super(c, textViewResourceId, content);
+    public AvailableRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> rideList) {
+        super(c, textViewResourceId, rideList);
         context = c;
-        this.content=new ArrayList<Ride>();
-        this.content.addAll(content);
-        this.agencyList=new ArrayList<Ride>();
-        this.agencyList.addAll(content);
+        this.rideList=new ArrayList<Ride>();
+        this.rideList.addAll(rideList);
         listDsManager=(ListDsManager) new Factory(c).getInstance();
         instance=this;
         mCallBack = (OnFragmentInteractionListener) context;
@@ -64,12 +61,12 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
     @Override
     public int getCount() {
-        return content.size();
+        return rideList.size();
     }
 
     @Override
     public Ride getItem(int position) {
-        return content.get(position);
+        return rideList.get(position);
     }
 
     @Override
@@ -89,10 +86,10 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
             Button btn = (Button) listView.findViewById(R.id.button_item_ride);
             Button showRide =(Button) listView.findViewById(R.id.showRide);
             TextView TVID = (TextView) listView.findViewById(R.id.name);
-            String id=String.valueOf(content.get(position).getRideId());
+            String id=String.valueOf(rideList.get(position).getRideId());
             TVID.setText(id);
             TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-            String travelTime= String.valueOf(content.get(position).getTravelTime());
+            String travelTime= String.valueOf(rideList.get(position).getTravelTime());
             TVTravelTime.setText(travelTime);
             Ride currentRide= ListDsManager.getAvailableRides().get(convertRideIdToIndex(AvailableRidesListName, Integer.valueOf(id)));
             if(currentRide.getRoute() != null)
@@ -115,7 +112,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String rideID=String.valueOf(content.get(position).getRideId());
+                    String rideID=String.valueOf(rideList.get(position).getRideId());
                     String [] user=new String[1];
                     user[0]=rideID;
                     new AvailableRideAdapter.UsersTask().execute(user);
@@ -175,7 +172,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
                     listDsManager.getMyRide().add(temp);
                     listDsManager.getAvailableRides().remove(convertRideIdToIndex("AvailableRides",Integer.parseInt(params[0])));
                     //new AvailableRideAdapter.UsersTask().execute(rideID);
-                    //content = listDsManager.getAvailableRides();
+                    //rideList = listDsManager.getAvailableRides();
                     //instance.notifyDataSetChanged();
                     publishProgress(params[0]);
                     toReturn="";
@@ -194,7 +191,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
             if(result.equals("")) {
                 //every thing is okay
-                content = listDsManager.getAvailableRides();
+                rideList = listDsManager.getAvailableRides();
                 instance.notifyDataSetChanged();
                 showAlert(context, "נסיעה נלקחה בהצלחה");
             }
