@@ -14,7 +14,7 @@ import java.io.Serializable;
 //////////////////////////////////////////////////////
 //////////////////// MyLocation //////////////////////
 ////////////////////////////////////////////////////
-public class MyLocation implements Serializable,Parcelable {
+public class MyLocation implements Serializable, Parcelable {
 
     private int locationId;
     private Location myLocation;
@@ -108,7 +108,8 @@ public class MyLocation implements Serializable,Parcelable {
         this.myLocation = myLocation;
         this.distance = distance;
     }
-    public MyLocation(int locationId, Location myLocation, double distance,boolean isPickUp, String passenger,String username, String phone) {
+
+    public MyLocation(int locationId, Location myLocation, double distance, boolean isPickUp, String passenger, String username, String phone) {
         this.locationId = locationId;
         this.myLocation = myLocation;
         this.distance = distance;
@@ -118,7 +119,7 @@ public class MyLocation implements Serializable,Parcelable {
         this.phone = phone;
     }
 
-    public MyLocation(Parcel in){
+    public MyLocation(Parcel in) {
         //Gson gson = new Gson();
         //String jsonData = in.readString();
         //this.locationId = gson.fromJson(jsonData,int.class);
@@ -143,7 +144,6 @@ public class MyLocation implements Serializable,Parcelable {
         //json = gson.toJson(distance);
         //dest.writeString(json);
     }
-
 
 
 }

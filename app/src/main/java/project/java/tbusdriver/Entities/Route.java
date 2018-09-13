@@ -15,12 +15,11 @@ import java.util.ArrayList;
 //////////////////////////////////////////////////////
 //////////////////// Route //////////////////////////
 ////////////////////////////////////////////////////
-public class Route implements Serializable,Parcelable
-{
+public class Route implements Serializable, Parcelable {
     // list of location
     private ArrayList<MyLocation> Locations;
 
-    public Route( ArrayList<MyLocation> locations) {
+    public Route(ArrayList<MyLocation> locations) {
         Locations = locations;
     }
 
@@ -44,7 +43,7 @@ public class Route implements Serializable,Parcelable
         Locations = locations;
     }
 
-    public Route(Parcel in){
+    public Route(Parcel in) {
         //Gson gson = new Gson();
         //String jsonData = in.readString();
         //this.Locations = gson.fromJson(jsonData, new TypeToken<ArrayList<MyLocation>>(){}.getType());

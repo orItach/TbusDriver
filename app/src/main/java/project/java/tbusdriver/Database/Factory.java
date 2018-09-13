@@ -11,16 +11,17 @@ import android.content.Context;
 public class Factory {
     static Context context;
     private static ListDsManager theInstance;
-    public Factory(Context context)
-    {
-        this.context=context;
+
+    public Factory(Context context) {
+        this.context = context;
     }
 
-    public static ListDsManager getInstance(){
-        if(theInstance == null)
+    public static ListDsManager getInstance() {
+        if (theInstance == null)
             theInstance = new ListDsManager(context);
         return theInstance;
     }
 
-    private Factory() {}
+    private Factory() {
+    }
 }

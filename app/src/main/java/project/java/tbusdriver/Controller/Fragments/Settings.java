@@ -321,7 +321,7 @@ public class Settings extends Fragment implements
             TVSecondTime.setClickable(false);
             TVTime.setAlpha(0.5f);
             TVSecondTime.setAlpha(0.5f);
-            for (Day userDay: userDays) {
+            for (Day userDay : userDays) {
                 if (userDay != null) {
                     userDay.setStartTime("00:01:00");
                     userDay.setEndTime("23:59:00");
@@ -552,9 +552,9 @@ public class Settings extends Fragment implements
             for (int i = 0; i < newRegion.getDays().length; i++) {
                 Day[] myRegionDay = myRegion.getDays();
                 Day[] newRegionDay = newRegion.getDays();
-                if(newRegionDay[i]!=null)
+                if (newRegionDay[i] != null)
                     check = check && newRegionDay[i].equals(myRegionDay[i]);
-                else if(myRegionDay[i] == null)
+                else if (myRegionDay[i] == null)
                     check = check && true;
                 else
                     check = check && false;

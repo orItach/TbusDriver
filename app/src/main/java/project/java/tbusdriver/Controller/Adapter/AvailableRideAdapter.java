@@ -51,10 +51,10 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
     public AvailableRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> rideList) {
         super(c, textViewResourceId, rideList);
         context = c;
-        this.rideList=new ArrayList<Ride>();
+        this.rideList = new ArrayList<Ride>();
         this.rideList.addAll(rideList);
-        listDsManager=(ListDsManager) new Factory(c).getInstance();
-        instance=this;
+        listDsManager = (ListDsManager) new Factory(c).getInstance();
+        instance = this;
         mCallBack = (OnFragmentInteractionListener) context;
         this.notifyDataSetChanged();
     }
@@ -77,48 +77,46 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
         //if (convertView == null) {
 
-            //listView = new View(context);
+        //listView = new View(context);
 
-            // get layout from resources
-            listView=inflater.inflate(R.layout.item_available_ride,null);
+        // get layout from resources
+        listView = inflater.inflate(R.layout.item_available_ride, null);
 
-            // set image based on selected text
-            Button btn = (Button) listView.findViewById(R.id.button_item_ride);
-            Button showRide =(Button) listView.findViewById(R.id.showRide);
-            TextView TVID = (TextView) listView.findViewById(R.id.name);
-            String id=String.valueOf(rideList.get(position).getRideId());
-            TVID.setText(id);
-            TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-            String travelTime= String.valueOf(rideList.get(position).getTravelTime());
-            TVTravelTime.setText(travelTime);
-            Ride currentRide= ListDsManager.getAvailableRides().get(convertRideIdToIndex(AvailableRidesListName, Integer.valueOf(id)));
-            if(currentRide.getRoute() != null)
-            {
-                int amountOfStation = currentRide.getRoute().getLocations().size();
-                if(amountOfStation>1)
-                {
-                    TextView firstStation = (TextView) listView.findViewById(R.id.firstStation);
-                    String firstStationAddress = currentRide.getRoute().getLocations().get(0).getDestinationAddress(); //convertLocationToAddress((currentRide.getRoute().getLocations().get(0).getMyLocation()));
-                    firstStation.setText(firstStationAddress);
-                    TextView lastStation = (TextView) listView.findViewById(R.id.lastStation);
+        // set image based on selected text
+        Button btn = (Button) listView.findViewById(R.id.button_item_ride);
+        Button showRide = (Button) listView.findViewById(R.id.showRide);
+        TextView TVID = (TextView) listView.findViewById(R.id.name);
+        String id = String.valueOf(rideList.get(position).getRideId());
+        TVID.setText(id);
+        TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
+        String travelTime = String.valueOf(rideList.get(position).getTravelTime());
+        TVTravelTime.setText(travelTime);
+        Ride currentRide = ListDsManager.getAvailableRides().get(convertRideIdToIndex(AvailableRidesListName, Integer.valueOf(id)));
+        if (currentRide.getRoute() != null) {
+            int amountOfStation = currentRide.getRoute().getLocations().size();
+            if (amountOfStation > 1) {
+                TextView firstStation = (TextView) listView.findViewById(R.id.firstStation);
+                String firstStationAddress = currentRide.getRoute().getLocations().get(0).getDestinationAddress(); //convertLocationToAddress((currentRide.getRoute().getLocations().get(0).getMyLocation()));
+                firstStation.setText(firstStationAddress);
+                TextView lastStation = (TextView) listView.findViewById(R.id.lastStation);
 
-                    //lastStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLongitude())
-                    //        +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLatitude()));
-                    String lastStationAddress =currentRide.getRoute().getLocations().get(currentRide.getRoute().getLocations().size()-1).getDestinationAddress();//convertLocationToAddress((currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation()));
-                    lastStation.setText(lastStationAddress);
-                }
+                //lastStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLongitude())
+                //        +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLatitude()));
+                String lastStationAddress = currentRide.getRoute().getLocations().get(currentRide.getRoute().getLocations().size() - 1).getDestinationAddress();//convertLocationToAddress((currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation()));
+                lastStation.setText(lastStationAddress);
             }
+        }
 
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String rideID=String.valueOf(rideList.get(position).getRideId());
-                    String [] user=new String[1];
-                    user[0]=rideID;
-                    new AvailableRideAdapter.UsersTask().execute(user);
-                }
-            });
-            showRide.setOnClickListener(this);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String rideID = String.valueOf(rideList.get(position).getRideId());
+                String[] user = new String[1];
+                user[0] = rideID;
+                new AvailableRideAdapter.UsersTask().execute(user);
+            }
+        });
+        showRide.setOnClickListener(this);
         //} else {
         //    listView = (View) convertView;
         //}
@@ -127,8 +125,8 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
 
     @Override
     public void onClick(View view) {
-        TextView rideID=(TextView)listView.findViewById(R.id.name);
-        switch(view.getId()) {
+        TextView rideID = (TextView) listView.findViewById(R.id.name);
+        switch (view.getId()) {
             case R.id.button_item_ride:
                 //claim(view);
                 //TextView rideID=(TextView)listView.findViewById(R.id.name);
@@ -144,12 +142,11 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         }
     }
 
-    public void claim(View view)
-    {
-        String rideID=((TextView)listView.findViewById(R.id.name)).getText().toString();
-        Ride temp=listDsManager.getAvailableRides().get(convertRideIdToIndex("AvailableRides",Integer.parseInt(rideID)));
+    public void claim(View view) {
+        String rideID = ((TextView) listView.findViewById(R.id.name)).getText().toString();
+        Ride temp = listDsManager.getAvailableRides().get(convertRideIdToIndex("AvailableRides", Integer.parseInt(rideID)));
         listDsManager.getMyRide().add(temp);
-        listDsManager.getAvailableRides().remove(convertRideIdToIndex("AvailableRides",Integer.parseInt(rideID)));
+        listDsManager.getAvailableRides().remove(convertRideIdToIndex("AvailableRides", Integer.parseInt(rideID)));
         //new AvailableRideAdapter.UsersTask().execute(rideID);
 
     }
@@ -159,23 +156,23 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         protected String doInBackground(String... params) {
             //user[0]= groupID    user[1]=User Name
             String toReturn = "";
-            Map<String,Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
             try {
-                toReturn= POST("http://52.16.221.155/api/taxi/claim/"+params[0],parameters);
+                toReturn = POST("http://52.16.221.155/api/taxi/claim/" + params[0], parameters);
                 //toReturn = POST(Const.CLAIM_A_RIDE_URI+params[0],parameters);
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     /// maybe not need
                     //// TODO: 25/08/2017 add the ride to my ride
-                    Ride temp=listDsManager.getAvailableRides().get(
-                            convertRideIdToIndex("AvailableRides",Integer.parseInt(params[0])));
+                    Ride temp = listDsManager.getAvailableRides().get(
+                            convertRideIdToIndex("AvailableRides", Integer.parseInt(params[0])));
                     listDsManager.getMyRide().add(temp);
-                    listDsManager.getAvailableRides().remove(convertRideIdToIndex("AvailableRides",Integer.parseInt(params[0])));
+                    listDsManager.getAvailableRides().remove(convertRideIdToIndex("AvailableRides", Integer.parseInt(params[0])));
                     //new AvailableRideAdapter.UsersTask().execute(rideID);
                     //rideList = listDsManager.getAvailableRides();
                     //instance.notifyDataSetChanged();
                     publishProgress(params[0]);
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong\n" + toReturn);
                 }
@@ -189,21 +186,18 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 rideList = listDsManager.getAvailableRides();
                 instance.notifyDataSetChanged();
                 showAlert(context, "נסיעה נלקחה בהצלחה");
-            }
-            else
-            {
+            } else {
                 showAlert(context, "ישנה בעיה, אנא פנה אלינו בהקדם");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
@@ -215,10 +209,8 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
                 //Ride temp=listDsManager.getAvailableRides().get(listDsManager.convertRideIdToIndex("AvailableRides",rideID));
                 //listDsManager.getMyRide().add(temp);
                 //listDsManager.getAvailableRides().remove(listDsManager.convertRideIdToIndex("AvailableRides",rideID));
-            }
-            catch (Exception e)
-            {
-                showAlert(context,values[0]);
+            } catch (Exception e) {
+                showAlert(context, values[0]);
             }
             //if()
             //
@@ -229,7 +221,7 @@ public class AvailableRideAdapter extends ArrayAdapter<Ride> implements View.OnC
     }
 
     private String convertLocationToAddress(Location location) {
-        String addressText = location.getLatitude()+" "+location.getLongitude();
+        String addressText = location.getLatitude() + " " + location.getLongitude();
 
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 

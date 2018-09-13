@@ -35,38 +35,32 @@ public class updateLocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LatLng currentLocation;
-        Double[] LatLng =new Double[2];
+        Double[] LatLng = new Double[2];
         try {
             Travel travelFragment = Travel.newInstance();
             Bundle data = intent.getExtras();
-            if (data!=null) {
+            if (data != null) {
                 LatLng[0] = data.getDouble("Lat");
                 LatLng[1] = data.getDouble("Lng");
-            }
-            else {
+            } else {
                 Location lastKnownLocation = travelFragment.getmLastKnownLocation();
-                if (lastKnownLocation!=null) {
+                if (lastKnownLocation != null) {
                     LatLng[0] = lastKnownLocation.getLatitude();
                     LatLng[1] = lastKnownLocation.getLongitude();
-                }
-                else
-                {
+                } else {
                     LatLng[0] = (double) 5;
                     LatLng[1] = (double) 5;
                 }
             }
             // if the driver is busy we send null
-            if (usefulFunctions.busy==true)
-            {
+            if (usefulFunctions.busy == true) {
                 LatLng[0] = null;
                 LatLng[1] = null;
             }
             //currentMyRide = temp.getParcelable("myRide");
             //currentMyRide = intent.getParcelableExtra("myRide");
-        }
-        catch (Exception ex )
-        {
-            int x =5;
+        } catch (Exception ex) {
+            int x = 5;
         }
         new updateLocationService.UpdateLocation().execute(LatLng);
         return super.onStartCommand(intent, flags, startId);
@@ -79,15 +73,15 @@ public class updateLocationService extends Service {
             String toReturn = "";
 
             try {
-                Map<String,Object> parameters = new HashMap<String, Object>();
-                parameters.put("lat",params[0]);
-                parameters.put("lng",params[1]);
-                toReturn = POST(Const.UPDATE_LOCATION_URI.toString(),parameters);
+                Map<String, Object> parameters = new HashMap<String, Object>();
+                parameters.put("lat", params[0]);
+                parameters.put("lng", params[1]);
+                toReturn = POST(Const.UPDATE_LOCATION_URI.toString(), parameters);
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     //listDsManager.updateMyRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -101,25 +95,23 @@ public class updateLocationService extends Service {
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1) {
+            if (values[0].length() > 1) {
                 //showAlert(myActivity,values[0]);
-            }
-            else {
+            } else {
                 //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }

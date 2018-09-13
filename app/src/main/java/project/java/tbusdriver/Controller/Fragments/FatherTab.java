@@ -90,9 +90,9 @@ public class FatherTab extends Fragment {
         //if (numOfYears > 3)
         //    tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         //for (int i = 0; i < ; i++)
-            tabLayout.addTab(tabLayout.newTab(),false);
-        tabLayout.addTab(tabLayout.newTab(),false);
-        tabLayout.addTab(tabLayout.newTab(),false);
+        tabLayout.addTab(tabLayout.newTab(), false);
+        tabLayout.addTab(tabLayout.newTab(), false);
+        tabLayout.addTab(tabLayout.newTab(), false);
 
 
         //final ViewPager viewPager = (ViewPager) v.findViewById(R.id.viewPager);

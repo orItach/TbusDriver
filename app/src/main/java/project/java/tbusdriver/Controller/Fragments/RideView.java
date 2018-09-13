@@ -21,7 +21,6 @@ public class RideView extends Fragment {
 
     FragmentActivity myActivity;
 
-
     private OnFragmentInteractionListener mListener;
 
     public RideView() {
@@ -47,7 +46,7 @@ public class RideView extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myView=inflater.inflate(R.layout.fragment_ride_view, container, false);
+        myView = inflater.inflate(R.layout.fragment_ride_view, container, false);
         //int totalHeight=0;
         //ViewGroup.LayoutParams params = sem0.getLayoutParams();
         //params.height = totalHeight + (sem0.getDividerHeight() );

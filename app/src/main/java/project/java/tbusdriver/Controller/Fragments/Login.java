@@ -24,7 +24,7 @@ import static project.java.tbusdriver.usefulFunctions.showAlert;
 
 public class Login extends Fragment {
 
-    boolean checkBoxIsCheck=true;
+    boolean checkBoxIsCheck = true;
     private String phone;
     private String userName;
 
@@ -34,7 +34,7 @@ public class Login extends Fragment {
 
     Activity myActivity;
 
-    View myView ;
+    View myView;
 
     LayoutInflater myinflater;
 
@@ -48,55 +48,53 @@ public class Login extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-    **/
+     **/
 
     //public static Login1 newInstance() {
     //    Login1 fragment = new Login1();
     //    Bundle args = new Bundle();
     //    return fragment;
     //}
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
+        myActivity = getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myinflater=inflater;
-        myView=inflater.inflate(R.layout.fragment_login, container, false);
-        EditText Phone=(EditText) myView.findViewById(R.id.phone);
-        EditText UserName=(EditText)myView.findViewById(R.id.userName);
+        myinflater = inflater;
+        myView = inflater.inflate(R.layout.fragment_login, container, false);
+        EditText Phone = (EditText) myView.findViewById(R.id.phone);
+        EditText UserName = (EditText) myView.findViewById(R.id.userName);
         Phone.setText("0524700286");
         UserName.setText("אור איטח");
-        return myView ;
+        return myView;
     }
 
-    public void onClickLogin(View v)
-    {
+    public void onClickLogin(View v) {
         switch (v.getId()) {
             case R.id.login:
                 accessToData();
                 break;
             default:
-                showAlert(myActivity,"something really get wrong");
+                showAlert(myActivity, "something really get wrong");
                 break;
         }
     }
-    public void accessToData ()
-    {
-        EditText Phone=(EditText) myView.findViewById(R.id.phone);
-        EditText UserName=(EditText)myView.findViewById(R.id.userName);
-        String [] user=new String[2];
-        user[0]=Phone.getText().toString();
-        user[1]=UserName.getText().toString();
-        if(user[0].equals(""))
-            showAlert(myActivity,"You must enter name");
-        else if(user[1].equals(""))
-            showAlert(myActivity,"you must enter phone");
+
+    public void accessToData() {
+        EditText Phone = (EditText) myView.findViewById(R.id.phone);
+        EditText UserName = (EditText) myView.findViewById(R.id.userName);
+        String[] user = new String[2];
+        user[0] = Phone.getText().toString();
+        user[1] = UserName.getText().toString();
+        if (user[0].equals(""))
+            showAlert(myActivity, "You must enter name");
+        else if (user[1].equals(""))
+            showAlert(myActivity, "you must enter phone");
         else
             //user[0]=Phone user[1]=User Name
             new Login.UsersTask().execute(user);
@@ -120,8 +118,7 @@ public class Login extends Fragment {
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
     }
 
@@ -136,17 +133,17 @@ public class Login extends Fragment {
         protected String doInBackground(String... params) {
             //user[0]=Phone user[1]=User Name
             String toReturn = "";
-            Map <String,Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
 
-            parameters.put("username",params[1]);
-            parameters.put("phone",params[0]);
-            parameters.put("taxiFlag",1);
+            parameters.put("username", params[1]);
+            parameters.put("phone", params[0]);
+            parameters.put("taxiFlag", 1);
 
             try {
-                toReturn = POST(Const.LOGIN_URI.toString() ,parameters);
-                if (toReturn.compareTo(("{\"status\":\"ok\"}").toString())==0) {
+                toReturn = POST(Const.LOGIN_URI.toString(), parameters);
+                if (toReturn.compareTo(("{\"status\":\"ok\"}").toString()) == 0) {
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -163,7 +160,7 @@ public class Login extends Fragment {
         protected void onPostExecute(String result) {
 
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 mCallBack.OnLoginFragmentInteractionListener(1);
             }
@@ -177,8 +174,8 @@ public class Login extends Fragment {
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1)
-                showAlert(myActivity,values[0]);
+            if (values[0].length() > 1)
+                showAlert(myActivity, values[0]);
             else {
 
                 //mCallBack.OnLoginFragmentInteractionListener(1);

@@ -28,13 +28,13 @@ public class Auth extends Fragment {
 
     RWSetting rwSettings = null;
 
-    boolean checkBoxIsCheck=true;
+    boolean checkBoxIsCheck = true;
 
     private String phone;
 
     Activity myActivity;
 
-    View myView ;
+    View myView;
 
     OnFragmentInteractionListener mCallBack;
 
@@ -45,7 +45,6 @@ public class Auth extends Fragment {
     private SharedPreferences.Editor editor;
 
 
-
     public Auth() {
 
     }
@@ -54,7 +53,7 @@ public class Auth extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myActivity=getActivity();
+        myActivity = getActivity();
     }
 
     @Override
@@ -66,7 +65,7 @@ public class Auth extends Fragment {
         //phone=savedInstanceState.getString("PHONE");
         //getArguments().getString("PHONE");
         // Inflate the layout for this fragment
-        myView=inflater.inflate(R.layout.fragment_auth, container, false);
+        myView = inflater.inflate(R.layout.fragment_auth, container, false);
         return myView;
     }
 
@@ -76,22 +75,21 @@ public class Auth extends Fragment {
                 accessToData();
                 break;
             default:
-                showAlert(myActivity,"something really get wrong");
+                showAlert(myActivity, "something really get wrong");
                 break;
         }
 
     }
 
-    private void accessToData ()
-    {
-        EditText AuthCode=(EditText)myView.findViewById(R.id.authCode);
-        String [] user=new String[2];
-        user[0]=phone;
-        user[1]=AuthCode.getText().toString();
-        if(user[0].equals(""))
-            showAlert(myActivity,"You must enter name");
-        else if(user[1].equals(""))
-            showAlert(myActivity,"you must enter phone");
+    private void accessToData() {
+        EditText AuthCode = (EditText) myView.findViewById(R.id.authCode);
+        String[] user = new String[2];
+        user[0] = phone;
+        user[1] = AuthCode.getText().toString();
+        if (user[0].equals(""))
+            showAlert(myActivity, "You must enter name");
+        else if (user[1].equals(""))
+            showAlert(myActivity, "you must enter phone");
         else
             //user[0]=Phone user[1]=User Name
             new Auth.UsersTask().execute(user);
@@ -100,7 +98,7 @@ public class Auth extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        pref =  context.getSharedPreferences("UserPref", Context.MODE_PRIVATE);
+        pref = context.getSharedPreferences("UserPref", Context.MODE_PRIVATE);
         editor = pref.edit();
         if (context instanceof OnFragmentInteractionListener) {
             mCallBack = (OnFragmentInteractionListener) context;
@@ -137,20 +135,20 @@ public class Auth extends Fragment {
         protected String doInBackground(String... params) {
             //user[0]=Phone user[1]=Auth Code
             String toReturn = "";
-            String  answer;
-            String [] answerArray =new String[2];
-            Map<String,Object> parameters = new HashMap<String, Object>();
-            parameters.put("phone",params[0]);
-            parameters.put("auth",params[1]);
+            String answer;
+            String[] answerArray = new String[2];
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("phone", params[0]);
+            parameters.put("auth", params[1]);
             try {
-                answer = POST(Const.AUTH_URI.toString() ,parameters);
-                answerArray=answer.split(",");
-                if (answerArray[0].compareTo(("{\"status\":\"ok\"").toString())==0) {
-                    Token=answerArray[1].split("\"")[3];
-                    rwSettings=RWSetting.getInstance(getActivity());
+                answer = POST(Const.AUTH_URI.toString(), parameters);
+                answerArray = answer.split(",");
+                if (answerArray[0].compareTo(("{\"status\":\"ok\"").toString()) == 0) {
+                    Token = answerArray[1].split("\"")[3];
+                    rwSettings = RWSetting.getInstance(getActivity());
                     rwSettings.setStringSetting("Token", Token);
                     publishProgress(Token);
-                    Intent intent =new Intent(getActivity(),MainActivity.class);
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
                 } else {
                     publishProgress("something get wrong      " + toReturn);
@@ -165,7 +163,7 @@ public class Auth extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            if(!result.equals("")) {
+            if (!result.equals("")) {
                 //every thing is okay
                 mCallBack.onAuthFragmentInteraction(1);
             }
@@ -179,14 +177,13 @@ public class Auth extends Fragment {
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1)
-                showAlert(myActivity,values[0]);
+            if (values[0].length() > 1)
+                showAlert(myActivity, values[0]);
             else {
-                EditText authCode = (EditText) myActivity.findViewById (R.id.authCode);
+                EditText authCode = (EditText) myActivity.findViewById(R.id.authCode);
                 authCode.setText("");
-                if(checkBoxIsCheck==true)
-                {
-                    editor.putString("PHONE",phone);
+                if (checkBoxIsCheck == true) {
+                    editor.putString("PHONE", phone);
                     editor.commit();
                 }
             }

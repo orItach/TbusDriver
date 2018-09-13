@@ -16,8 +16,7 @@ import project.java.tbusdriver.Database.ListDsManager;
 import project.java.tbusdriver.R;
 
 
-
-public class MyRegion extends Fragment implements View.OnClickListener{
+public class MyRegion extends Fragment implements View.OnClickListener {
 
     View myView;
     Activity myActivity;
@@ -44,13 +43,13 @@ public class MyRegion extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-        listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+        myActivity = getActivity();
+        listDsManager = (ListDsManager) new Factory(getActivity()).getInstance();
 
     }
-    public void fillMyRegion()
-    {
-        myRegionAdapter=new RegionAdapter(myActivity,R.layout.item_region,listDsManager.getRegions());
+
+    public void fillMyRegion() {
+        myRegionAdapter = new RegionAdapter(myActivity, R.layout.item_region, listDsManager.getRegions());
         //myRegionAdapter.notifyDataSetChanged();
         listView.setAdapter(myRegionAdapter);
 
@@ -61,12 +60,12 @@ public class MyRegion extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         //inflater.inflate(R.layout.fragment_my_region, container, false);
-        myView=inflater.inflate(R.layout.fragment_my_region, container, false);
-        listView=(ListView) myView.findViewById(R.id.myRegionList);
+        myView = inflater.inflate(R.layout.fragment_my_region, container, false);
+        listView = (ListView) myView.findViewById(R.id.myRegionList);
         addRegion = (FloatingActionButton) myView.findViewById(R.id.addRegion);
         addRegion.setOnClickListener(this);
         fillMyRegion();
-        return  myView;
+        return myView;
     }
 
 
@@ -95,8 +94,7 @@ public class MyRegion extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.addRegion:
                 // 1 mean add Region
                 onAddButtonPressed(1);
@@ -125,9 +123,9 @@ public class MyRegion extends Fragment implements View.OnClickListener{
 
         void onRegionFragmentInteraction(int sign);
     }
+
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         getActivity().setTitle("זמני העבודה שלי");
     }

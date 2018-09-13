@@ -11,6 +11,7 @@ import android.net.Uri;
 /////////////////////////////////////////////////////////////////// ///////////////////
 public class Const {
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
     //region const and URI
     static {
         sUriMatcher.addURI("project.java.contact_ptovider.model.datasorce.ContentProvide", "BusList", 1);
@@ -56,21 +57,21 @@ public class Const {
     static final String URL_NOTIFICATION_TOKEN = PROVIDE_NAME + "/account/taxiDriverToken";
 
     public static final Uri NOTIFICATION_TOKEN_URI = Uri.parse(URL_NOTIFICATION_TOKEN);
-    
-    
+
+
     /////////////////////// App Constant //////////////////////////////////////
-    
+
     /////// TODO: 20/10/2017  add all constant like fragment name keys and so on to here
     //public static final Enum FragmentName=;
-    public static final String AvailableRidesListName ="AvailableRides";
-    public static final String MyRideListName ="MyRide";
-    public static final String HistoricRidesListName ="HistoricRides";
-    public static final String RegionsListName ="Regions";
+    public static final String AvailableRidesListName = "AvailableRides";
+    public static final String MyRideListName = "MyRide";
+    public static final String HistoricRidesListName = "HistoricRides";
+    public static final String RegionsListName = "Regions";
 
-    public static final String TravelFragmentName ="travel";
-    public static final String myRideFragmentName ="myRide";
-    public static final String availableRideFragmentName ="availableRide";
-    public static final String historicRideFragmentName ="historicRide";
+    public static final String TravelFragmentName = "travel";
+    public static final String myRideFragmentName = "myRide";
+    public static final String availableRideFragmentName = "availableRide";
+    public static final String historicRideFragmentName = "historicRide";
     public static final String myRegionFragmentName = "myRegion";
     public static final String settingFragmentName = "setting";
     public static final String personalInfoFragmentName = "personalInfo";

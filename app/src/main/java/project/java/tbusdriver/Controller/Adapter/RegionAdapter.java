@@ -26,7 +26,7 @@ import static project.java.tbusdriver.Database.ListDsManager.convertRideIdToInde
  * Created by אור איטח on 16/10/2017.
  */
 
-public class RegionAdapter extends ArrayAdapter<Region>  {
+public class RegionAdapter extends ArrayAdapter<Region> {
 
     private ArrayList<Region> regionList;
     //private ArrayList<Region> agencyList;
@@ -37,15 +37,15 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
     Activity myActivity;
 
     private OnRegionAdapterInteractionListener mListener;
-    
+
     public RegionAdapter(Context c, int textViewResourceId, ArrayList<Region> regionList) {
         super(c, textViewResourceId, regionList);
         context = c;
-        this.regionList=new ArrayList<Region>();
+        this.regionList = new ArrayList<Region>();
         this.regionList.addAll(regionList);
-        listDsManager= new Factory(c).getInstance();
-        mListener  =(OnRegionAdapterInteractionListener) context;
-        instance=this;
+        listDsManager = new Factory(c).getInstance();
+        mListener = (OnRegionAdapterInteractionListener) context;
+        instance = this;
     }
 
     @Override
@@ -62,25 +62,24 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
     @Override
     public View getView(final int position, View convertView, @NonNull final ViewGroup parent) {
 
-        myActivity = (MainActivity)context;
+        myActivity = (MainActivity) context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        listView=inflater.inflate(R.layout.item_region,null);
+        listView = inflater.inflate(R.layout.item_region, null);
 
-        Button update =(Button) listView.findViewById(R.id.editRegion);
+        Button update = (Button) listView.findViewById(R.id.editRegion);
         Button delete = (Button) listView.findViewById(R.id.deleteRegion);
         TextView TVRegionName = (TextView) listView.findViewById(R.id.regionName);
-        TextView TVRegionId=(TextView) listView.findViewById(R.id.regionId);
-        String regionName=String.valueOf(regionList.get(position).getRegionName());
-        String regionId=String.valueOf(regionList.get(position).getRegionID());
+        TextView TVRegionId = (TextView) listView.findViewById(R.id.regionId);
+        String regionName = String.valueOf(regionList.get(position).getRegionName());
+        String regionId = String.valueOf(regionList.get(position).getRegionID());
         TVRegionName.setText(regionName);
         TVRegionId.setText(regionId);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String regionId =String.valueOf(regionList.get(position).getRegionID());
-                if(mListener != null)
-                {
+                String regionId = String.valueOf(regionList.get(position).getRegionID());
+                if (mListener != null) {
                     mListener.OnRegionAdapterInteractionListener(Integer.parseInt(regionId));
                 }
             }
@@ -97,16 +96,16 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
         return listView;
     }
 
-    private void showSureDelete(int position){
-        final int tempPosition= position;
+    private void showSureDelete(int position) {
+        final int tempPosition = position;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(myActivity);
         alertDialogBuilder.setMessage("האם אתה בטוח?")
                 .setCancelable(false)
                 .setPositiveButton("מחק",
-                        new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int id){
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 String regionId = String.valueOf(regionList.get(tempPosition).getRegionID());
-                                int regionIndex = convertRideIdToIndex("Regions",Integer.parseInt(regionId));
+                                int regionIndex = convertRideIdToIndex("Regions", Integer.parseInt(regionId));
                                 //Region regionToDelete= (regionId);
                                 ListDsManager.getRegions().remove(regionIndex);
                                 regionList = ListDsManager.getRegions();
@@ -114,8 +113,8 @@ public class RegionAdapter extends ArrayAdapter<Region>  {
                             }
                         });
         alertDialogBuilder.setNegativeButton("בטל",
-                new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });

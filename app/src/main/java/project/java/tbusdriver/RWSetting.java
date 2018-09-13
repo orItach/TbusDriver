@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
  * Created by אור איטח on 06/06/2017.
  */
 
-public class RWSetting  {
+public class RWSetting {
     private static RWSetting instance = null;
     private SharedPreferences pref;
     /**
@@ -19,38 +19,34 @@ public class RWSetting  {
     private SharedPreferences.Editor editor;
 
 
-    private RWSetting(Context context)
-    {
-        String name="Setting";
-        pref =  context.getSharedPreferences("SettingPref", Context.MODE_PRIVATE);
+    private RWSetting(Context context) {
+        String name = "Setting";
+        pref = context.getSharedPreferences("SettingPref", Context.MODE_PRIVATE);
         editor = pref.edit();
     }
 
-    public int getIntSetting(String parameter)
-    {
-        return pref.getInt(parameter,-1);
+    public int getIntSetting(String parameter) {
+        return pref.getInt(parameter, -1);
     }
 
-    public String getStringSetting(String parameter)
-    {
-        return pref.getString(parameter,"");
+    public String getStringSetting(String parameter) {
+        return pref.getString(parameter, "");
     }
 
     public static RWSetting getInstance(Context context) {
-        if(instance == null) {
+        if (instance == null) {
             instance = new RWSetting(context);
         }
         return instance;
     }
-    public void setIntSetting(String parameter,int setting)
-    {
-        editor.putInt(parameter,setting);
+
+    public void setIntSetting(String parameter, int setting) {
+        editor.putInt(parameter, setting);
         editor.commit();
     }
 
-    public void setStringSetting(String parameter,String setting)
-    {
-        editor.putString(parameter,setting);
+    public void setStringSetting(String parameter, String setting) {
+        editor.putString(parameter, setting);
         editor.commit();
     }
 }

@@ -42,20 +42,18 @@ public class rideStartService extends Service {
     Travel travelFragment;
     ListDsManager listDsManager;
 
-    static final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
+    static final long ONE_MINUTE_IN_MILLIS = 60000;//millisecs
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        listDsManager=(ListDsManager) new Factory(null).getInstance();
+        listDsManager = (ListDsManager) new Factory(null).getInstance();
         //listDsManager = new ListDsManager()
         try {
             Bundle temp = intent.getExtras();
             //currentMyRide = temp.getParcelable("myRide");
             //currentMyRide = intent.getParcelableExtra("myRide");
-        }
-        catch (Exception ex )
-        {
-            int x =5;
+        } catch (Exception ex) {
+            int x = 5;
         }
         new rideStartService.UsersTask().execute();
         doWork();
@@ -70,28 +68,25 @@ public class rideStartService extends Service {
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
     }
 
 
-    public void doWork()
-    {
-        int x =5;
-        if (listDsManager.getMyRide() == null)
-        {
+    public void doWork() {
+        int x = 5;
+        if (listDsManager.getMyRide() == null) {
             return;
         }
         Date now = new Date();
 
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ENGLISH);
-        for ( Ride currentRide: listDsManager.getMyRide()) {
+        for (Ride currentRide : listDsManager.getMyRide()) {
             try {
                 Date currentTravelTime = format.parse(currentRide.getTravelTime());
-                currentTravelTime.setTime(currentTravelTime.getTime()+1);
+                currentTravelTime.setTime(currentTravelTime.getTime() + 1);
                 //if (currentTravelTime.after(now))
-                if (true)
-                {
+                if (true) {
                     travelFragment = Travel.newInstance();
                     travelFragment.startRide(currentRide.getRideId());
                     System.out.println("intent Received");
@@ -103,17 +98,13 @@ public class rideStartService extends Service {
                     //do something
                     return;
                 }
-            }
-            catch (Exception ex )
-            {
+            } catch (Exception ex) {
             }
         }
-        new Thread(new Runnable()
-        {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true)
-                {
+                while (true) {
 
                 }
             }
@@ -129,10 +120,10 @@ public class rideStartService extends Service {
             try {
                 toReturn = GET(Const.USER_MY_RIDE_URI.toString());
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     listDsManager.updateMyRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -146,25 +137,23 @@ public class rideStartService extends Service {
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1) {
+            if (values[0].length() > 1) {
                 //showAlert(myActivity,values[0]);
-            }
-            else {
+            } else {
                 //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }

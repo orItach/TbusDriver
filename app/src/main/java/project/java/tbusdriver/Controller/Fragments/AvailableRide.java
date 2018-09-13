@@ -49,14 +49,13 @@ public class AvailableRide extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-        listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+        myActivity = getActivity();
+        listDsManager = (ListDsManager) new Factory(getActivity()).getInstance();
         fillAvailableRideList();
 
     }
 
-    private void fillAvailableRideList()
-    {
+    private void fillAvailableRideList() {
         new AvailableRide.UsersTask().execute();
     }
 
@@ -69,10 +68,10 @@ public class AvailableRide extends Fragment {
             try {
                 toReturn = GET(Const.PADDING_RIDES_URI.toString());
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     listDsManager.updateAvailableRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -86,28 +85,27 @@ public class AvailableRide extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1)
-                showAlert(myActivity,values[0]);
+            if (values[0].length() > 1)
+                showAlert(myActivity, values[0]);
             else {
 
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
-            availableRideAdapter=new AvailableRideAdapter(myActivity,R.layout.item_available_ride,listDsManager.getAvailableRides());
+            availableRideAdapter = new AvailableRideAdapter(myActivity, R.layout.item_available_ride, listDsManager.getAvailableRides());
             availableRideAdapter.notifyDataSetChanged();
             listView.setAdapter(availableRideAdapter);
             //listView.deferNotifyDataSetChanged();
@@ -120,10 +118,10 @@ public class AvailableRide extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         //getActivity().setTitle("Available Ride");
-        myView= inflater.inflate(R.layout.fragment_available_ride, container, false);
+        myView = inflater.inflate(R.layout.fragment_available_ride, container, false);
 
         // Inflate the layout for this fragment
-        listView=(ListView) myView.findViewById(R.id.availableRideList);
+        listView = (ListView) myView.findViewById(R.id.availableRideList);
 
 
         return myView;
@@ -161,17 +159,16 @@ public class AvailableRide extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(getActivity()!=null)
+            if (getActivity() != null)
                 getActivity().setTitle("Available Ride");
-        }
-        else {
+        } else {
         }
     }
+
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-        myActivity=getActivity();
+        myActivity = getActivity();
         myActivity.setTitle("נסיעות פנויות");
     }
 }

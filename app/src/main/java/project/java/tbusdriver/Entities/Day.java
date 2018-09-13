@@ -9,7 +9,6 @@ public class Day {
     private String startTime;
     private String endTime;
 
-
     public Day(String dayName, String startTime, String endTime) {
         this.dayName = dayName;
         this.startTime = startTime;
@@ -19,7 +18,7 @@ public class Day {
     @Override
     public boolean equals(Object obj) {
         Day current = (Day) obj;
-        if(current !=null )
+        if (current != null)
             return dayName.equalsIgnoreCase(current.dayName) &&
                     startTime.equalsIgnoreCase(current.startTime) &&
                     endTime.equalsIgnoreCase(current.endTime);

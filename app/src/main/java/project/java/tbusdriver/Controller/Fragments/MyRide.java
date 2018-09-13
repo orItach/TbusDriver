@@ -29,7 +29,7 @@ import static project.java.tbusdriver.usefulFunctions.GET;
 import static project.java.tbusdriver.usefulFunctions.showAlert;
 
 
-public class MyRide extends Fragment  {
+public class MyRide extends Fragment {
 
     View myView;
     Activity myActivity;
@@ -56,20 +56,23 @@ public class MyRide extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-        listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+        myActivity = getActivity();
+        listDsManager = (ListDsManager) new Factory(getActivity()).getInstance();
 
         fillMyRide();
     }
-    private void fillMyRide(){new MyRide.UsersTask().execute();}
+
+    private void fillMyRide() {
+        new MyRide.UsersTask().execute();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         //getActivity().setTitle("My Ride");
-        myView=inflater.inflate(R.layout.fragment_my_ride, container, false);
-        listView=(ListView) myView.findViewById(R.id.myRideList);
+        myView = inflater.inflate(R.layout.fragment_my_ride, container, false);
+        listView = (ListView) myView.findViewById(R.id.myRideList);
         return myView;
     }
 
@@ -82,10 +85,10 @@ public class MyRide extends Fragment  {
             try {
                 toReturn = GET(Const.USER_MY_RIDE_URI.toString());
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     listDsManager.updateMyRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -99,32 +102,31 @@ public class MyRide extends Fragment  {
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1)
-                showAlert(myActivity,values[0]);
+            if (values[0].length() > 1)
+                showAlert(myActivity, values[0]);
             else {
                 //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
 
-            myRideAdapter=new MyRideAdapter(myActivity,R.layout.item_available_ride,listDsManager.getMyRide());
+            myRideAdapter = new MyRideAdapter(myActivity, R.layout.item_available_ride, listDsManager.getMyRide());
             listView.setAdapter(myRideAdapter);
             myRideAdapter.notifyDataSetChanged();
-            ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
+            ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
             listView.invalidateViews();
             listView.scrollBy(0, 0);
             //Intent myRideStartServiceIntent = new Intent(getActivity(), rideStartService.class);
@@ -136,7 +138,7 @@ public class MyRide extends Fragment  {
             //}
             //catch (Exception e)
             {
-                int x =5;
+                int x = 5;
             }
         }
     }
@@ -181,8 +183,7 @@ public class MyRide extends Fragment  {
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         getActivity().setTitle("נסיעות שלי");
     }

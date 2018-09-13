@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 public class startAlarmService extends Service {
 
     Alarm alarm = new Alarm();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

@@ -39,15 +39,14 @@ public class ListDsManager {
     private static ArrayList<Ride> HistoricRides;
     private static ArrayList<Region> Regions;
     private Context context;
-    private DateFormat formatter ;
+    private DateFormat formatter;
 
-    public ListDsManager(Context context)
-    {
-        this.context=context;
-        AvailableRides=new ArrayList<Ride>();
-        MyRide=new ArrayList<Ride>();
-        HistoricRides=new ArrayList<Ride>();
-        Regions=new ArrayList<Region>();
+    public ListDsManager(Context context) {
+        this.context = context;
+        AvailableRides = new ArrayList<Ride>();
+        MyRide = new ArrayList<Ride>();
+        HistoricRides = new ArrayList<Ride>();
+        Regions = new ArrayList<Region>();
         formatter = new SimpleDateFormat("HH:mm");
         //new UpdateDataTask().execute(0);//update agency
         //new UpdateDataTask().execute(1);//update trips
@@ -78,6 +77,7 @@ public class ListDsManager {
     public static void setHistoricRide(ArrayList<Ride> historicRide) {
         HistoricRides = historicRide;
     }
+
     public static ArrayList<Region> getRegions() {
         return Regions;
     }
@@ -86,47 +86,35 @@ public class ListDsManager {
         Regions = Regions;
     }
 
-    public void updateHistoricRides(String input)
-    {
-        try
-        {
+    public void updateHistoricRides(String input) {
+        try {
             HistoricRides.clear();
             StringHistoricalRidesToJson(input);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
 
     public void updateAvailableRides(String input) {
-        try
-        {
+        try {
             AvailableRides.clear();
             StringAvailableRidesToJson(input);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
 
 
-    public void updateMyRides(String input)
-    {
-        try
-        {
+    public void updateMyRides(String input) {
+        try {
             MyRide.clear();
             StringMyRidesToJson(input);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
 
-    private void StringMyRidesToJson(String input)
-    {
+    private void StringMyRidesToJson(String input) {
         if (input != null) {
             try {
                 JSONObject result = new JSONObject(input);
@@ -134,7 +122,7 @@ public class ListDsManager {
                 JSONArray rides = result.getJSONArray("rides");
                 int id;
                 String travel_time;
-                Route route=null;
+                Route route = null;
                 // looping through All Contacts
                 for (int i = 0; i < rides.length(); i++) {
                     JSONObject c = rides.getJSONObject(i);
@@ -143,32 +131,27 @@ public class ListDsManager {
                     DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ENGLISH);
                     try {
                         travel_time = format.format(now);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
 
                     }
-                    id=c.getInt("id");
+                    id = c.getInt("id");
                     if (!c.isNull("json_route")) {
-                        route=JsonRouteToRoute(c.getJSONObject("json_route"));
+                        route = JsonRouteToRoute(c.getJSONObject("json_route"));
                     }
-                    if(travel_time.equalsIgnoreCase("null"))
-                        travel_time="--:--";
-                    Ride ride=new Ride(route,travel_time,id);
+                    if (travel_time.equalsIgnoreCase("null"))
+                        travel_time = "--:--";
+                    Ride ride = new Ride(route, travel_time, id);
                     MyRide.add(ride);
                     //ride.setTravelTime(c.getString("travel_time"));
                 }
-            } catch ( Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
         }
     }
 
-    private void StringAvailableRidesToJson(String input)
-    {
+    private void StringAvailableRidesToJson(String input) {
         if (input != null) {
             try {
                 JSONObject result = new JSONObject(input);
@@ -176,32 +159,30 @@ public class ListDsManager {
                 JSONArray rides = result.getJSONArray("rides");
                 int id;
                 String travel_time;
-                Route route=null;
+                Route route = null;
                 // looping through All Contacts
                 for (int i = 0; i < rides.length(); i++) {
                     JSONObject c = rides.getJSONObject(i);
                     travel_time = c.getString("travel_time");
-                    id=c.getInt("id");
+                    id = c.getInt("id");
                     if (!c.isNull("json_route")) {
-                        route=JsonRouteToRoute(c.getJSONObject("json_route"));
+                        route = JsonRouteToRoute(c.getJSONObject("json_route"));
                     }
-                    if(travel_time.equalsIgnoreCase("null"))
-                        travel_time="--:--";
-                    Ride ride=new Ride(route,travel_time,id);
+                    if (travel_time.equalsIgnoreCase("null"))
+                        travel_time = "--:--";
+                    Ride ride = new Ride(route, travel_time, id);
                     AvailableRides.add(ride);
                     //ride.setTravelTime(c.getString("travel_time"));
                 }
-            } catch ( Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
 
         }
     }
-    private void StringHistoricalRidesToJson(String input)
-    {
+
+    private void StringHistoricalRidesToJson(String input) {
         if (input != null) {
             try {
                 JSONObject result = new JSONObject(input);
@@ -209,85 +190,74 @@ public class ListDsManager {
                 JSONArray rides = result.getJSONArray("rides");
                 int id;
                 String travel_time;
-                Route route=null;
+                Route route = null;
                 // looping through All Contacts
                 for (int i = 0; i < rides.length(); i++) {
                     JSONObject c = rides.getJSONObject(i);
                     travel_time = c.getString("travel_time");
-                    id=c.getInt("id");
+                    id = c.getInt("id");
                     if (!c.isNull("json_route")) {
-                        route=JsonRouteToRoute(c.getJSONObject("json_route"));
+                        route = JsonRouteToRoute(c.getJSONObject("json_route"));
                     }
-                    if(travel_time.equalsIgnoreCase("null"))
-                        travel_time="--:--";
-                    Ride ride=new Ride(route,travel_time,id);
+                    if (travel_time.equalsIgnoreCase("null"))
+                        travel_time = "--:--";
+                    Ride ride = new Ride(route, travel_time, id);
                     HistoricRides.add(ride);
                     //ride.setTravelTime(c.getString("travel_time"));
                 }
-            } catch ( Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else
-        {
+        } else {
 
         }
     }
 
     @Nullable
-    private Route JsonRouteToRoute(JSONObject jsonRoute)
-    {
-        ArrayList<MyLocation> temp=new ArrayList<>();
-        Route result=new Route(temp);
+    private Route JsonRouteToRoute(JSONObject jsonRoute) {
+        ArrayList<MyLocation> temp = new ArrayList<>();
+        Route result = new Route(temp);
         //JSONObject point;
-        if(jsonRoute!=null)
-        {
+        if (jsonRoute != null) {
             try {
                 for (int i = 0; i < jsonRoute.length(); i++) {
                     JSONObject point = jsonRoute.getJSONObject(String.valueOf(i));
                     String id = String.valueOf(i);
-                    Location geom=new Location("");
+                    Location geom = new Location("");
                     geom.setLatitude(point.getJSONObject("geom").getDouble("lat"));
                     geom.setLongitude(point.getJSONObject("geom").getDouble("lng"));
                     //Double distance=
                     // tmp hash map for single contact
-                    MyLocation myLocation=new MyLocation(0,geom,5);
+                    MyLocation myLocation = new MyLocation(0, geom, 5);
                     myLocation.setDistance(point.getDouble("distance"));
                     myLocation.setLocationId(i);
                     myLocation.setMyLocation(geom);
                     String test = point.getString("name");
-                    if (jsonRoute.toString().contains("username")){
+                    if (jsonRoute.toString().contains("username")) {
                         myLocation.setUsername(point.getString("username"));
                     }
-                    if (jsonRoute.toString().contains("phone")){
+                    if (jsonRoute.toString().contains("phone")) {
                         myLocation.setPhone(point.getString("phone"));
                     }
                     if (test != null && test.contains("-d")) {
                         myLocation.setPickUp(true);
-                        myLocation.setPassenger(test.replace("-d",""));
-                    }
-                    else {
+                        myLocation.setPassenger(test.replace("-d", ""));
+                    } else {
                         myLocation.setPickUp(false);
                         myLocation.setPassenger(test);
                     }
-                    if (jsonRoute.toString().contains("junction_name"))
-                    {
+                    if (jsonRoute.toString().contains("junction_name")) {
                         myLocation.setDestinationAddress(point.getString("junction_name"));
-                    }
-                    else
-                    {
+                    } else {
                         myLocation.setDestinationAddress("לא ידוע");
                     }
                     // adding contact to contact list
                     result.getLocations().add(myLocation);
                 }
-            }
-            catch (final JSONException e) {
+            } catch (final JSONException e) {
 
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
         return result;
@@ -295,22 +265,17 @@ public class ListDsManager {
 
     public class UpdateDataTask extends AsyncTask<Integer, String, String> {
         protected String doInBackground(Integer... type) {
-            if(type[0]==0)
-            {
+            if (type[0] == 0) {
                 //Cursor matrixAgency=context.getContentResolver().query(uriAgency, new String[]{}, "", new String[]{}, "");
                 //if(HistoricRides==null)
                 //    publishProgress("The Agencies are empty");
                 //updateAvailableRides(matrixAgency);
-            }
-            else if(type[0]==1)
-            {
+            } else if (type[0] == 1) {
                 //Cursor matrixTrip = context.getContentResolver().query(uriTrip, new String[]{}, "", new String[]{}, "");
                 //if(matrixTrip==null)
                 //    publishProgress("The Trips are empty");
                 //updateTrip(matrixTrip);
-            }
-            else if(type[0]==2)
-            {
+            } else if (type[0] == 2) {
                 ///// TODO: 27/06/2017  implement
 
             }
@@ -319,7 +284,7 @@ public class ListDsManager {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            android.app.AlertDialog.Builder myAlert=new android.app.AlertDialog.Builder(context);
+            android.app.AlertDialog.Builder myAlert = new android.app.AlertDialog.Builder(context);
             myAlert.setMessage(values[0]).create();
             myAlert.setTitle("Error with load Data");
             //myAlert.setIcon(R.drawable.error);
@@ -328,36 +293,30 @@ public class ListDsManager {
         }
     }
 
-    public static int convertRideIdToIndex(String list,int rideId)
-    {
-        switch (list)
-        {
+    public static int convertRideIdToIndex(String list, int rideId) {
+        switch (list) {
             case AvailableRidesListName:
-                for (int i=0; i<AvailableRides.size();i++)
-                {
-                    if(AvailableRides.get(i).getRideId()==rideId)
+                for (int i = 0; i < AvailableRides.size(); i++) {
+                    if (AvailableRides.get(i).getRideId() == rideId)
                         return i;
                 }
                 break;
             case MyRideListName:
-                for (int i=0; i<MyRide.size();i++)
-                {
-                    if(MyRide.get(i).getRideId()==rideId)
+                for (int i = 0; i < MyRide.size(); i++) {
+                    if (MyRide.get(i).getRideId() == rideId)
                         return i;
                 }
                 break;
             case HistoricRidesListName:
-                for (int i=0; i<HistoricRides.size();i++)
-                {
-                    if(HistoricRides.get(i).getRideId()==rideId)
+                for (int i = 0; i < HistoricRides.size(); i++) {
+                    if (HistoricRides.get(i).getRideId() == rideId)
                         return i;
                 }
                 break;
             case RegionsListName:
-                for (int i = 0; i <Regions.size() ; i++)
-                {
-                    if (Regions.get(i).getRegionID()==rideId)
-                        return  i;
+                for (int i = 0; i < Regions.size(); i++) {
+                    if (Regions.get(i).getRegionID() == rideId)
+                        return i;
                 }
             default:
                 return -1;

@@ -40,30 +40,30 @@ public class HistoricalRide extends Fragment {
     public HistoricalRide() {
         // Required empty public constructor
     }
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-        listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+        myActivity = getActivity();
+        listDsManager = (ListDsManager) new Factory(getActivity()).getInstance();
         fillHistoricalRideList();
 
     }
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myView= inflater.inflate(R.layout.fragment_historical_ride, container, false);
+        myView = inflater.inflate(R.layout.fragment_historical_ride, container, false);
 
         // Inflate the layout for this fragment
-        listView=(ListView) myView.findViewById(R.id.historicalRideList);
+        listView = (ListView) myView.findViewById(R.id.historicalRideList);
 
 
         return myView;
     }
-    
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -81,10 +81,9 @@ public class HistoricalRide extends Fragment {
         mListener = null;
     }
 
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-        myActivity=getActivity();
+        myActivity = getActivity();
         myActivity.setTitle("היסטוריית נסיעות");
     }
 
@@ -102,12 +101,9 @@ public class HistoricalRide extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(String str);
     }
-    
 
-    
 
-    private void fillHistoricalRideList()
-    {
+    private void fillHistoricalRideList() {
         new HistoricalRide.UsersTask().execute();
     }
 
@@ -120,10 +116,10 @@ public class HistoricalRide extends Fragment {
             try {
                 toReturn = GET(Const.USER_HISTORIC_RIDE_URI.toString());
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     listDsManager.updateHistoricRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -137,28 +133,27 @@ public class HistoricalRide extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1)
-                showAlert(myActivity,values[0]);
+            if (values[0].length() > 1)
+                showAlert(myActivity, values[0]);
             else {
 
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
-            historicalRideAdapter=new HistoricalRideAdapter(myActivity,R.layout.item_historical_ride,listDsManager.getHistoricRide());
+            historicalRideAdapter = new HistoricalRideAdapter(myActivity, R.layout.item_historical_ride, listDsManager.getHistoricRide());
             historicalRideAdapter.notifyDataSetChanged();
             listView.setAdapter(historicalRideAdapter);
             //listView.deferNotifyDataSetChanged();

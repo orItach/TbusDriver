@@ -3,6 +3,7 @@ package project.java.tbusdriver.Service;
 /**
  * Created by אור איטח on 12/06/2017.
  */
+
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import project.java.tbusdriver.Controller.Travel;
 import project.java.tbusdriver.usefulFunctions;
 
 import static project.java.tbusdriver.Controller.Travel.newInstance;
+
 ///////////////////////////////// currently not in use //////////////////////
 public class dRService extends Service {
 
@@ -26,7 +28,7 @@ public class dRService extends Service {
 
     @SuppressLint("StaticFieldLeak")
     public void onCreate() {
-        int x =4;
+        int x = 4;
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -44,12 +46,11 @@ public class dRService extends Service {
                         while (true) {
                             try {
                                 Thread.sleep(5000);
-                                usefulFunctions.busy=false;
-                                if (usefulFunctions.busy==false && usefulFunctions.Token!=null)
-                                {
+                                usefulFunctions.busy = false;
+                                if (usefulFunctions.busy == false && usefulFunctions.Token != null) {
                                     //// TODO: 17/07/2017 send update to server
                                     Travel travelFragment = newInstance();
-                                    Location mLastKnowLocation= travelFragment.getmLastKnownLocation();
+                                    Location mLastKnowLocation = travelFragment.getmLastKnownLocation();
                                 }
 
                                 //send query to the data base and count him

@@ -93,30 +93,30 @@ import static java.lang.Math.pow;
 import static project.java.tbusdriver.usefulFunctions.POST;
 
 public class Travel extends Fragment
-            implements OnMapReadyCallback,
-            GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,
-            View.OnClickListener
-            , com.google.android.gms.location.LocationListener{
+        implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener
+        , com.google.android.gms.location.LocationListener {
     //GoogleApiClient.ConnectionCallbacks,
     //GoogleApiClient.OnConnectionFailedListener,
     //LocationListener {
 
 
-        //region Variable
-    private static int DEFAULT_ZOOM =10 ;
+    //region Variable
+    private static int DEFAULT_ZOOM = 10;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
 
-    boolean mRequestingLocationUpdates=true;
+    boolean mRequestingLocationUpdates = true;
     FusedLocationProviderClient mFusedLocationClient;
     LocationCallback mLocationCallback;
     LocationRequest mLocationRequest;
 
-    private boolean mLocationPermissionGranted=false;
-    private Location mLastKnownLocation=null;
-    private Location mPreviousLastKnownLocation=null;
-    private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=1;
+    private boolean mLocationPermissionGranted = false;
+    private Location mLastKnownLocation = null;
+    private Location mPreviousLastKnownLocation = null;
+    private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private LatLng mDefaultLocation;
     private CameraPosition mCameraPosition;
     public static final String TAG = Travel.class.getSimpleName();
@@ -148,10 +148,9 @@ public class Travel extends Fragment
 
 
     public static Travel newInstance() {
-        if(instance==null) {
+        if (instance == null) {
             instance = new Travel();
-        }
-        else {
+        } else {
 
             return instance;
         }
@@ -161,8 +160,8 @@ public class Travel extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myActivity=getActivity();
-        doZoom=true;
+        myActivity = getActivity();
+        doZoom = true;
 
 
         locationManager = (LocationManager) myActivity.getSystemService(LOCATION_SERVICE);
@@ -170,13 +169,13 @@ public class Travel extends Fragment
         SupportMapFragment mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-        listDsManager=(ListDsManager) new Factory(getActivity()).getInstance();
+        listDsManager = (ListDsManager) new Factory(getActivity()).getInstance();
         //mapFragment.getMapAsync(this);
         // Do other setup activities here too, as described elsewhere in this tutorial.
         // Build the Play services client for use by the Fused Location Provider and the Places API.
         // Use the addApi() method to request the Google Places API and the Fused Location Provider.
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(myActivity);
-        mLocationRequest=new LocationRequest();
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(3000000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -186,20 +185,20 @@ public class Travel extends Fragment
             public void onLocationResult(LocationResult locationResult) {
 
                 for (Location location : locationResult.getLocations()) {
-                    if(mPreviousLastKnownLocation!=null)
-                    {   double LKLLo=mPreviousLastKnownLocation.getLongitude();
-                        double LKLLa=mPreviousLastKnownLocation.getLatitude();
-                        double LLo=location.getLongitude();
-                        double LLa=location.getLatitude();
-                        double deviation=0.01;
-                        if (pow(deviation,2)<pow((LKLLa-LLa),2)+pow((LKLLo-LLo),2))
-                            usefulFunctions.showAlert(myActivity,"the location change");
+                    if (mPreviousLastKnownLocation != null) {
+                        double LKLLo = mPreviousLastKnownLocation.getLongitude();
+                        double LKLLa = mPreviousLastKnownLocation.getLatitude();
+                        double LLo = location.getLongitude();
+                        double LLa = location.getLatitude();
+                        double deviation = 0.01;
+                        if (pow(deviation, 2) < pow((LKLLa - LLa), 2) + pow((LKLLo - LLo), 2))
+                            usefulFunctions.showAlert(myActivity, "the location change");
                     }
                 }
             }
         };
 
-        if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             mGoogleApiClient = new GoogleApiClient.Builder(myActivity)
                     .enableAutoManage(myActivity /* FragmentActivity */,
                             this /* OnConnectionFailedListener */)
@@ -216,7 +215,7 @@ public class Travel extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        myView= inflater.inflate(R.layout.fragment_travel, container, false);
+        myView = inflater.inflate(R.layout.fragment_travel, container, false);
 
         availableButton = (Button) myView.findViewById(R.id.available); // you have to use rootview object..
         availableButton.setOnClickListener(this);
@@ -224,16 +223,16 @@ public class Travel extends Fragment
         busyButton = (Button) myView.findViewById(R.id.busy); // you have to use rootview object..
         busyButton.setOnClickListener(this);
 
-        myFloating=(FloatingActionButton) myView.findViewById(R.id.getMyLocation); // you have to use rootview object..
+        myFloating = (FloatingActionButton) myView.findViewById(R.id.getMyLocation); // you have to use rootview object..
         myFloating.bringToFront();
         myFloating.setClickable(true);
         myFloating.setOnClickListener(this);
         myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        mapFragment=(SupportMapFragment) myActivity.getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-        mMapView=(MapView)myActivity.findViewById(R.id.map);
-        PercentRelativeLayout allInstruction=(PercentRelativeLayout)myActivity.findViewById(R.id.allInstruction);
+        mMapView = (MapView) myActivity.findViewById(R.id.map);
+        PercentRelativeLayout allInstruction = (PercentRelativeLayout) myActivity.findViewById(R.id.allInstruction);
         allInstruction.bringToFront();
         //stationsList =(ListView) myView.findViewById(R.id.DragbleText);
 
@@ -243,13 +242,13 @@ public class Travel extends Fragment
         DragbleText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
+                ClipData.Item item = new ClipData.Item((CharSequence) v.getTag());
                 String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
 
                 //ClipData dragData = new ClipData(v.getTag().toString(),mimeTypes, item);
                 View.DragShadowBuilder myShadow = new View.DragShadowBuilder(DragbleText);
 
-                v.startDrag(null,myShadow,null,0);
+                v.startDrag(null, myShadow, null, 0);
                 return true;
             }
         });
@@ -264,7 +263,7 @@ public class Travel extends Fragment
 
                 // dpWidth is the 100% ?
                 float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-                switch(action) {
+                switch (action) {
                     case DragEvent.ACTION_DRAG_STARTED:
                         //where its now
 
@@ -274,7 +273,7 @@ public class Travel extends Fragment
                         v.invalidate();
                         // Invalidate the view to force a redraw in the new tint
 
-                            // returns true to indicate that the View can accept the dragged data.
+                        // returns true to indicate that the View can accept the dragged data.
                         return true;
 
 
@@ -330,7 +329,7 @@ public class Travel extends Fragment
 
                     // An unknown action type was received.
                     default:
-                        Log.e("DragDrop Example","Unknown action type received by OnDragListener.");
+                        Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
                         break;
                 }
                 return true;
@@ -343,10 +342,9 @@ public class Travel extends Fragment
     public void onAttach(Context context) {
         super.onAttach(context);
         //onMapReady();
-        if(mMap!=null)
-        {
+        if (mMap != null) {
             //// Get the current location of the device and set the position of the map.
-            DEFAULT_ZOOM=16;
+            DEFAULT_ZOOM = 16;
             getDeviceLocation();
             //updateLocationUI();
         }
@@ -356,9 +354,8 @@ public class Travel extends Fragment
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        if(getActivity()!=null)
-        {
-            myActivity=getActivity();
+        if (getActivity() != null) {
+            myActivity = getActivity();
         }
     }
 
@@ -376,15 +373,15 @@ public class Travel extends Fragment
     }
 
 
-     //* This interface must be implemented by activities that contain this
-     //* fragment to allow an interaction in this fragment to be communicated
-     //* to the activity and potentially other fragments contained in that
-     //* activity.
-     //* <p>
-     //* See the Android Training lesson <a href=
-     //* "http://developer.android.com/training/basics/fragments/communicating.html"
-     //* >Communicating with Other Fragments</a> for more information.
-     //*/
+    //* This interface must be implemented by activities that contain this
+    //* fragment to allow an interaction in this fragment to be communicated
+    //* to the activity and potentially other fragments contained in that
+    //* activity.
+    //* <p>
+    //* See the Android Training lesson <a href=
+    //* "http://developer.android.com/training/basics/fragments/communicating.html"
+    //* >Communicating with Other Fragments</a> for more information.
+    //*/
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -397,10 +394,9 @@ public class Travel extends Fragment
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.v(TAG, "onConnected");
-        if(mMap!=null)
-        {
+        if (mMap != null) {
             //// Get the current location of the device and set the position of the map.
-            DEFAULT_ZOOM=16;
+            DEFAULT_ZOOM = 16;
             getDeviceLocation();
             updateLocationUI();
         }
@@ -447,6 +443,7 @@ public class Travel extends Fragment
     //    mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
     //    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     //}
+
     /**
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
@@ -454,32 +451,30 @@ public class Travel extends Fragment
     @SuppressLint("NewApi")
     @Override
     public void onMapReady(GoogleMap map) {
-        mMap =map;
+        mMap = map;
         //// Get the current location of the device and set the position of the map.
-        if(mMap!=null)
-        {
+        if (mMap != null) {
             //// Get the current location of the device and set the position of the map.
-            DEFAULT_ZOOM=16;
+            DEFAULT_ZOOM = 16;
             getDeviceLocation();
             updateLocationUI();
         }
 
-        if(ride !=null && inRoute==true)
-        {
+        if (ride != null && inRoute == true) {
             drawMap();
             drawStation(ride.getRoute().getLocations());
             stations = ride.getRoute().getLocations();
-            if(showStations){
+            if (showStations) {
                 ShowListStations();
             }
             drawRoute(ride.getRoute().getLocations());
             DEFAULT_ZOOM = 13;
-            if(mLastKnownLocation!=null) {
+            if (mLastKnownLocation != null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(mLastKnownLocation.getLatitude(),
                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
             }
-            if(mLastKnownLocation==null && ride!=null && ride.getRoute()!=null){
+            if (mLastKnownLocation == null && ride != null && ride.getRoute() != null) {
 
                 MyLocation firstLocation = ride.getRoute().getLocations().get(0);
                 LatLng newMapLocation = new LatLng(firstLocation.getMyLocation().getLatitude(),
@@ -487,14 +482,10 @@ public class Travel extends Fragment
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         newMapLocation, DEFAULT_ZOOM));
             }
-        }
-        else
-        {
+        } else {
             try {
                 RemoveListStations();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.e("error", e.toString());
             }
         }
@@ -508,17 +499,18 @@ public class Travel extends Fragment
             myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             busyButton.setBackgroundResource(R.drawable.busy);
             availableButton.setBackgroundResource(R.drawable.start);
-            usefulFunctions.busy=true;
+            usefulFunctions.busy = true;
             //drawNavigationInstruction();
             //setBigInstruction("left");
             //setSmallInstructionP("right");
             //drawStation(ride.getRoute().getLocations());
-            Double[] LatLng =new Double[2];
-            LatLng[0]=null;
+            Double[] LatLng = new Double[2];
+            LatLng[0] = null;
             LatLng[1] = null;
             new Travel.UpdateLocation().execute(LatLng);
         }
     }
+
     class UpdateLocation extends AsyncTask<Double, String, String> {
         @Override
         protected String doInBackground(Double... params) {
@@ -526,15 +518,15 @@ public class Travel extends Fragment
             String toReturn = "";
 
             try {
-                Map<String,Object> parameters = new HashMap<String, Object>();
-                parameters.put("lat",params[0]);
-                parameters.put("lng",params[1]);
-                toReturn = POST(Const.UPDATE_LOCATION_URI.toString(),parameters);
+                Map<String, Object> parameters = new HashMap<String, Object>();
+                parameters.put("lat", params[0]);
+                parameters.put("lng", params[1]);
+                toReturn = POST(Const.UPDATE_LOCATION_URI.toString(), parameters);
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     //listDsManager.updateMyRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -548,46 +540,43 @@ public class Travel extends Fragment
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1) {
+            if (values[0].length() > 1) {
                 //showAlert(myActivity,values[0]);
-            }
-            else {
+            } else {
                 //showAlert(myActivity,"נסיעה נלקחה בהצלחה");
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
         }
     }
 
-    public void available(View v)
-    {
+    public void available(View v) {
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);
             myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
             busyButton.setBackgroundResource(R.drawable.start);
             availableButton.setBackgroundResource(R.drawable.available);
-            usefulFunctions.busy=false;
+            usefulFunctions.busy = false;
             drawMap();
         }
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.available:
                 available(v);
                 //myFloating.setDrawingCacheBackgroundColor(323);
@@ -596,15 +585,14 @@ public class Travel extends Fragment
                 busy(v);
                 break;
             case R.id.getMyLocation:
-                if(mMap != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
+                if (mMap != null) { // Check to ensure coordinates aren't null, probably a better way of doing this...
                     ///DEFAULT_ZOOM =14; // good for view nibgerood
-                    if(doZoom) {
+                    if (doZoom) {
                         DEFAULT_ZOOM = 16;
-                        doZoom=false;
-                    }
-                    else {
+                        doZoom = false;
+                    } else {
                         DEFAULT_ZOOM = 14;
-                        doZoom=true;
+                        doZoom = true;
                     }
                     getDeviceLocation();
                     updateLocationUI();
@@ -618,12 +606,11 @@ public class Travel extends Fragment
 
     //maybe here the problem, look good and work just one time
     private void getDeviceLocation() {
-        boolean mLocationPermissionGranted= false;
+        boolean mLocationPermissionGranted = false;
         //permission handler
         if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-        {
+                == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
             ActivityCompat.requestPermissions(myActivity,
@@ -631,7 +618,7 @@ public class Travel extends Fragment
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
         if (mLocationPermissionGranted) {
-            mPreviousLastKnownLocation=mLastKnownLocation;
+            mPreviousLastKnownLocation = mLastKnownLocation;
             mLastKnownLocation = LocationServices.FusedLocationApi
                     .getLastLocation(mGoogleApiClient);
             //mFusedLocationClient.getLastLocation()
@@ -686,27 +673,24 @@ public class Travel extends Fragment
     }
 
     private void updateLocationUI() {
-        if (mMap == null)
-        {
+        if (mMap == null) {
             return;
         }
-    /*
-     * Request location permission, so that we can get the location of the
-     * device. The result of the permission request is handled by a callback,
-     * onRequestPermissionsResult.
-     */
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
         if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
-        }
-        else {
+        } else {
             if (Build.VERSION.SDK_INT >= 23) {
                 ActivityCompat.requestPermissions(myActivity,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-            }
-            else
+            } else
                 /////////////////////////check maybe need to be false
                 mLocationPermissionGranted = true;
         }
@@ -715,9 +699,7 @@ public class Travel extends Fragment
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.getUiSettings().setMapToolbarEnabled(true);
-        }
-        else
-        {
+        } else {
             mMap.setMyLocationEnabled(false);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -726,30 +708,29 @@ public class Travel extends Fragment
     }
 
     //region GPS Enable?
-    private void checkGPSEnable()
-    {
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+    private void checkGPSEnable() {
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             //Toast.makeText(myActivity, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             showGPSDisabledAlertToUser();
         }
     }
 
-    private void showGPSDisabledAlertToUser(){
+    private void showGPSDisabledAlertToUser() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(myActivity);
         alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Goto Settings Page To Enable GPS",
-                        new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int id){
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 Intent callGPSSettingIntent = new Intent(
                                         android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                                 startActivity(callGPSSettingIntent);
                             }
                         });
         alertDialogBuilder.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });
@@ -760,39 +741,35 @@ public class Travel extends Fragment
 
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
 
         //if (mRequestingLocationUpdates) {
         //    startLocationUpdates();
         //    //getDeviceLocation();
         //}
-        if(mMap!=null)
-        {
+        if (mMap != null) {
             //// Get the current location of the device and set the position of the map.
-            DEFAULT_ZOOM=16;
+            DEFAULT_ZOOM = 16;
             //startLocationUpdates();
             getDeviceLocation();
             //updateLocationUI();
         }
 
-        if(isHidden()==false)
-        {
+        if (isHidden() == false) {
             int rideId;
             int index;
-            myActivity=getActivity();
+            myActivity = getActivity();
             Bundle bundle = this.getArguments();
             if (bundle != null) {
                 rideId = bundle.getInt("RIDEID", 0);
                 index = ListDsManager.convertRideIdToIndex("MyRide", rideId);
                 ride = ListDsManager.getMyRide().get(index);
                 boolean showRide = bundle.getBoolean("SHOWSTATIONS"); ///SHOWRIDE
-                if (showRide)
-                {
-                    showStations =true;
+                if (showRide) {
+                    showStations = true;
                 }
-                inRoute=true;
+                inRoute = true;
             }
             myActivity.setTitle("נסיעה");
             mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
@@ -806,8 +783,7 @@ public class Travel extends Fragment
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(myActivity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-        {
+                == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
             ActivityCompat.requestPermissions(myActivity,
@@ -822,43 +798,36 @@ public class Travel extends Fragment
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         drawMap();
     }
 
     //region NavigationInstruction
-    private void drawNavigationInstruction()
-    {
-        if(getActivity()!=null)
-        {
-            myActivity=getActivity();
-            RelativeLayout allInstruction=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+    private void drawNavigationInstruction() {
+        if (getActivity() != null) {
+            myActivity = getActivity();
+            RelativeLayout allInstruction = (RelativeLayout) myActivity.findViewById(R.id.allInstruction);
             allInstruction.setVisibility(View.VISIBLE);
         }
         //ins.invalidate();
     }
 
-    private void drawMap()
-    {
-        if(getActivity()!=null)
-        {
-            myActivity=getActivity();
+    private void drawMap() {
+        if (getActivity() != null) {
+            myActivity = getActivity();
             //PercentRelativeLayout allTravel=(PercentRelativeLayout)myActivity.findViewById(R.id.allTravel);
             //allTravel.bringToFront();
             //allTravel.invalidate();
-            RelativeLayout allInstruction=(RelativeLayout)myActivity.findViewById(R.id.allInstruction);
+            RelativeLayout allInstruction = (RelativeLayout) myActivity.findViewById(R.id.allInstruction);
             allInstruction.setVisibility(View.GONE);
         }
     }
 
-    private void setBigInstruction(String direction)
-    {
+    private void setBigInstruction(String direction) {
         ImageView imageFirstInstruction = (ImageView) myActivity.findViewById(R.id.imageFirstInstruction);
-        TextView textFirstInstruction = (TextView)myActivity.findViewById(R.id.textFirstInstruction);
-        switch (direction)
-        {
+        TextView textFirstInstruction = (TextView) myActivity.findViewById(R.id.textFirstInstruction);
+        switch (direction) {
             case "left":
                 imageFirstInstruction.setImageResource(R.drawable.left);
                 textFirstInstruction.setText("turn left");
@@ -874,11 +843,9 @@ public class Travel extends Fragment
         }
     }
 
-    private void setSmallInstructionP(String direction)
-    {
+    private void setSmallInstructionP(String direction) {
         ImageView imageSecondInstruction = (ImageView) myActivity.findViewById(R.id.imageSecondInstruction);
-        switch (direction)
-        {
+        switch (direction) {
             case "left":
                 break;
             case "right":
@@ -953,29 +920,25 @@ public class Travel extends Fragment
     //end region
 
     //region routeAndDraw
-    private void drawStation(ArrayList<MyLocation> station)
-    {
-        for (int i = 0; i < station.size(); i++)
-        {
+    private void drawStation(ArrayList<MyLocation> station) {
+        for (int i = 0; i < station.size(); i++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(
                             station.get(i).getMyLocation().getLatitude(),
                             station.get(i).getMyLocation().getLongitude()))
-                    .title("station "+i)
+                    .title("station " + i)
             ).showInfoWindow();
         }
     }
 
-    private void drawRoute (ArrayList<MyLocation> station )
-    {
-        int numberOfStation = station.size()-1;
-        if (numberOfStation<1)
-        {
-            usefulFunctions.showAlert(myActivity,"אין תחנות בנסיעה זאת, אנא פנה אלינו בהקדם");
+    private void drawRoute(ArrayList<MyLocation> station) {
+        int numberOfStation = station.size() - 1;
+        if (numberOfStation < 1) {
+            usefulFunctions.showAlert(myActivity, "אין תחנות בנסיעה זאת, אנא פנה אלינו בהקדם");
             return;
         }
-        LatLng first = new LatLng(station.get(0).getMyLocation().getLatitude(),station.get(0).getMyLocation().getLongitude());
-        LatLng last = new LatLng(station.get(numberOfStation).getMyLocation().getLatitude(),station.get(numberOfStation).getMyLocation().getLongitude());
+        LatLng first = new LatLng(station.get(0).getMyLocation().getLatitude(), station.get(0).getMyLocation().getLongitude());
+        LatLng last = new LatLng(station.get(numberOfStation).getMyLocation().getLatitude(), station.get(numberOfStation).getMyLocation().getLongitude());
         DragbleText.setVisibility(View.VISIBLE);
         myView.invalidate();
         String url = getDirectionsUrl(first, last);
@@ -997,25 +960,25 @@ public class Travel extends Fragment
         //}
     }
 
-    private String getDirectionsUrl(LatLng origin,LatLng dest){
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
         // Origin of route
-        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
 
         // Destination of route
-        String str_dest = "destination="+dest.latitude+","+dest.longitude;
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
 
         // Sensor enabled
         String sensor = "sensor=false";
 
         // Building the parameters to the web service
-        String parameters = str_origin+"&"+str_dest+"&"+sensor;
+        String parameters = str_origin + "&" + str_dest + "&" + sensor;
 
         // Output format
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
 
         return url;
     }
@@ -1024,7 +987,7 @@ public class Travel extends Fragment
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
-        try{
+        try {
             URL url = new URL(strUrl);
 
             // Creating an http connection to communicate with url
@@ -1041,7 +1004,7 @@ public class Travel extends Fragment
             StringBuffer sb = new StringBuffer();
 
             String line = "";
-            while( ( line = br.readLine()) != null){
+            while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
 
@@ -1049,9 +1012,9 @@ public class Travel extends Fragment
 
             br.close();
 
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.d("Exception url", e.toString());
-        }finally{
+        } finally {
             iStream.close();
             urlConnection.disconnect();
         }
@@ -1067,11 +1030,11 @@ public class Travel extends Fragment
             // For storing data from web service
             String data = "";
 
-            try{
+            try {
                 // Fetching the data from web service
                 data = downloadUrl(url[0]);
-            }catch(Exception e){
-                Log.d("Background Task",e.toString());
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
             }
             return data;
         }
@@ -1089,8 +1052,10 @@ public class Travel extends Fragment
         }
     }
 
-    /** A class to parse the Google Places in JSON format */
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+    /**
+     * A class to parse the Google Places in JSON format
+     */
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
         // Parsing the data in non-ui thread
         @Override
@@ -1099,13 +1064,13 @@ public class Travel extends Fragment
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
 
-            try{
+            try {
                 jObject = new JSONObject(jsonData[0]);
                 //DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
                 routes = parse(jObject);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return routes;
@@ -1119,7 +1084,7 @@ public class Travel extends Fragment
             MarkerOptions markerOptions = new MarkerOptions();
 
             // Traversing through all the routes
-            for(int i=0;i<result.size();i++){
+            for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
                 lineOptions = new PolylineOptions();
 
@@ -1127,8 +1092,8 @@ public class Travel extends Fragment
                 List<HashMap<String, String>> path = result.get(i);
 
                 // Fetching all the points in i-th route
-                for(int j=0;j<path.size();j++){
-                    HashMap<String,String> point = path.get(j);
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
 
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
@@ -1148,9 +1113,9 @@ public class Travel extends Fragment
         }
     }
 
-    public List<List<HashMap<String,String>>> parse(JSONObject jObject){
+    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
-        List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String,String>>>() ;
+        List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String, String>>>();
         JSONArray jRoutes = null;
         JSONArray jLegs = null;
         JSONArray jSteps = null;
@@ -1160,25 +1125,25 @@ public class Travel extends Fragment
             jRoutes = jObject.getJSONArray("routes");
 
             /** Traversing all routes */
-            for(int i=0;i<jRoutes.length();i++){
-                jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
+            for (int i = 0; i < jRoutes.length(); i++) {
+                jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<HashMap<String, String>>();
 
                 /** Traversing all legs */
-                for(int j=0;j<jLegs.length();j++){
-                    jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
+                for (int j = 0; j < jLegs.length(); j++) {
+                    jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
 
                     /** Traversing all steps */
-                    for(int k=0;k<jSteps.length();k++){
+                    for (int k = 0; k < jSteps.length(); k++) {
                         String polyline = "";
-                        polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
+                        polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
                         List<LatLng> list = decodePoly(polyline);
 
                         /** Traversing all points */
-                        for(int l=0;l<list.size();l++){
+                        for (int l = 0; l < list.size(); l++) {
                             HashMap<String, String> hm = new HashMap<String, String>();
-                            hm.put("lat", Double.toString(((LatLng)list.get(l)).latitude) );
-                            hm.put("lng", Double.toString(((LatLng)list.get(l)).longitude) );
+                            hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
+                            hm.put("lng", Double.toString(((LatLng) list.get(l)).longitude));
                             path.add(hm);
                         }
                     }
@@ -1188,7 +1153,7 @@ public class Travel extends Fragment
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
         }
 
         return routes;
@@ -1229,16 +1194,14 @@ public class Travel extends Fragment
     }
     //end region
 
-    public Location getmLastKnownLocation()
-    {
+    public Location getmLastKnownLocation() {
         return mLastKnownLocation;
     }
 
-    public void startRide(int rideId)
-    {
+    public void startRide(int rideId) {
         int index = ListDsManager.convertRideIdToIndex("MyRide", rideId);
         ride = ListDsManager.getMyRide().get(index);
-        inRoute=true;
+        inRoute = true;
 
     }
 
@@ -1254,14 +1217,12 @@ public class Travel extends Fragment
         int speed = (int) (location.getSpeed() * 2.2369);
         // send location data to server
         Intent myUpdateLocationServiceIntent = new Intent(getActivity(), updateLocationService.class);
-        myUpdateLocationServiceIntent.putExtra("Lat",currentLatitude);
-        myUpdateLocationServiceIntent.putExtra("Lng",currentLongitude);
+        myUpdateLocationServiceIntent.putExtra("Lat", currentLatitude);
+        myUpdateLocationServiceIntent.putExtra("Lng", currentLongitude);
         try {
             getContext().startService(myUpdateLocationServiceIntent);
-        }
-        catch (Exception e)
-        {
-            int x =5;
+        } catch (Exception e) {
+            int x = 5;
         }
         //if (isSubscribed) {
         //    JSONObject json = new JSONObject();
@@ -1285,58 +1246,57 @@ public class Travel extends Fragment
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void ShowListStations(){
+    private void ShowListStations() {
         float dpHeight = getDpHeight();
         availableButton.setVisibility(View.GONE);
         busyButton.setVisibility(View.GONE);
         myFloating.setVisibility(View.GONE);
-        if (mapFragment.getView() != null){
+        if (mapFragment.getView() != null) {
             ViewGroup.LayoutParams mapFragmentParams = mapFragment.getView().getLayoutParams();
-            mapFragmentParams.height = (int)(dpHeight*1.50);
+            mapFragmentParams.height = (int) (dpHeight * 1.50);
             mapFragment.getView().setLayoutParams(mapFragmentParams);
         }
         ViewGroup.LayoutParams stationsListParams = stationsList.getLayoutParams();
 
-        stationsListParams.height = (int)(dpHeight*0.20);
+        stationsListParams.height = (int) (dpHeight * 0.20);
         stationsList.setLayoutParams(stationsListParams);
         stationsList.setVisibility(View.VISIBLE);
-        stationsAdapter = new StationsAdapter(myActivity,R.layout.item_station,stations);
+        stationsAdapter = new StationsAdapter(myActivity, R.layout.item_station, stations);
         stationsList.setAdapter(stationsAdapter);
         RelativeLayout.LayoutParams draggableLayoutParams = (RelativeLayout.LayoutParams) DragbleText.getLayoutParams();
         draggableLayoutParams.removeRule(RelativeLayout.ABOVE);
-        draggableLayoutParams.addRule(RelativeLayout.ABOVE, R.id.stationList );
+        draggableLayoutParams.addRule(RelativeLayout.ABOVE, R.id.stationList);
         DragbleText.setText("אתה בנסיעה עם תחנות, גרור למטה על מנת להעלימן");
         stationsList.invalidateViews();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void RemoveListStations(){
+    private void RemoveListStations() {
         DisplayMetrics displayMetrics = myActivity.getResources().getDisplayMetrics();
         float dpHeight = getDpHeight();
         availableButton.setVisibility(View.VISIBLE);
         busyButton.setVisibility(View.VISIBLE);
         myFloating.setVisibility(View.VISIBLE);
-        if (mapFragment.getView() != null){
+        if (mapFragment.getView() != null) {
             ViewGroup.LayoutParams mapFragmentParams = mapFragment.getView().getLayoutParams();
-            mapFragmentParams.height = (int)(displayMetrics.heightPixels);
+            mapFragmentParams.height = (int) (displayMetrics.heightPixels);
             mapFragment.getView().setLayoutParams(mapFragmentParams);
         }
         ViewGroup.LayoutParams stationsListParams = stationsList.getLayoutParams();
 
-        stationsListParams.height = (int)(0);
+        stationsListParams.height = (int) (0);
         stationsList.setLayoutParams(stationsListParams);
         stationsList.setVisibility(View.GONE);
         //stationsAdapter = new StationsAdapter(myActivity,R.layout.item_station,stations);
         //stationsList.setAdapter(stationsAdapter);
         RelativeLayout.LayoutParams draggableLayoutParams = (RelativeLayout.LayoutParams) DragbleText.getLayoutParams();
         draggableLayoutParams.removeRule(RelativeLayout.ABOVE);
-        draggableLayoutParams.addRule(RelativeLayout.BELOW, R.id.stationList );
+        draggableLayoutParams.addRule(RelativeLayout.BELOW, R.id.stationList);
         DragbleText.setText("אתה בנסיעה עם תחנות, גרור למטה על מנת להעלימן");
         stationsList.invalidateViews();
     }
 
-    private float getDpHeight()
-    {
+    private float getDpHeight() {
         DisplayMetrics displayMetrics = myActivity.getResources().getDisplayMetrics();
 
         // dpHeight is the 100% ?

@@ -9,8 +9,7 @@ import android.location.Location;
 //////////////////////////////////////////////////////
 //////////////////// Passenger //////////////////////
 ////////////////////////////////////////////////////
-public class Passenger
-{
+public class Passenger {
     private int passengerNumber;
     private String name;
     private String phone;
@@ -76,15 +75,14 @@ public class Passenger
         this.paymentType = paymentType;
     }
 
-    public Passenger(int passengerNumber_in,String name_in,String phone_in,String note_in,Location source_in,Location destination_in,String paymentType_in)
-    {
-        this.passengerNumber=passengerNumber_in;
-        this.name=name_in;
-        this.phone=phone_in;
-        this.note=note_in;
-        this.source=source_in;
-        this.destination=destination_in;
-        this.paymentType=paymentType_in;
+    public Passenger(int passengerNumber_in, String name_in, String phone_in, String note_in, Location source_in, Location destination_in, String paymentType_in) {
+        this.passengerNumber = passengerNumber_in;
+        this.name = name_in;
+        this.phone = phone_in;
+        this.note = note_in;
+        this.source = source_in;
+        this.destination = destination_in;
+        this.paymentType = paymentType_in;
     }
 
 }

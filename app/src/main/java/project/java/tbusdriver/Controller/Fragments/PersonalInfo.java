@@ -39,7 +39,7 @@ import static project.java.tbusdriver.usefulFunctions.showAlert;
  * create an instance of this fragment.
  */
 public class PersonalInfo extends Fragment
-        implements AdapterView.OnItemSelectedListener{
+        implements AdapterView.OnItemSelectedListener {
 
     Activity myActivity;
     View myView;
@@ -86,15 +86,15 @@ public class PersonalInfo extends Fragment
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String [] user=new String[2];
-                        user[0]=name.getText().toString().trim();
-                        user[1]=email.getText().toString().trim();
+                        String[] user = new String[2];
+                        user[0] = name.getText().toString().trim();
+                        user[1] = email.getText().toString().trim();
                         //if(user[0].equals(""))
                         //    showAlert(myActivity,"You must enter name");
                         //else if(user[1].equals(""))
                         //    showAlert(myActivity,"you must enter phone");
                         //else
-                            //user[0]=Phone user[1]=User Name
+                        //user[0]=Phone user[1]=User Name
                         new PersonalInfo.UpdateUser().execute(user);
                     }
                 }
@@ -127,8 +127,7 @@ public class PersonalInfo extends Fragment
         mListener = null;
     }
 
-    private void fillPersonalInfo()
-    {
+    private void fillPersonalInfo() {
         new PersonalInfo.GetUser().execute();
     }
 
@@ -147,15 +146,15 @@ public class PersonalInfo extends Fragment
         protected User doInBackground(String... params) {
             //user[0]=Phone user[1]=User Name
             String toReturn = "";
-            User resultUser=null;
+            User resultUser = null;
 
             try {
                 toReturn = GET(Const.PRESONAL_INFO_URI.toString());
                 resultUser = parsePersonalInfo(toReturn);
-                if (resultUser!=null) {
+                if (resultUser != null) {
                     //listDsManager.updateAvailableRides(toReturn);
                     publishProgress(resultUser);
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress(null);
                 }
@@ -168,7 +167,7 @@ public class PersonalInfo extends Fragment
 
         @Override
         protected void onPostExecute(User result) {
-            if(result!= null) {
+            if (result != null) {
                 //every thing is okay
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
@@ -182,16 +181,14 @@ public class PersonalInfo extends Fragment
         protected void onProgressUpdate(User... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if (values == null)
-            {
-                showAlert(myActivity,"something get wrong");
-                return;
-            }
-            if(values[0]== null) {
+            if (values == null) {
                 showAlert(myActivity, "something get wrong");
                 return;
             }
-            else {
+            if (values[0] == null) {
+                showAlert(myActivity, "something get wrong");
+                return;
+            } else {
                 name.setText(values[0].getName());
                 phone.setText(values[0].getPhone());
                 email.setText(values[0].getEmail());
@@ -208,18 +205,18 @@ public class PersonalInfo extends Fragment
             //user[0]=Phone user[1]=User Name
             String toReturn = "";
             User updatedUser = null;
-            Map<String,Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
 
-            parameters.put("name",params[0]);
-            parameters.put("email",params[1]);
+            parameters.put("name", params[0]);
+            parameters.put("email", params[1]);
 
             try {
-                toReturn = PUT(Const.PRESONAL_INFO_URI.toString() ,parameters);
+                toReturn = PUT(Const.PRESONAL_INFO_URI.toString(), parameters);
                 updatedUser = parsePersonalInfo(toReturn);
-                if (updatedUser!=null) {
+                if (updatedUser != null) {
                     //listDsManager.updateAvailableRides(toReturn);
                     publishProgress(updatedUser);
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress(null);
                 }
@@ -236,7 +233,7 @@ public class PersonalInfo extends Fragment
         protected void onPostExecute(User result) {
 
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
@@ -255,16 +252,14 @@ public class PersonalInfo extends Fragment
             //else {
             //    //mCallBack.OnLoginFragmentInteractionListener(1);
             //}
-            if (values == null)
-            {
-                showAlert(myActivity,"something get wrong");
-                return;
-            }
-            if(values[0]== null) {
+            if (values == null) {
                 showAlert(myActivity, "something get wrong");
                 return;
             }
-            else {
+            if (values[0] == null) {
+                showAlert(myActivity, "something get wrong");
+                return;
+            } else {
                 name.setText(values[0].getName());
                 phone.setText(values[0].getPhone());
                 email.setText(values[0].getEmail());
@@ -276,8 +271,7 @@ public class PersonalInfo extends Fragment
     }
 
     @Nullable
-    private User parsePersonalInfo(String data)
-    {
+    private User parsePersonalInfo(String data) {
         //JSONObject c = rides.getJSONObject(i);
         //travel_time = c.getString("travel_time");
         //String name =
@@ -285,31 +279,27 @@ public class PersonalInfo extends Fragment
         try {
             String userData = new JSONObject(data).getString("user");
             int driverNumber = new JSONObject(userData).getInt("id");
-            String name =new JSONObject(userData).getString("name");
+            String name = new JSONObject(userData).getString("name");
             String phone = new JSONObject(userData).getString("phone");
             String email = new JSONObject(userData).getString("email");
-            if(email.toLowerCase() == "null")
-            {
-                email ="";
+            if (email.toLowerCase() == "null") {
+                email = "";
             }
             String address = new JSONObject(userData).getString("address");
-            if (address.toLowerCase() == "null")
-            {
-                address="";
+            if (address.toLowerCase() == "null") {
+                address = "";
             }
             String gender = new JSONObject(userData).getString("gender");
-            if (gender == null)
-            {
-                gender ="";
+            if (gender == null) {
+                gender = "";
             }
-            return new User(driverNumber,name,phone,email,address,gender,"");
-        }
-        catch (Exception e)
-        {
+            return new User(driverNumber, name, phone, email, address, gender, "");
+        } catch (Exception e) {
 
         }
-        return  null;
+        return null;
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

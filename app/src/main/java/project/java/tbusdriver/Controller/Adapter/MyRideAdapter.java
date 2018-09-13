@@ -40,13 +40,14 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
     public MyRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> rideList) {
         super(c, textViewResourceId, rideList);
         context = c;
-        this.rideList=new ArrayList<Ride>();
+        this.rideList = new ArrayList<Ride>();
         this.rideList.addAll(rideList);
-        listDsManager=(ListDsManager) new Factory(c).getInstance();
+        listDsManager = (ListDsManager) new Factory(c).getInstance();
         mCallBack = (OnFragmentInteractionListener) context;
-        instance=this;
+        instance = this;
 
     }
+
     @Override
     public int getCount() {
         return rideList.size();
@@ -65,28 +66,28 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
 
         //if (convertView == null) {
 
-            //listView = new View(context);
+        //listView = new View(context);
 
-            // get layout from resources
-        listView=inflater.inflate(R.layout.item_my_ride,null);
+        // get layout from resources
+        listView = inflater.inflate(R.layout.item_my_ride, null);
 
         // set image based on selected text
         Button unclaim = (Button) listView.findViewById(R.id.unclaim);
         Button startRide = (Button) listView.findViewById(R.id.startRide);
 
         TextView TVID = (TextView) listView.findViewById(R.id.name);
-        String id=String.valueOf(rideList.get(position).getRideId());
+        String id = String.valueOf(rideList.get(position).getRideId());
         TVID.setText(id);
 
         TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-        String travelTime= String.valueOf(rideList.get(position).getTravelTime());
+        String travelTime = String.valueOf(rideList.get(position).getTravelTime());
         TVTravelTime.setText(travelTime);
         unclaim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String rideID=String.valueOf(rideList.get(position).getRideId());
-                String [] user=new String[1];
-                user[0]=rideID;
+                String rideID = String.valueOf(rideList.get(position).getRideId());
+                String[] user = new String[1];
+                user[0] = rideID;
                 new MyRideAdapter.ClaimRide().execute(user);
             }
         });
@@ -96,12 +97,12 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        TextView rideID=(TextView)listView.findViewById(R.id.name);
-        switch(view.getId()) {
+        TextView rideID = (TextView) listView.findViewById(R.id.name);
+        switch (view.getId()) {
             case R.id.unclaim:
                 //claim(view);
-                String [] user=new String[1];
-                user[0]=rideID.getText().toString();
+                String[] user = new String[1];
+                user[0] = rideID.getText().toString();
                 new MyRideAdapter.ClaimRide().execute(user);
                 break;
             case R.id.startRide:
@@ -118,19 +119,19 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
         protected String doInBackground(String... params) {
             //user[0]= groupID    user[1]=User Name
             String toReturn = "";
-            Map<String,Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<String, Object>();
             try {
-                toReturn= POST("http://52.16.221.155/api/taxi/claim/"+params[0],parameters);
+                toReturn = POST("http://52.16.221.155/api/taxi/claim/" + params[0], parameters);
                 //toReturn = POST(Const.CLAIM_A_RIDE_URI+params[0],parameters);
                 String httpResult = new JSONObject(toReturn).getString("status");
-                if (httpResult.compareTo("OK")==0) {
+                if (httpResult.compareTo("OK") == 0) {
                     //// TODO: 25/08/2017 add the ride to my ride
-                    Ride temp=listDsManager.getMyRide().get(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
+                    Ride temp = listDsManager.getMyRide().get(listDsManager.convertRideIdToIndex("MyRide", Integer.parseInt(params[0])));
                     listDsManager.getAvailableRides().add(temp);
-                    listDsManager.getMyRide().remove(listDsManager.convertRideIdToIndex("MyRide",Integer.parseInt(params[0])));
+                    listDsManager.getMyRide().remove(listDsManager.convertRideIdToIndex("MyRide", Integer.parseInt(params[0])));
                     rideList = listDsManager.getMyRide();
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong\n" + toReturn);
                 }
@@ -144,7 +145,7 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 instance.notifyDataSetChanged();
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
@@ -152,16 +153,15 @@ public class MyRideAdapter extends ArrayAdapter<Ride> implements View.OnClickLis
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1)
-                showAlert(context,values[0]);
+            if (values[0].length() > 1)
+                showAlert(context, values[0]);
             else {
                 instance.notifyDataSetChanged();
                 //mCallBack.OnLoginFragmentInteractionListener(1);

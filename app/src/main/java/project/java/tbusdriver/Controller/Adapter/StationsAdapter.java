@@ -32,7 +32,7 @@ public class StationsAdapter extends ArrayAdapter<MyLocation> {
     public StationsAdapter(Context c, int textViewResourceId, ArrayList<MyLocation> stationList) {
         super(c, textViewResourceId, stationList);
         context = c;
-        this.stationList=new ArrayList<MyLocation>();
+        this.stationList = new ArrayList<MyLocation>();
         this.stationList.addAll(stationList);
         //this.notifyDataSetChanged();
     }
@@ -53,7 +53,7 @@ public class StationsAdapter extends ArrayAdapter<MyLocation> {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        listView=inflater.inflate(R.layout.item_station,null);
+        listView = inflater.inflate(R.layout.item_station, null);
 
         // set image based on selected text
         //TVID is text view for ride id R.id.name is used for ride id
@@ -62,23 +62,21 @@ public class StationsAdapter extends ArrayAdapter<MyLocation> {
         TVID.setText(id);
         // travel time is used as distance
         TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-        String travelTime= String.valueOf(stationList.get(position).getDistance());
+        String travelTime = String.valueOf(stationList.get(position).getDistance());
         TVTravelTime.setText(travelTime);
 
         TextView isPickup = (TextView) listView.findViewById(R.id.isPickup);
-        if (stationList.get(position).isPickUp()){
+        if (stationList.get(position).isPickUp()) {
             isPickup.setText("עליה ");
-        }
-        else {
+        } else {
             isPickup.setText("ירידה ");
         }
         TextView TVPassenger = (TextView) listView.findViewById(R.id.passenger);
         String passenger = stationList.get(position).getPassenger();
-        if (stationList.get(position).getUsername()==null && stationList.get(position).getPhone()==null){
+        if (stationList.get(position).getUsername() == null && stationList.get(position).getPhone() == null) {
             TVPassenger.setText(passenger);
-        }
-        else {
-            TVPassenger.setText(stationList.get(position).getUsername() +" "+ stationList.get(position).getPhone());
+        } else {
+            TVPassenger.setText(stationList.get(position).getUsername() + " " + stationList.get(position).getPhone());
         }
         //Ride currentRide= ListDsManager.getHistoricRide().get(convertRideIdToIndex(HistoricRidesListName, Integer.valueOf(id)));
         return listView;

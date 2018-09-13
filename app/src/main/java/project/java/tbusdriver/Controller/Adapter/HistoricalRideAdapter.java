@@ -36,9 +36,9 @@ public class HistoricalRideAdapter extends ArrayAdapter<Ride> {
     public HistoricalRideAdapter(Context c, int textViewResourceId, ArrayList<Ride> rideList) {
         super(c, textViewResourceId, rideList);
         context = c;
-        this.rideList=new ArrayList<Ride>();
+        this.rideList = new ArrayList<Ride>();
         this.rideList.addAll(rideList);
-        listDsManager=(ListDsManager) new Factory(c).getInstance();
+        listDsManager = (ListDsManager) new Factory(c).getInstance();
         this.notifyDataSetChanged();
     }
 
@@ -57,35 +57,27 @@ public class HistoricalRideAdapter extends ArrayAdapter<Ride> {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-
-        //if (convertView == null) {
-
-        //listView = new View(context);
-
-
         // get layout from resources
-        listView=inflater.inflate(R.layout.item_historical_ride,null);
+        listView = inflater.inflate(R.layout.item_historical_ride, null);
 
         // set image based on selected text
         TextView TVID = (TextView) listView.findViewById(R.id.name);
-        String id=String.valueOf(rideList.get(position).getRideId());
+        String id = String.valueOf(rideList.get(position).getRideId());
         TVID.setText(id);
         TextView TVTravelTime = (TextView) listView.findViewById(R.id.travelTime);
-        String travelTime= String.valueOf(rideList.get(position).getTravelTime());
+        String travelTime = String.valueOf(rideList.get(position).getTravelTime());
         TVTravelTime.setText(travelTime);
-        Ride currentRide= ListDsManager.getHistoricRide().get(convertRideIdToIndex(HistoricRidesListName, Integer.valueOf(id)));
-        if(currentRide.getRoute() != null)
-        {
+        Ride currentRide = ListDsManager.getHistoricRide().get(convertRideIdToIndex(HistoricRidesListName, Integer.valueOf(id)));
+        if (currentRide.getRoute() != null) {
             int amountOfStation = currentRide.getRoute().getLocations().size();
-            if(amountOfStation>1)
-            {
+            if (amountOfStation > 1) {
                 TextView firstStation = (TextView) listView.findViewById(R.id.firstStation);
                 firstStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(0).getMyLocation().getLongitude())
-                        +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(0).getMyLocation().getLatitude()));
+                        + "   " + String.valueOf(currentRide.getRoute().getLocations().get(0).getMyLocation().getLatitude()));
                 TextView lastStation = (TextView) listView.findViewById(R.id.lastStation);
 
-                lastStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLongitude())
-                        +"   "+ String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation-1).getMyLocation().getLatitude()));
+                lastStation.setText(String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation - 1).getMyLocation().getLongitude())
+                        + "   " + String.valueOf(currentRide.getRoute().getLocations().get(amountOfStation - 1).getMyLocation().getLatitude()));
             }
         }
 

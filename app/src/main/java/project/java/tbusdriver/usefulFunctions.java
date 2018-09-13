@@ -24,14 +24,13 @@ public class usefulFunctions {
 
     //public static String Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTExLCJpYXQiOjE1MDYyNTcwMDF9.dn17ItRw6f55wfbO_YhAOMuNxU14fUY-dVx0y98M-bo";
     // the driver token
-    public static String Token=null;
+    public static String Token = null;
 
     // flag that say if the driver want to get new rides
-    public static boolean busy=false;
+    public static boolean busy = false;
 
-    public static void showAlert(Context context, String alert)
-    {
-        AlertDialog.Builder myAlert=new AlertDialog.Builder(context);
+    public static void showAlert(Context context, String alert) {
+        AlertDialog.Builder myAlert = new AlertDialog.Builder(context);
         myAlert.setMessage(alert).create();
         myAlert.show();
     }
@@ -42,8 +41,8 @@ public class usefulFunctions {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
-        if(Token!=null)
-            con.setRequestProperty("Authorization","JWT "+Token);
+        if (Token != null)
+            con.setRequestProperty("Authorization", "JWT " + Token);
         if (con.getResponseCode() == HttpURLConnection.HTTP_OK) { // success
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     con.getInputStream()));
@@ -65,11 +64,11 @@ public class usefulFunctions {
 
     // post req
     @NonNull
-    public static String POST(String url, Map<String,Object> params) throws IOException {
+    public static String POST(String url, Map<String, Object> params) throws IOException {
 
         //Convert Map<String,Object> into key=value&key=value pairs.
         StringBuilder postData = new StringBuilder();
-        for (Map.Entry<String,Object> param : params.entrySet()) {
+        for (Map.Entry<String, Object> param : params.entrySet()) {
             if (postData.length() != 0)
                 postData.append('&');
             postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
@@ -80,8 +79,8 @@ public class usefulFunctions {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
-        if(Token!=null)
-            con.setRequestProperty("Authorization","JWT "+Token);
+        if (Token != null)
+            con.setRequestProperty("Authorization", "JWT " + Token);
 
         // For POST only - START
         con.setDoOutput(true);
@@ -105,18 +104,17 @@ public class usefulFunctions {
             }
             in.close();
             return response.toString();
-        }
-        else
+        } else
             return "";
     }
 
     // put req
     @NonNull
-    public static String PUT(String url, Map<String,Object> params) throws IOException {
+    public static String PUT(String url, Map<String, Object> params) throws IOException {
 
         //Convert Map<String,Object> into key=value&key=value pairs.
         StringBuilder postData = new StringBuilder();
-        for (Map.Entry<String,Object> param : params.entrySet()) {
+        for (Map.Entry<String, Object> param : params.entrySet()) {
             if (postData.length() != 0)
                 postData.append('&');
             postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
@@ -127,8 +125,8 @@ public class usefulFunctions {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("PUT");
-        if(Token!=null)
-            con.setRequestProperty("Authorization","JWT "+Token);
+        if (Token != null)
+            con.setRequestProperty("Authorization", "JWT " + Token);
 
         // For POST only - START
         con.setDoOutput(true);
@@ -152,8 +150,7 @@ public class usefulFunctions {
             }
             in.close();
             return response.toString();
-        }
-        else
+        } else
             return "";
     }
 }

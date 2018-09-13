@@ -13,7 +13,7 @@ import java.io.Serializable;
 //////////////////////////////////////////////////////
 //////////////////// Ride //////////////////////////
 ////////////////////////////////////////////////////
-public class Ride implements Serializable,Parcelable {
+public class Ride implements Serializable, Parcelable {
 
     private static final long serialVersionUID = 0L;
 
@@ -24,7 +24,7 @@ public class Ride implements Serializable,Parcelable {
     // the travelTime- how much the all ride took
     private String travelTime;
 
-    public Ride(Route route, String  travelTime, int rideId) {
+    public Ride(Route route, String travelTime, int rideId) {
         this.route = route;
         this.travelTime = travelTime;
         this.rideId = rideId;
@@ -38,7 +38,7 @@ public class Ride implements Serializable,Parcelable {
         this.route = route;
     }
 
-    public String  getTravelTime() {
+    public String getTravelTime() {
         return travelTime;
     }
 
@@ -66,7 +66,7 @@ public class Ride implements Serializable,Parcelable {
         }
     };
 
-    public Ride(Parcel in){
+    public Ride(Parcel in) {
         //Gson gson = new Gson();
         //String jsonData = in.readString();
         //this.rideId = gson.fromJson(jsonData,int.class);

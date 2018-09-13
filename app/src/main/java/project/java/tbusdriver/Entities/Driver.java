@@ -8,8 +8,7 @@ import java.util.ArrayList;
  * Created by אור איטח on 04/06/2017.
  */
 
-public class Driver
-{
+public class Driver {
     private int driverNumber;
     private String name;
     private int numberOfPassenger;
@@ -75,18 +74,16 @@ public class Driver
     }
 
 
-    public Driver(int driverNumber_in,String name_in,int numberOfPassenger_in,Route route_in,  ArrayList[] passengers,Location currentLocation_in, boolean available_in)
-    {
-        this.driverNumber=driverNumber_in;
-        this.name=name_in;
-        this.numberOfPassenger=numberOfPassenger_in;
-        this.route=route_in;
-        this.passengers=new ArrayList[numberOfPassenger_in];
-        this.currentLocation=currentLocation_in;
-        this.available=available_in;
+    public Driver(int driverNumber_in, String name_in, int numberOfPassenger_in, Route route_in, ArrayList[] passengers, Location currentLocation_in, boolean available_in) {
+        this.driverNumber = driverNumber_in;
+        this.name = name_in;
+        this.numberOfPassenger = numberOfPassenger_in;
+        this.route = route_in;
+        this.passengers = new ArrayList[numberOfPassenger_in];
+        this.currentLocation = currentLocation_in;
+        this.available = available_in;
         return;
     }
-
 
 
 }

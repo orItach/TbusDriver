@@ -22,9 +22,9 @@ public class Alarm extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
-        wl.acquire(60*5);
+        wl.acquire(60 * 5);
         //context.startService(new Intent(context, getGradesInBackground.class));
-        context.startService(new Intent(context,updateLocationService.class));
+        context.startService(new Intent(context, updateLocationService.class));
         wl.release();
     }
 
@@ -33,7 +33,7 @@ public class Alarm extends BroadcastReceiver {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, Alarm.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 *CHECKUP_MINUTES* CHECKUP_HOURS, pi); // Millisec * Second * Minute
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * CHECKUP_MINUTES * CHECKUP_HOURS, pi); // Millisec * Second * Minute
     }
 
     public void cancelAlarm(Context context) {

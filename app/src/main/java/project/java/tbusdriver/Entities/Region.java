@@ -9,7 +9,7 @@ package project.java.tbusdriver.Entities;
 ////////////////////////////////////////////////////
 public class Region {
     // just because the app manage the region
-    static  int oldRegionID;
+    static int oldRegionID;
     // real region ID
     private int regionID;
     // region name, e.g tel aviv
@@ -18,8 +18,8 @@ public class Region {
     private Day[] days;
 
     public Region(String regionName, Day[] days) {
-        this.regionID=oldRegionID+1;
-        oldRegionID=this.regionID;
+        this.regionID = oldRegionID + 1;
+        oldRegionID = this.regionID;
         this.regionName = regionName;
         this.days = days;
     }
@@ -48,8 +48,6 @@ public class Region {
     public void setDays(Day[] days) {
         this.days = days;
     }
-
-
 
 
 }

@@ -40,14 +40,14 @@ public class NotificationIDService extends FirebaseInstanceIdService {
 
     /**
      * Persist token to third-party servers.
-     *
+     * <p>
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
      * maintained by your application.
      *
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-       new NotificationIDService.SendNotficationToken().execute(token);
+        new NotificationIDService.SendNotficationToken().execute(token);
     }
 
     class SendNotficationToken extends AsyncTask<String, String, String> {
@@ -57,27 +57,23 @@ public class NotificationIDService extends FirebaseInstanceIdService {
             String toReturn = "";
             try {
                 Log.d(TAG, "Refreshed token: " + params[0]);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.d(TAG, "error: ");
             }
             try {
-                Map<String,Object> parameters = new HashMap<String, Object>();
+                Map<String, Object> parameters = new HashMap<String, Object>();
                 try {
                     parameters.put("token", params[0]);
+                } catch (Exception e) {
+                    int x = 5;
                 }
-                catch (Exception e)
-                {
-                    int x =5;
-                }
-                parameters.put("device","android");
-                toReturn = POST(Const.NOTIFICATION_TOKEN_URI.toString(),parameters);
+                parameters.put("device", "android");
+                toReturn = POST(Const.NOTIFICATION_TOKEN_URI.toString(), parameters);
                 String httpResult = new JSONObject(toReturn).getString("user");
                 if (!httpResult.equalsIgnoreCase("")) {
                     //listDsManager.updateAvailableRides(toReturn);
                     publishProgress("");
-                    toReturn="";
+                    toReturn = "";
                 } else {
                     publishProgress("something get wrong      " + toReturn);
                 }
@@ -90,25 +86,23 @@ public class NotificationIDService extends FirebaseInstanceIdService {
         @Override
         protected void onPostExecute(String result) {
 
-            if(result.equals("")) {
+            if (result.equals("")) {
                 //every thing is okay
                 //mListener.onFragmentInteraction("");
             }
         }
 
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             //user[0]=Phone user[1]=User Name
             //check if have any error
-            if(values[0].length()>1) {
+            if (values[0].length() > 1) {
                 //showAlert(,values[0]);
-            }
-            else {
+            } else {
 
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
