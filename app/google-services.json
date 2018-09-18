@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "783842639974",
+    "firebase_url": "https://tbus-ionic.firebaseio.com",
+    "project_id": "tbus-ionic",
+    "storage_bucket": "tbus-ionic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783842639974:android:202e8ba32268ad64",
+        "android_client_info": {
+          "package_name": "project.java.tbusdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "783842639974-ulbui4244n13bc2b1q8iftin36saic74.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeEao58jWSW-sFGjeDds__s6XhNjg9fiY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
