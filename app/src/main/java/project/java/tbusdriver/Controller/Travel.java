@@ -104,18 +104,26 @@ public class Travel extends Fragment
 
 
     //region Variable
+    // default zoom on the map
     private static int DEFAULT_ZOOM = 10;
     private GoogleApiClient mGoogleApiClient;
+    // the map as object
     private GoogleMap mMap;
 
+    // not in use
     boolean mRequestingLocationUpdates = true;
+    // the client to get the current location
     FusedLocationProviderClient mFusedLocationClient;
     LocationCallback mLocationCallback;
     LocationRequest mLocationRequest;
 
+    // bool that say if the location premmsion is granted
     private boolean mLocationPermissionGranted = false;
+    // the last known location, not have to be the current
     private Location mLastKnownLocation = null;
+    // same as above but the previous
     private Location mPreviousLastKnownLocation = null;
+    // some const to req location premission
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private LatLng mDefaultLocation;
     private CameraPosition mCameraPosition;
@@ -126,6 +134,7 @@ public class Travel extends Fragment
     Button availableButton;
     Button busyButton;
     FloatingActionButton myFloating;
+    // the map fragment as a object
     SupportMapFragment mapFragment;
     private MapView mMapView;
     public static Travel instance;
@@ -134,7 +143,9 @@ public class Travel extends Fragment
     boolean doZoom;
     ListDsManager listDsManager;
     Ride ride;
+    // bool say if we in ride
     public boolean inRoute;
+    // bool say if we want to show the station list
     boolean showStations; ///SHOWSTATIONS
     ListView stationsList;
     ArrayList<MyLocation> stations;
@@ -146,7 +157,7 @@ public class Travel extends Fragment
         // Required empty public constructor
     }
 
-
+    // implement the singleton pattern
     public static Travel newInstance() {
         if (instance == null) {
             instance = new Travel();
@@ -174,12 +185,15 @@ public class Travel extends Fragment
         // Do other setup activities here too, as described elsewhere in this tutorial.
         // Build the Play services client for use by the Fused Location Provider and the Places API.
         // Use the addApi() method to request the Google Places API and the Fused Location Provider.
+
+        // define some parameter of the client location
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(myActivity);
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(3000000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
+        // define what happen when we get the location
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -198,6 +212,7 @@ public class Travel extends Fragment
             }
         };
 
+        // define some parameter of the googleApiClient
         if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             mGoogleApiClient = new GoogleApiClient.Builder(myActivity)
                     .enableAutoManage(myActivity /* FragmentActivity */,
@@ -223,11 +238,13 @@ public class Travel extends Fragment
         busyButton = (Button) myView.findViewById(R.id.busy); // you have to use rootview object..
         busyButton.setOnClickListener(this);
 
+        // define some view od the floating button
         myFloating = (FloatingActionButton) myView.findViewById(R.id.getMyLocation); // you have to use rootview object..
         myFloating.bringToFront();
         myFloating.setClickable(true);
         myFloating.setOnClickListener(this);
         myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+
         mapFragment = (SupportMapFragment) myActivity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -239,6 +256,8 @@ public class Travel extends Fragment
         //stationsList.setOnDragListener(new View.OnDragListener()
         stationsList = (ListView) myView.findViewById(R.id.stationList);
         DragbleText = (TextView) myView.findViewById(R.id.Test);
+
+        // define what happen when hold the TextView
         DragbleText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -253,6 +272,7 @@ public class Travel extends Fragment
             }
         });
 
+        // define what happen when drag the TextView
         DragbleText.setOnDragListener(new View.OnDragListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override
@@ -369,7 +389,6 @@ public class Travel extends Fragment
     public void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
-
     }
 
 
@@ -448,6 +467,7 @@ public class Travel extends Fragment
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
      */
+    // define what happen when we get the map object from google
     @SuppressLint("NewApi")
     @Override
     public void onMapReady(GoogleMap map) {
@@ -460,7 +480,8 @@ public class Travel extends Fragment
             updateLocationUI();
         }
 
-        if (ride != null && inRoute == true) {
+        // define what happen when we are in route, e.g. draw route
+        if (ride != null && inRoute) {
             drawMap();
             drawStation(ride.getRoute().getLocations());
             stations = ride.getRoute().getLocations();
@@ -511,7 +532,8 @@ public class Travel extends Fragment
         }
     }
 
-    class UpdateLocation extends AsyncTask<Double, String, String> {
+    // update the server with the current driver location
+    static class UpdateLocation extends AsyncTask<Double, String, String> {
         @Override
         protected String doInBackground(Double... params) {
             //user[0]=Phone user[1]=User Name
@@ -655,6 +677,7 @@ public class Travel extends Fragment
         // A step later in the tutorial adds the code to get the device location.
     }
 
+    // define what happen when we get the permission req result
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
@@ -756,7 +779,7 @@ public class Travel extends Fragment
             //updateLocationUI();
         }
 
-        if (isHidden() == false) {
+        if (!isHidden()) {
             int rideId;
             int index;
             myActivity = getActivity();
@@ -774,8 +797,6 @@ public class Travel extends Fragment
             myActivity.setTitle("נסיעה");
             mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
             mapFragment.getMapAsync(this);
-
-
         }
 
     }
@@ -859,9 +880,7 @@ public class Travel extends Fragment
     }
     //endregion
 
-    //region custom marker
-
-
+    //region custom marker - currently not in use
     public void mLocationCallback(Location location) {
         if (location == null)
             return;
@@ -920,7 +939,7 @@ public class Travel extends Fragment
     //end region
 
     //region routeAndDraw
-    private void drawStation(ArrayList<MyLocation> station) {
+    private void drawStation(@NonNull ArrayList<MyLocation> station) {
         for (int i = 0; i < station.size(); i++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(
@@ -931,7 +950,7 @@ public class Travel extends Fragment
         }
     }
 
-    private void drawRoute(ArrayList<MyLocation> station) {
+    private void drawRoute(@NonNull ArrayList<MyLocation> station) {
         int numberOfStation = station.size() - 1;
         if (numberOfStation < 1) {
             usefulFunctions.showAlert(myActivity, "אין תחנות בנסיעה זאת, אנא פנה אלינו בהקדם");
@@ -960,7 +979,7 @@ public class Travel extends Fragment
         //}
     }
 
-    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+    private String getDirectionsUrl(@NonNull LatLng origin,@NonNull LatLng dest) {
 
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -985,19 +1004,19 @@ public class Travel extends Fragment
 
     private String downloadUrl(String strUrl) throws IOException {
         String data = "";
-        InputStream iStream = null;
+
         HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
+        urlConnection.connect();
+        URL url = new URL(strUrl);
+
+        urlConnection = (HttpURLConnection) url.openConnection();
+        try (InputStream iStream = urlConnection.getInputStream()) {
 
             // Creating an http connection to communicate with url
-            urlConnection = (HttpURLConnection) url.openConnection();
 
             // Connecting to url
-            urlConnection.connect();
 
             // Reading data from url
-            iStream = urlConnection.getInputStream();
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
@@ -1015,12 +1034,12 @@ public class Travel extends Fragment
         } catch (Exception e) {
             Log.d("Exception url", e.toString());
         } finally {
-            iStream.close();
             urlConnection.disconnect();
         }
         return data;
     }
 
+    // req the route from google api
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
         // Downloading data in non-ui thread
@@ -1159,7 +1178,7 @@ public class Travel extends Fragment
         return routes;
     }
 
-    private List<LatLng> decodePoly(String encoded) {
+    private List<LatLng> decodePoly(@NonNull String encoded) {
 
         List<LatLng> poly = new ArrayList<LatLng>();
         int index = 0, len = encoded.length();
@@ -1206,6 +1225,7 @@ public class Travel extends Fragment
     }
 
     //Location update region
+    // define what happen when the driver change is location
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 
