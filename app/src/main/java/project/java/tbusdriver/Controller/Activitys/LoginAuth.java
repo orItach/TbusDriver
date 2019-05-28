@@ -1,5 +1,8 @@
 package project.java.tbusdriver.Controller.Activitys;
 
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
@@ -25,9 +28,12 @@ public class LoginAuth extends AppCompatActivity implements
     Login loginFragment;
     Auth authFragment;
     RWSetting rwSettings;
-
     String phone;
 
+    public String  getPhone()
+    {
+        return  phone;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +52,9 @@ public class LoginAuth extends AppCompatActivity implements
     {
         //accessToData(1);
         loginFragment.onClickLogin(v);
-
-
     }
-     public void onClickAuth(View v)
+
+    public void onClickAuth(View v)
      {
          authFragment.onClickAuth(v);
      }
@@ -80,9 +85,18 @@ public class LoginAuth extends AppCompatActivity implements
         fragmentTransaction.commit();
     }
 
-    public String  getPhone()
-    {
-        return  phone;
-    }
+    @Override
+    public void onBackPressed() {
+        Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.login_authContainer);
 
+        if (currentFragment instanceof Auth) {
+            super.onBackPressed();
+        }
+        if (currentFragment instanceof Login) {
+            ActivityCompat.finishAffinity(LoginAuth.this);
+
+            //android.os.Process.killProcess(android.os.Process.myPid());
+            this.finish();
+        }
+    }
 }

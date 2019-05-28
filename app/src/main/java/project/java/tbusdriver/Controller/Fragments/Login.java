@@ -29,17 +29,11 @@ public class Login extends Fragment {
     private String userName;
 
     FragmentManager fragmentManager;
-
     FragmentTransaction fragmentTransaction;
-
     Activity myActivity;
-
     View myView;
-
     LayoutInflater myinflater;
-
     OnFragmentInteractionListener mCallBack;
-
 
     public Login() {
         // Required empty public constructor
@@ -69,8 +63,8 @@ public class Login extends Fragment {
         myView = inflater.inflate(R.layout.fragment_login, container, false);
         EditText Phone = (EditText) myView.findViewById(R.id.phone);
         EditText UserName = (EditText) myView.findViewById(R.id.userName);
-        Phone.setText("0524700286");
-        UserName.setText("אור איטח");
+        //Phone.setText("0524700286");
+        //UserName.setText("אור איטח");
         return myView;
     }
 

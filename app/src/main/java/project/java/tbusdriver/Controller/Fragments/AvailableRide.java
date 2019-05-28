@@ -67,6 +67,9 @@ public class AvailableRide extends Fragment {
 
             try {
                 toReturn = GET(Const.PADDING_RIDES_URI.toString());
+                //listDsManager.updateAvailableRides(toReturn);
+                //publishProgress("");
+                //toReturn="";
                 String httpResult = new JSONObject(toReturn).getString("status");
                 if (httpResult.compareTo("OK") == 0) {
                     listDsManager.updateAvailableRides(toReturn);
