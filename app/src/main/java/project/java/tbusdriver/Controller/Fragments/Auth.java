@@ -1,12 +1,17 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,45 +25,56 @@ import project.java.tbusdriver.Controller.Activitys.LoginAuth;
 import project.java.tbusdriver.Controller.Activitys.MainActivity;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
+import project.java.tbusdriver.Service.BootReceiver;
 
 import static project.java.tbusdriver.usefulFunctions.*;
 
 
-public class Auth extends Fragment {
-
+public class Auth extends Fragment// implements BootReceiver.OnFragmentInteractionListener
+{
     RWSetting rwSettings = null;
-
     boolean checkBoxIsCheck = true;
-
     private String phone;
-
     Activity myActivity;
-
     View myView;
-
     OnFragmentInteractionListener mCallBack;
-
     private SharedPreferences pref;
+    private BroadcastReceiver messagesReceiver;
     /**
      * The Editor.
      */
     private SharedPreferences.Editor editor;
 
-
     public Auth() {
-
     }
+
+    // receiver as a global variable in your Fragment class
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+         messagesReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null && intent.getExtras() != null) {
+                    String smsMessageStr = intent.getExtras().getString("code");
+                    if (smsMessageStr != null) {
+                        //int code =Integer.parseInt(smsMessageStr);
+                        String[] user = new String[2];
+                        user[0]=phone;
+                        user[1]=smsMessageStr;
+                        new Auth.UsersTask().execute(user);
+                    }
+                }
+            }
+        };
 
         myActivity = getActivity();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
         //phone=savedInstanceState.getString("PHONE");
         phone = getArguments().getString("PHONE");
@@ -68,6 +84,7 @@ public class Auth extends Fragment {
         myView = inflater.inflate(R.layout.fragment_auth, container, false);
         return myView;
     }
+
 
     public void onClickAuth(View v) {
         switch (v.getId()) {
@@ -91,6 +108,7 @@ public class Auth extends Fragment {
         else if (user[1].equals(""))
             showAlert(myActivity, "you must enter phone");
         else
+            //worng
             //user[0]=Phone user[1]=User Name
             new Auth.UsersTask().execute(user);
     }
@@ -182,7 +200,8 @@ public class Auth extends Fragment {
             else {
                 EditText authCode = (EditText) myActivity.findViewById(R.id.authCode);
                 authCode.setText("");
-                if (checkBoxIsCheck == true) {
+                if (checkBoxIsCheck == true)
+                {
                     editor.putString("PHONE", phone);
                     editor.commit();
                 }

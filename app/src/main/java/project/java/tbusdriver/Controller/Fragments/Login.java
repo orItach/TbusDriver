@@ -1,6 +1,8 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -39,6 +41,7 @@ public class Login extends Fragment {
     LayoutInflater myinflater;
 
     OnFragmentInteractionListener mCallBack;
+    private BroadcastReceiver receiver;
 
 
     public Login() {
@@ -71,6 +74,7 @@ public class Login extends Fragment {
         EditText UserName = (EditText) myView.findViewById(R.id.userName);
         Phone.setText("0524700286");
         UserName.setText("אור איטח");
+
         return myView;
     }
 
