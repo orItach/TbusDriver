@@ -91,7 +91,7 @@ public class Login extends Fragment {
             showAlert(myActivity, "you must enter phone");
         else
             //user[0]=Phone user[1]=User Name
-            new Login.UsersTask().execute(user);
+            new UsersTask().execute(user);
     }
 
     @Override
