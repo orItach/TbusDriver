@@ -1,6 +1,12 @@
 package project.java.tbusdriver.Controller.Fragments;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,12 +18,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import project.java.tbusdriver.Const;
 import project.java.tbusdriver.R;
 
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
+import static project.java.tbusdriver.Const.REQUEST_MULTIPLE_PERMISSIONS;
 import static project.java.tbusdriver.usefulFunctions.POST;
 import static project.java.tbusdriver.usefulFunctions.showAlert;
 
@@ -31,6 +41,7 @@ public class Login extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     Activity myActivity;
+    Context context;
     View myView;
     LayoutInflater myinflater;
     OnFragmentInteractionListener mCallBack;
@@ -68,9 +79,11 @@ public class Login extends Fragment {
         return myView;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void onClickLogin(View v) {
         switch (v.getId()) {
             case R.id.login:
+                AccessContact();
                 accessToData();
                 break;
             default:
@@ -175,6 +188,51 @@ public class Login extends Fragment {
                 //mCallBack.OnLoginFragmentInteractionListener(1);
             }
         }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void AccessContact() {
+        List<String> permissionsNeeded = new ArrayList<String>();
+        final List<String> permissionsList = new ArrayList<String>();
+        if (!addPermission(permissionsList, Manifest.permission.READ_SMS))
+            permissionsNeeded.add("SMS READ");
+        if (permissionsList.size() > 0) {
+            if (permissionsNeeded.size() > 0) {
+                String message = "You need to grant access to " + permissionsNeeded.get(0);
+                for (int i = 1; i < permissionsNeeded.size(); i++)
+                    message = message + ", " + permissionsNeeded.get(i);
+                if (context.checkSelfPermission(Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]), REQUEST_MULTIPLE_PERMISSIONS);
+                                }
+                            });
+                    return;
+                }
+            }
+            requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                    REQUEST_MULTIPLE_PERMISSIONS);
+            return;
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(context)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 }
 

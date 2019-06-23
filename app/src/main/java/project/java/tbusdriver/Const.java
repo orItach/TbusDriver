@@ -1,5 +1,6 @@
 package project.java.tbusdriver;
 
+
 import android.content.UriMatcher;
 import android.net.Uri;
 
@@ -58,6 +59,7 @@ public class Const {
 
     public static final Uri NOTIFICATION_TOKEN_URI = Uri.parse(URL_NOTIFICATION_TOKEN);
 
+    public static final String SMS_BUNDLE="android.provider.Telephony.SMS_RECEIVED";
 
     /////////////////////// App Constant //////////////////////////////////////
 
@@ -78,6 +80,7 @@ public class Const {
 
     //public static final Integer BusySharedPreferences = 1;
     public static final String BusySharedPreferences = "busy";
+    public static final int REQUEST_MULTIPLE_PERMISSIONS=124;
 
 
 }

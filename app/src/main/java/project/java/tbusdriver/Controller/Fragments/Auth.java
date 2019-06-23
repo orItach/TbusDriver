@@ -1,6 +1,7 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,9 +32,11 @@ public class Auth extends Fragment {
     boolean checkBoxIsCheck = true;
 
     private String phone;
+    Context context;
 
     Activity myActivity;
 
+    private BroadcastReceiver messagesReceiver;
     View myView;
 
     OnFragmentInteractionListener mCallBack;
@@ -55,10 +58,8 @@ public class Auth extends Fragment {
 
         myActivity = getActivity();
     }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
         //phone=savedInstanceState.getString("PHONE");
         phone = getArguments().getString("PHONE");
@@ -66,6 +67,30 @@ public class Auth extends Fragment {
         //getArguments().getString("PHONE");
         // Inflate the layout for this fragment
         myView = inflater.inflate(R.layout.fragment_auth, container, false);
+        context=getContext();
+        myActivity = getActivity();
+        //AccessContact();
+        messagesReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                EditText AuthCode = (EditText) myView.findViewById(R.id.authCode);
+                AuthCode.setText("12345");
+
+            /*if (intent != null && intent.getExtras() != null) {
+                String smsMessageStr = intent.getExtras().getString("code");
+                if (smsMessageStr != null) {
+                    AuthCode.setText(smsMessageStr);
+                    //int code =Integer.parseInt(smsMessageStr);
+                   // String[] user = new String[2];
+                    //user[0]=phone;
+                    //user[1]=smsMessageStr;
+                   // new UsersTask().execute(user);
+                }
+            }*/
+            }
+        };
+
         return myView;
     }
 

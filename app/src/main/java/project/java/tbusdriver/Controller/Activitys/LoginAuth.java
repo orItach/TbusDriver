@@ -1,6 +1,8 @@
 package project.java.tbusdriver.Controller.Activitys;
 
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,6 +50,7 @@ public class LoginAuth extends AppCompatActivity implements
         fragmentTransaction.commit();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void onClickLogin(View v)
     {
         //accessToData(1);
