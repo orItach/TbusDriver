@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -18,34 +19,38 @@ import static project.java.tbusdriver.Controller.Travel.TAG;
 
 public class BootReceiver extends BroadcastReceiver {
     public BootReceiver() {
+        int x =5;
     }
     /*/OnFragmentInteractionListener send;
     public interface OnFragmentInteractionListener {
         void onAuthFragmentInteraction(String fragmentReturn);
 
     }/*/
+    public interface SmsListener {
+        interface OTPListener{
+            void messageReceived(String messageText,String messageSender);
+        }
+    }
+    private static SmsListener.OTPListener mListener;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                Object[] pdus = (Object[]) bundle.get("pdus");
-                String num="";
-                final SmsMessage[] messages = new SmsMessage[pdus.length];
-                for (int i = 0; i < pdus.length; i++) {
-                    messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                    if(Integer.parseInt(messages[i].getMessageBody())<=9&&Integer.parseInt(messages[i].getMessageBody())>=0)
-                    {
-                       num+=messages[i].getMessageBody();
-                    }
+        if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
 
-                }
-                if (messages.length > -1)
-                {
-                    Intent message  = new Intent(/*/BootReceiver.this,Auth.class*/);
-                    message.putExtra("code",num);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(message);
+            Bundle data = intent.getExtras();
+            Object[] pdus = new Object[0];
+            if (data != null) {
+                pdus = (Object[]) data.get("pdus");
+            }
+            if (pdus != null) {
+                for (Object pdu : pdus) {
+                    SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) pdu);
+                    String sender = smsMessage.getDisplayOriginatingAddress();
+                    String messageBody = smsMessage.getMessageBody();
+                    if (mListener != null) {
+                        mListener.messageReceived(messageBody, sender);
+                        break;
+                    }
                 }
             }
         }
@@ -54,4 +59,11 @@ public class BootReceiver extends BroadcastReceiver {
             context.startService(new Intent(context, startAlarmService.class));
         }
     }
+        public static void bindListener(SmsListener.OTPListener listener) {
+            mListener = listener;
+        }
+
+        public static void unbindListener() {
+            mListener = null;
+        }
 }

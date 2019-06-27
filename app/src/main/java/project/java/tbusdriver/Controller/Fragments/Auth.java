@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +38,10 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
     private String phone;
     Activity myActivity;
     View myView;
+    private EditText Authcode;
     OnFragmentInteractionListener mCallBack;
     private SharedPreferences pref;
+     EditText AuthCode;
     private BroadcastReceiver messagesReceiver;
     /**
      * The Editor.
@@ -54,34 +57,27 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         messagesReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent != null && intent.getExtras() != null) {
-                    String smsMessageStr = intent.getExtras().getString("code");
-                    if (smsMessageStr != null) {
-                        //int code =Integer.parseInt(smsMessageStr);
-                        String[] user = new String[2];
-                        user[0]=phone;
-                        user[1]=smsMessageStr;
-                        new Auth.UsersTask().execute(user);
-                    }
-                }
-            }
-        };
-
         myActivity = getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
+        myView = inflater.inflate(R.layout.fragment_auth, container, false);
         //phone=savedInstanceState.getString("PHONE");
         phone = getArguments().getString("PHONE");
         //phone=savedInstanceState.getString("PHONE");
         //getArguments().getString("PHONE");
         // Inflate the layout for this fragment
-        myView = inflater.inflate(R.layout.fragment_auth, container, false);
+            AuthCode = (EditText) myView.findViewById(R.id.authCode);
+          BootReceiver.bindListener(new BootReceiver.SmsListener.OTPListener() {
+            @Override
+            public void messageReceived(String messageText, String messageSender) {
+
+                AuthCode.setText(getTheNumberInString(messageText));
+
+            }
+        });
         return myView;
     }
 
@@ -207,5 +203,16 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
                 }
             }
         }
+    }
+
+    //the brodcast reciver brings us all the message and we need only the code
+        String getTheNumberInString(String sms){
+        String num="";
+        char[] smschar=sms.toCharArray();
+        for(int i=0;i<sms.length();i++){
+            if(smschar[i]>='0'&&smschar[i]<='9')
+                num+=smschar[i];
+        }
+        return num;
     }
 }
