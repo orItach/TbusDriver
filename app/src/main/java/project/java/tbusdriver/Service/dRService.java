@@ -46,7 +46,6 @@ public class dRService extends Service {
                         while (true) {
                             try {
                                 Thread.sleep(5000);
-                                usefulFunctions.busy = false;
                                 if (usefulFunctions.busy == false && usefulFunctions.Token != null) {
                                     //// TODO: 17/07/2017 send update to server
                                     Travel travelFragment = newInstance();

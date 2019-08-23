@@ -22,9 +22,9 @@ import java.util.Map;
 public class usefulFunctions {
 
 
-    //public static String Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTExLCJpYXQiOjE1MDYyNTcwMDF9.dn17ItRw6f55wfbO_YhAOMuNxU14fUY-dVx0y98M-bo";
+    public static String Token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTExLCJpYXQiOjE1MDYyNTcwMDF9.dn17ItRw6f55wfbO_YhAOMuNxU14fUY-dVx0y98M-bo";
     // the driver token
-    public static String Token = null;
+    //public static String Token = null;
 
     // flag that say if the driver want to get new rides
     public static boolean busy = false;

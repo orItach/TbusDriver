@@ -1,16 +1,10 @@
 package project.java.tbusdriver.Controller.Activitys;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -21,8 +15,10 @@ import project.java.tbusdriver.Controller.Fragments.Login;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 
-public class LoginAuth extends AppCompatActivity implements Login.OnFragmentInteractionListener,Auth.OnFragmentInteractionListener
-{
+public class LoginAuth extends AppCompatActivity implements
+        Login.OnFragmentInteractionListener,
+        Auth.OnFragmentInteractionListener {
+
     Context context=this;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -46,23 +42,9 @@ public class LoginAuth extends AppCompatActivity implements Login.OnFragmentInte
         fragmentTransaction.commit();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void onClickLogin(View v)
     {
         //accessToData(1);
-        int GET_MY_PERMISSION = 1;
-        if(ContextCompat.checkSelfPermission(LoginAuth.this,Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(LoginAuth.this,
-                    Manifest.permission.READ_SMS)){
-                /* do nothing*/
-            }
-            else{
-
-                ActivityCompat.requestPermissions(LoginAuth.this,
-                        new String[]{Manifest.permission.READ_SMS},GET_MY_PERMISSION);
-            }
-        }
         loginFragment.onClickLogin(v);
 
 

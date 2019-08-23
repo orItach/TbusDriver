@@ -76,4 +76,10 @@ public class Const {
     public static final String myRegionFragmentName = "myRegion";
     public static final String settingFragmentName = "setting";
     public static final String personalInfoFragmentName = "personalInfo";
+
+    //public static final Integer BusySharedPreferences = 1;
+    public static final String BusySharedPreferences = "busy";
+    public static final int REQUEST_MULTIPLE_PERMISSIONS=124;
+
+
 }

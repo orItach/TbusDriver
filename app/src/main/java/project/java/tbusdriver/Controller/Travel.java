@@ -7,6 +7,7 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -61,8 +62,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import junit.framework.Test;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,6 +89,7 @@ import project.java.tbusdriver.usefulFunctions;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static java.lang.Math.pow;
+import static project.java.tbusdriver.Const.AvailableRidesListName;
 import static project.java.tbusdriver.usefulFunctions.POST;
 
 public class Travel extends Fragment
@@ -173,7 +173,10 @@ public class Travel extends Fragment
         super.onCreate(savedInstanceState);
         myActivity = getActivity();
         doZoom = true;
-
+        SharedPreferences sharedPref = myActivity.getPreferences(Context.MODE_PRIVATE);
+        //boolean busySharedPreferences = getResources().getBoolean(Const.BusySharedPreferences);
+        boolean busySharedPreferences = sharedPref.getBoolean(Const.BusySharedPreferences, false);
+        usefulFunctions.busy =busySharedPreferences;
 
         locationManager = (LocationManager) myActivity.getSystemService(LOCATION_SERVICE);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -355,6 +358,12 @@ public class Travel extends Fragment
                 return true;
             }
         });
+        if(usefulFunctions.busy){
+            drawBusy();
+        }
+        else {
+            drawAvailable();
+        }
         return myView;
     }
 
@@ -517,10 +526,12 @@ public class Travel extends Fragment
         myActivity.startService(new Intent(myActivity, updateLocationService.class));
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);
-            myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-            busyButton.setBackgroundResource(R.drawable.busy);
-            availableButton.setBackgroundResource(R.drawable.start);
+            drawBusy();
             usefulFunctions.busy = true;
+            SharedPreferences sharedPref = myActivity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(Const.BusySharedPreferences,true );
+            editor.commit();
             //drawNavigationInstruction();
             //setBigInstruction("left");
             //setSmallInstructionP("right");
@@ -588,10 +599,12 @@ public class Travel extends Fragment
     public void available(View v) {
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);
-            myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
-            busyButton.setBackgroundResource(R.drawable.start);
-            availableButton.setBackgroundResource(R.drawable.available);
+            drawAvailable();
             usefulFunctions.busy = false;
+            SharedPreferences sharedPref = myActivity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(Const.BusySharedPreferences,false );
+            editor.commit();
             drawMap();
         }
     }
@@ -623,6 +636,17 @@ public class Travel extends Fragment
             default:
                 break;
         }
+    }
+    private void drawBusy(){
+        myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+        busyButton.setBackgroundResource(R.drawable.busy);
+        availableButton.setBackgroundResource(R.drawable.start);
+    }
+
+    private void drawAvailable(){
+        myFloating.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+        busyButton.setBackgroundResource(R.drawable.start);
+        availableButton.setBackgroundResource(R.drawable.available);
     }
     //endregion
 
@@ -785,15 +809,33 @@ public class Travel extends Fragment
             myActivity = getActivity();
             Bundle bundle = this.getArguments();
             if (bundle != null) {
+                boolean haveInMyRide =true;
                 rideId = bundle.getInt("RIDEID", 0);
-                index = ListDsManager.convertRideIdToIndex("MyRide", rideId);
-                ride = ListDsManager.getMyRide().get(index);
+                index = ListDsManager.convertGroupIdToIndex("MyRide", rideId);
+                if( index == -1){
+                    index = ListDsManager.convertGroupIdToIndex(AvailableRidesListName,rideId);
+                    haveInMyRide = false;
+                }
+                if (haveInMyRide){
+                    ride = ListDsManager.getMyRide().get(index);
+                }
+                else {
+                    ride = ListDsManager.getAvailableRides().get(index);
+                }
                 boolean showRide = bundle.getBoolean("SHOWSTATIONS"); ///SHOWRIDE
                 if (showRide) {
                     showStations = true;
                 }
                 inRoute = true;
             }
+            //else
+            //{
+            //    try {
+            //        RemoveListStations();
+            //    } catch (Exception e) {
+            //        Log.e("error", e.toString());
+            //    }
+            //}
             myActivity.setTitle("נסיעה");
             mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map));
             mapFragment.getMapAsync(this);
@@ -940,7 +982,7 @@ public class Travel extends Fragment
 
     //region routeAndDraw
     private void drawStation(@NonNull ArrayList<MyLocation> station) {
-        for (int i = 0; i < station.size(); i++) {
+        for (int i = 1; i < station.size(); i++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(
                             station.get(i).getMyLocation().getLatitude(),
@@ -980,61 +1022,57 @@ public class Travel extends Fragment
     }
 
     private String getDirectionsUrl(@NonNull LatLng origin,@NonNull LatLng dest) {
-
-        // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-
-        // Destination of route
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-
-        // Sensor enabled
         String sensor = "sensor=false";
-
         // Building the parameters to the web service
         String parameters = str_origin + "&" + str_dest + "&" + sensor;
-
         // Output format
         String output = "json";
-
+        String keyParam = "key="+"AIzaSyBa5Sdd6-OM5tZO6QEysPziGBgDEzYPTUY";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&" + keyParam;
         return url;
     }
 
     private String downloadUrl(String strUrl) throws IOException {
         String data = "";
 
-        HttpURLConnection urlConnection = null;
-        urlConnection.connect();
-        URL url = new URL(strUrl);
+        try {
+            HttpURLConnection urlConnection = null;
+            URL url = new URL(strUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.connect();
 
-        urlConnection = (HttpURLConnection) url.openConnection();
-        try (InputStream iStream = urlConnection.getInputStream()) {
+            try (InputStream iStream = urlConnection.getInputStream()) {
 
-            // Creating an http connection to communicate with url
+                // Creating an http connection to communicate with url
 
-            // Connecting to url
+                // Connecting to url
 
-            // Reading data from url
+                // Reading data from url
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+                BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
 
-            StringBuffer sb = new StringBuffer();
+                StringBuffer sb = new StringBuffer();
 
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                data = sb.toString();
+
+                br.close();
+
+            } catch (Exception e) {
+                Log.d("Exception url", e.toString());
+            } finally {
+                urlConnection.disconnect();
             }
-
-            data = sb.toString();
-
-            br.close();
-
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             Log.d("Exception url", e.toString());
-        } finally {
-            urlConnection.disconnect();
         }
         return data;
     }
@@ -1063,9 +1101,7 @@ public class Travel extends Fragment
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
             ParserTask parserTask = new ParserTask();
-
             // Invokes the thread for parsing the JSON data
             parserTask.execute(result);
         }
@@ -1082,11 +1118,9 @@ public class Travel extends Fragment
 
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
-
             try {
                 jObject = new JSONObject(jsonData[0]);
                 //DirectionsJSONParser parser = new DirectionsJSONParser();
-
                 // Starts parsing data
                 routes = parse(jObject);
             } catch (Exception e) {
@@ -1101,15 +1135,12 @@ public class Travel extends Fragment
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = new PolylineOptions();
             MarkerOptions markerOptions = new MarkerOptions();
-
             // Traversing through all the routes
-            for (int i = 0; i < result.size(); i++) {
+            for (int i = 0; result != null && i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
                 lineOptions = new PolylineOptions();
-
                 // Fetching i-th route
                 List<HashMap<String, String>> path = result.get(i);
-
                 // Fetching all the points in i-th route
                 for (int j = 0; j < path.size(); j++) {
                     HashMap<String, String> point = path.get(j);
@@ -1120,13 +1151,11 @@ public class Travel extends Fragment
 
                     points.add(position);
                 }
-
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(15);
                 lineOptions.color(Color.BLUE);
             }
-
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
         }
@@ -1297,7 +1326,7 @@ public class Travel extends Fragment
         availableButton.setVisibility(View.VISIBLE);
         busyButton.setVisibility(View.VISIBLE);
         myFloating.setVisibility(View.VISIBLE);
-        if (mapFragment.getView() != null) {
+        if (mapFragment != null && mapFragment.getView() != null) {
             ViewGroup.LayoutParams mapFragmentParams = mapFragment.getView().getLayoutParams();
             mapFragmentParams.height = (int) (displayMetrics.heightPixels);
             mapFragment.getView().setLayoutParams(mapFragmentParams);
@@ -1310,7 +1339,7 @@ public class Travel extends Fragment
         //stationsAdapter = new StationsAdapter(myActivity,R.layout.item_station,stations);
         //stationsList.setAdapter(stationsAdapter);
         RelativeLayout.LayoutParams draggableLayoutParams = (RelativeLayout.LayoutParams) DragbleText.getLayoutParams();
-        draggableLayoutParams.removeRule(RelativeLayout.ABOVE);
+        draggableLayoutParams.removeRule(RelativeLayout.BELOW);
         draggableLayoutParams.addRule(RelativeLayout.BELOW, R.id.stationList);
         DragbleText.setText("אתה בנסיעה עם תחנות, גרור למטה על מנת להעלימן");
         stationsList.invalidateViews();
