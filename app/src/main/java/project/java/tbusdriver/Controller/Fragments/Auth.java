@@ -27,7 +27,9 @@ import project.java.tbusdriver.Controller.Activitys.MainActivity;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
 import project.java.tbusdriver.Service.BootReceiver;
+import project.java.tbusdriver.Service.InnerRecevier;
 
+import static android.content.Context.MODE_PRIVATE;
 import static project.java.tbusdriver.usefulFunctions.*;
 
 
@@ -37,15 +39,21 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
     boolean checkBoxIsCheck = true;
     private String phone;
     Activity myActivity;
+    Context context;
     View myView;
-    private EditText Authcode;
+    private IntentFilter mFilter;
+    private InnerRecevier mRecevier;
+
     OnFragmentInteractionListener mCallBack;
     private SharedPreferences pref;
+    RWSetting rwSetting;
      EditText AuthCode;
+    BroadcastReceiver broadcastReceiver;
     private BroadcastReceiver messagesReceiver;
     /**
      * The Editor.
      */
+    IntentFilter intentFilterACSD;
     private SharedPreferences.Editor editor;
 
     public Auth() {
@@ -59,17 +67,33 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
         super.onCreate(savedInstanceState);
         myActivity = getActivity();
     }
-
+//on recents view
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Bundle bundle = this.getArguments();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+     //   mFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+
         myView = inflater.inflate(R.layout.fragment_auth, container, false);
-        //phone=savedInstanceState.getString("PHONE");
+       // /*
+        InnerRecevier.bindListener(new InnerRecevier.OnHomePressedListener() {
+
+            @Override
+            public void onHomePressed() {
+                rwSetting.setStringSetting("true","onHomePressed");
+            }
+            @Override
+            public void onRecentAppPressed() {
+                rwSetting.setStringSetting("true","onRecentAppPressed");
+            }
+        });
+    //    this.mRecevier.start();
+
+        Bundle bundle = this.getArguments();
+        context=getContext().getApplicationContext();
+        rwSetting=new RWSetting(context);
         phone = getArguments().getString("PHONE");
-        //phone=savedInstanceState.getString("PHONE");
-        //getArguments().getString("PHONE");
-        // Inflate the layout for this fragment
-            AuthCode = (EditText) myView.findViewById(R.id.authCode);
+        AuthCode = (EditText) myView.findViewById(R.id.authCode);
+        //get sms code
           BootReceiver.bindListener(new BootReceiver.SmsListener.OTPListener() {
             @Override
             public void messageReceived(String messageText, String messageSender) {
@@ -112,7 +136,7 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        pref = context.getSharedPreferences("UserPref", Context.MODE_PRIVATE);
+        pref = context.getSharedPreferences("UserPref", MODE_PRIVATE);
         editor = pref.edit();
         if (context instanceof OnFragmentInteractionListener) {
             mCallBack = (OnFragmentInteractionListener) context;
@@ -186,9 +210,9 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
         @Override
         protected void onPreExecute() {
         }
-
         @Override
         protected void onProgressUpdate(String... values) {
+
             //user[0]=Phone user[1]=User Name
             //check if have any error
             if (values[0].length() > 1)
