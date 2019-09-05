@@ -1,16 +1,22 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,54 +26,61 @@ import project.java.tbusdriver.Controller.Activitys.LoginAuth;
 import project.java.tbusdriver.Controller.Activitys.MainActivity;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
+import project.java.tbusdriver.Service.BootReceiver;
 
 import static project.java.tbusdriver.usefulFunctions.*;
 
 
-public class Auth extends Fragment {
-
+public class Auth extends Fragment// implements BootReceiver.OnFragmentInteractionListener
+{
     RWSetting rwSettings = null;
-
     boolean checkBoxIsCheck = true;
-
     private String phone;
-
     Activity myActivity;
-
     View myView;
-
+    private EditText Authcode;
     OnFragmentInteractionListener mCallBack;
-
     private SharedPreferences pref;
+     EditText AuthCode;
+    private BroadcastReceiver messagesReceiver;
     /**
      * The Editor.
      */
     private SharedPreferences.Editor editor;
 
-
     public Auth() {
-
     }
+
+    // receiver as a global variable in your Fragment class
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         myActivity = getActivity();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
+        myView = inflater.inflate(R.layout.fragment_auth, container, false);
         //phone=savedInstanceState.getString("PHONE");
         phone = getArguments().getString("PHONE");
         //phone=savedInstanceState.getString("PHONE");
         //getArguments().getString("PHONE");
         // Inflate the layout for this fragment
-        myView = inflater.inflate(R.layout.fragment_auth, container, false);
+            AuthCode = (EditText) myView.findViewById(R.id.authCode);
+          BootReceiver.bindListener(new BootReceiver.SmsListener.OTPListener() {
+            @Override
+            public void messageReceived(String messageText, String messageSender) {
+
+                AuthCode.setText(getTheNumberInString(messageText));
+
+            }
+        });
         return myView;
     }
+
 
     public void onClickAuth(View v) {
         switch (v.getId()) {
@@ -91,6 +104,7 @@ public class Auth extends Fragment {
         else if (user[1].equals(""))
             showAlert(myActivity, "you must enter phone");
         else
+            //worng
             //user[0]=Phone user[1]=User Name
             new Auth.UsersTask().execute(user);
     }
@@ -182,11 +196,23 @@ public class Auth extends Fragment {
             else {
                 EditText authCode = (EditText) myActivity.findViewById(R.id.authCode);
                 authCode.setText("");
-                if (checkBoxIsCheck == true) {
+                if (checkBoxIsCheck == true)
+                {
                     editor.putString("PHONE", phone);
                     editor.commit();
                 }
             }
         }
+    }
+
+    //the brodcast reciver brings us all the message and we need only the code
+        String getTheNumberInString(String sms){
+        String num="";
+        char[] smschar=sms.toCharArray();
+        for(int i=0;i<sms.length();i++){
+            if(smschar[i]>='0'&&smschar[i]<='9')
+                num+=smschar[i];
+        }
+        return num;
     }
 }

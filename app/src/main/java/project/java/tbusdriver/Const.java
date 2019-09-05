@@ -58,6 +58,7 @@ public class Const {
 
     public static final Uri NOTIFICATION_TOKEN_URI = Uri.parse(URL_NOTIFICATION_TOKEN);
 
+    public static final String SMS_BUNDLE="android.provider.Telephony.SMS_RECEIVED";
 
     /////////////////////// App Constant //////////////////////////////////////
 

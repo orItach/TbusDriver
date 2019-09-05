@@ -1,6 +1,14 @@
 package project.java.tbusdriver.Controller.Fragments;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,7 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import project.java.tbusdriver.Const;
@@ -24,6 +34,8 @@ import static project.java.tbusdriver.usefulFunctions.showAlert;
 
 public class Login extends Fragment {
 
+    private static final int REQUEST_MULTIPLE_PERMISSIONS =127;
+    Context context;
     boolean checkBoxIsCheck = true;
     private String phone;
     private String userName;
@@ -34,6 +46,7 @@ public class Login extends Fragment {
     View myView;
     LayoutInflater myinflater;
     OnFragmentInteractionListener mCallBack;
+    private BroadcastReceiver receiver;
 
     public Login() {
         // Required empty public constructor
@@ -84,7 +97,7 @@ public class Login extends Fragment {
         EditText UserName = (EditText) myView.findViewById(R.id.userName);
         String[] user = new String[2];
         user[0] = Phone.getText().toString();
-        user[1] = UserName.getText().toString();
+            user[1] = UserName.getText().toString();
         if (user[0].equals(""))
             showAlert(myActivity, "You must enter name");
         else if (user[1].equals(""))
@@ -176,5 +189,6 @@ public class Login extends Fragment {
             }
         }
     }
+
 }
 

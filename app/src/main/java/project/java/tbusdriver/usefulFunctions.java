@@ -64,7 +64,8 @@ public class usefulFunctions {
 
     // post req
     @NonNull
-    public static String POST(String url, Map<String, Object> params) throws IOException {
+    public static String POST(String url, Map<String, Object> params)
+            throws IOException {
 
         //Convert Map<String,Object> into key=value&key=value pairs.
         StringBuilder postData = new StringBuilder();
