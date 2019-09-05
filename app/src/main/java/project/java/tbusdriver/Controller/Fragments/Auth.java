@@ -90,7 +90,7 @@ public class Auth extends Fragment// implements BootReceiver.OnFragmentInteracti
 
         Bundle bundle = this.getArguments();
         context=getContext().getApplicationContext();
-        rwSetting=new RWSetting(context);
+        rwSetting=RWSetting.getInstance(context);
         phone = getArguments().getString("PHONE");
         AuthCode = (EditText) myView.findViewById(R.id.authCode);
         //get sms code
