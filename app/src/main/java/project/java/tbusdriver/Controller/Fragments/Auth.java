@@ -1,16 +1,22 @@
 package project.java.tbusdriver.Controller.Fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,54 +26,85 @@ import project.java.tbusdriver.Controller.Activitys.LoginAuth;
 import project.java.tbusdriver.Controller.Activitys.MainActivity;
 import project.java.tbusdriver.R;
 import project.java.tbusdriver.RWSetting;
+import project.java.tbusdriver.Service.BootReceiver;
+import project.java.tbusdriver.Service.InnerRecevier;
 
+import static android.content.Context.MODE_PRIVATE;
 import static project.java.tbusdriver.usefulFunctions.*;
 
 
-public class Auth extends Fragment {
-
+public class Auth extends Fragment// implements BootReceiver.OnFragmentInteractionListener
+{
     RWSetting rwSettings = null;
-
     boolean checkBoxIsCheck = true;
-
     private String phone;
-
     Activity myActivity;
-
+    Context context;
     View myView;
+    private IntentFilter mFilter;
+    private InnerRecevier mRecevier;
 
     OnFragmentInteractionListener mCallBack;
-
     private SharedPreferences pref;
+    RWSetting rwSetting;
+     EditText AuthCode;
+    BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver messagesReceiver;
     /**
      * The Editor.
      */
+    IntentFilter intentFilterACSD;
     private SharedPreferences.Editor editor;
 
-
     public Auth() {
-
     }
+
+    // receiver as a global variable in your Fragment class
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         myActivity = getActivity();
     }
-
+//on recents view
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Bundle bundle = this.getArguments();
-        //phone=savedInstanceState.getString("PHONE");
-        phone = getArguments().getString("PHONE");
-        //phone=savedInstanceState.getString("PHONE");
-        //getArguments().getString("PHONE");
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+     //   mFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+
         myView = inflater.inflate(R.layout.fragment_auth, container, false);
+       // /*
+        InnerRecevier.bindListener(new InnerRecevier.OnHomePressedListener() {
+
+            @Override
+            public void onHomePressed() {
+                rwSetting.setStringSetting("true","onHomePressed");
+            }
+            @Override
+            public void onRecentAppPressed() {
+                rwSetting.setStringSetting("true","onRecentAppPressed");
+            }
+        });
+    //    this.mRecevier.start();
+
+        Bundle bundle = this.getArguments();
+        context=getContext().getApplicationContext();
+        rwSetting=new RWSetting(context);
+        phone = getArguments().getString("PHONE");
+        AuthCode = (EditText) myView.findViewById(R.id.authCode);
+        //get sms code
+          BootReceiver.bindListener(new BootReceiver.SmsListener.OTPListener() {
+            @Override
+            public void messageReceived(String messageText, String messageSender) {
+
+                AuthCode.setText(getTheNumberInString(messageText));
+
+            }
+        });
         return myView;
     }
+
 
     public void onClickAuth(View v) {
         switch (v.getId()) {
@@ -91,6 +128,7 @@ public class Auth extends Fragment {
         else if (user[1].equals(""))
             showAlert(myActivity, "you must enter phone");
         else
+            //worng
             //user[0]=Phone user[1]=User Name
             new Auth.UsersTask().execute(user);
     }
@@ -98,7 +136,7 @@ public class Auth extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        pref = context.getSharedPreferences("UserPref", Context.MODE_PRIVATE);
+        pref = context.getSharedPreferences("UserPref", MODE_PRIVATE);
         editor = pref.edit();
         if (context instanceof OnFragmentInteractionListener) {
             mCallBack = (OnFragmentInteractionListener) context;
@@ -172,9 +210,9 @@ public class Auth extends Fragment {
         @Override
         protected void onPreExecute() {
         }
-
         @Override
         protected void onProgressUpdate(String... values) {
+
             //user[0]=Phone user[1]=User Name
             //check if have any error
             if (values[0].length() > 1)
@@ -182,11 +220,23 @@ public class Auth extends Fragment {
             else {
                 EditText authCode = (EditText) myActivity.findViewById(R.id.authCode);
                 authCode.setText("");
-                if (checkBoxIsCheck == true) {
+                if (checkBoxIsCheck == true)
+                {
                     editor.putString("PHONE", phone);
                     editor.commit();
                 }
             }
         }
+    }
+
+    //the brodcast reciver brings us all the message and we need only the code
+        String getTheNumberInString(String sms){
+        String num="";
+        char[] smschar=sms.toCharArray();
+        for(int i=0;i<sms.length();i++){
+            if(smschar[i]>='0'&&smschar[i]<='9')
+                num+=smschar[i];
+        }
+        return num;
     }
 }

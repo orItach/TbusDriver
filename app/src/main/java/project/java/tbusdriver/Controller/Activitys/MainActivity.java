@@ -115,56 +115,65 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rwSettings=RWSetting.getInstance(this);
-        boolean haveToken = false;
         // check if we have the token
-        if((rwSettings.getStringSetting("Token")=="" || rwSettings.getStringSetting("Token")==null) )
+        if(rwSettings.getStringSetting("Token")=="" || rwSettings.getStringSetting("Token")==null)
         {
             //start login
-            haveToken = false;
-            Intent intent = new Intent(this,LoginAuth.class);
+            Intent intent =new Intent(this,LoginAuth.class);
             startActivity(intent);
-            return;
         }
         else
         {
-            usefulFunctions.Token = rwSettings.getStringSetting("Token");
-            haveToken = true;
+            usefulFunctions.Token=rwSettings.getStringSetting("Token");
         }
-        //if (haveToken){
-            setContentView(R.layout.activity_main);
-            // for navigation drawer
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_main);
 
-            drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.setDrawerListener(toggle);
-            toggle.syncState();
+        //TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        //tabLayout.addTab(tabLayout.newTab().setText("Map"));
+        //tabLayout.addTab(tabLayout.newTab().setText("My Rides"));
+        //tabLayout.addTab(tabLayout.newTab().setText("Active Rides"));
+        //tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-            navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
 
-            LinearLayout nevHeader= (LinearLayout)  navigationView.getHeaderView(0);
-            menuImage = (ImageView) nevHeader.findViewById(R.id.menuImage);
-            //set Travel to be the first fragment
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-            travelFragment = newInstance();
-            fragmentTransaction.add(R.id.content_main,travelFragment);
-            fragmentTransaction.commit();
-            //mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
-            mapFragment=SupportMapFragment.newInstance();
-            menuImage.setOnClickListener(new View.OnClickListener() {
+        // for navigation drawer
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-                @Override
-                public void onClick(View view) {
-                    setFragment(personalInfoFragmentName);
-                }
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-            });
-        //}
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
+        LinearLayout nevHeader= (LinearLayout)  navigationView.getHeaderView(0);
+        menuImage = (ImageView) nevHeader.findViewById(R.id.menuImage);
+        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //View hView =  navigationView.getHeaderView(0);
+        //TextView nav_user = (TextView)hView.findViewById(R.id.nav_name);
+        //nav_user.setText(user);
+
+        //set Travel to be the first fragment
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        travelFragment = newInstance();
+        fragmentTransaction.add(R.id.content_main,travelFragment);
+        fragmentTransaction.commit();
+
+
+
+        //mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment=SupportMapFragment.newInstance();
+        menuImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                setFragment(personalInfoFragmentName);
+            }
+
+        });
         // need to be deleted after sync with the server
         // init work item
         {
@@ -201,6 +210,32 @@ public class MainActivity extends AppCompatActivity
             Region tempRegionT = new Region(region[2], userDaysT);
             ListDsManager.getRegions().add(tempRegionT);
         }
+        //final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        //final PagerAdapter adapter = new PagerAdapter
+        //        (getSupportFragmentManager(), tabLayout.getTabCount());
+        //viewPager.setAdapter(adapter);
+        //viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        //tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        //    @Override
+        //    public void onTabSelected(TabLayout.Tab tab) {
+        //        viewPager.setCurrentItem(tab.getPosition());
+//
+        //    }
+//
+        //    @Override
+        //    public void onTabUnselected(TabLayout.Tab tab) {
+//
+        //    }
+//
+        //    @Override
+        //    public void onTabReselected(TabLayout.Tab tab) {
+//
+        //    }
+        //});
+
+        //int tabIndex=getIntent().getIntExtra("index",0);
+
+        //viewPager.setCurrentItem(tabIndex);
 
         // currently not in use
         bReceiver = new BroadcastReceiver() {

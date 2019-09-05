@@ -21,8 +21,6 @@ public class MyLocation implements Serializable, Parcelable {
     private double distance;
     // flag mean the station is down or up
     private boolean isPickUp;
-
-    //private Passenger passenger;
     // TODO check why we have passenger and username
     private String passenger;
     private String username;

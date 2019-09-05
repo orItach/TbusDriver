@@ -1,4 +1,4 @@
-developer convention.
+developer convetion.
 have three type of task
 1. bug fix.
 2. feature.
@@ -10,16 +10,13 @@ at the end of the day, fetch, pull and then commit and push.
 
 Task list:
 1. feature - add comment all over the code.
-2. feature - when user click on notification need to go to ride and see te ride (הצג נסיעה).server side Ok
-3. research - the app crash when gilad click on show ride - Complete, when you click on show ride at available
-ride (at the first time) the app crash.
-4. feature - exit show ride mode when go out from map fragment.
-5. feature - generate new key so we can see the route.
-6. feature - when user go back when in the login screen he came back to app.
-7. feature - when driver go out the app should be close (from the web ui).
-8. bug fix - when select show ride from available ride the first time, the app crash.
-9. feature - add price to ride (available view, and all other)
-10. feature - the צמתים not shown correctly (ride 353)
+2. feature - when user click on notification need to go to ride and see te ride (הצג נסיעה).
+3. research - the app crash when gilad click on show ride
+4.
+
+
+
+
 
 #1 change name, support two lan'
 #3 complete the feedback
@@ -50,11 +47,3 @@ see mail
 1. make zoom in the current location
 2. show route
 3. make historic ride screen
-
-28/03/2019
-1. minor change at date day as name before day as number.
-2. order of up and down.
-3. remove hower time from menu.
-2. exit (return) from show ride
-3. sort myRides, maybe double.
-4. busy change.

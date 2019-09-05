@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -107,26 +106,6 @@ public class NotificationService extends FirebaseMessagingService {
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        String message = "";
-        String rideId = "";
-        if(messageBody.contains(";")){
-            message = messageBody.split(";")[0];
-            rideId = messageBody.split(";")[1];
-        }
-        else {
-            message = messageBody;
-        }
-        if (!rideId.equals("")){
-            Bundle bundle=new Bundle();
-            //bundle.putInt("RIDEID",rideId);
-            //bundle.putBoolean("SHOWSTATIONS",true);
-            Bundle rideIdBundle = new Bundle();
-            //rideIdBundle.putInt("RIDEID",rideId);
-            intent.putExtra("RIDEID",Integer.parseInt(rideId));
-            intent.putExtra("SHOWSTATIONS", true);
-        }
-
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -136,11 +115,10 @@ public class NotificationService extends FirebaseMessagingService {
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.mipmap.tbus_logo)
                         .setContentTitle("FCM Message")
-                        .setContentText(message)
+                        .setContentText(messageBody)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
-        notificationBuilder.setSound(defaultSoundUri);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
